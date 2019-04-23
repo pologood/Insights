@@ -6,9 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +26,7 @@ public class InsightsCorrelationBuilder {
 	
 	@RequestMapping(value = "/getCorrelationJson", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody JsonObject getCorrelationJson() throws IOException, InsightsCustomException {
-		String details = null;
+		Object details = null;
 		try {
 			details = correlationBuilderService.getCorrelationJson();
 		}catch (InsightsCustomException e) {
@@ -37,7 +37,7 @@ public class InsightsCorrelationBuilder {
 		//return PlatformServiceUtil.buildSuccessResponseWithData(details);
 	}
 	@RequestMapping(value = "/saveConfig", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody JsonObject saveConfig(@RequestParam String configDetails) {
+	public @ResponseBody JsonObject saveConfig(@RequestBody String configDetails) {
 		String message = null;
 		log.error("input"+configDetails);
 		try {

@@ -14,7 +14,7 @@ export class RelationshipBuilderComponent implements OnInit {
   selectedDummyAgent: any = undefined;
   element: any = undefined;
   updatedDatasource = [];
-
+  BothDataSorce = [];
   relationmappingLabels: RelationLabel[] = [];
   neo4jResponseData: any = [];
   property1selected: boolean = false;
@@ -241,6 +241,7 @@ export class RelationshipBuilderComponent implements OnInit {
               var c = (element.source.toolName);
               this.relationDataSource.push(a)
               this.servicesDataSource.push(element);
+              this.BothDataSorce = this.relationDataSource;
 
             }
           }

@@ -30,11 +30,12 @@
 height: 14px !important;
 width: 14px !important
 }
-.mat-radio-button2
+.mat-radio-button
 {
-    width: 20px;
-    height: 20px;
+    font-size: 14px !important;
 }
+
+
 
 .RadioCss
 {
@@ -158,8 +159,15 @@ mat-dialog-content::-webkit-scrollbar-track {
     margin-right: -10px;
 } 
 
+th, td {
+  overflow: hidden;
+  width: 200px !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .SubHeading{
-     font-size: 16px;
+     font-size: 14px;
     color:  #0033A0;
     font-weight:bold;
     margin-left: 10px;
@@ -178,20 +186,23 @@ mat-dialog-content::-webkit-scrollbar-track {
 
 .button .mat-raised-button
 {
-border-radius: 0px !important;
- color: #FFFFFF;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+    color: #FFFFFF;
 }
 
 .configureBut {
     float: right;
     background-color: #0033A0 !important;
     margin-bottom: 8px;
-    margin-left: 10px;
-    margin-top: 10px;
+    margin-left: -100px; 
+   /*  margin-top: 10px; */
     margin-right: 10px;
     border-radius: 0px !important;
     height: 100%;
-    width:150px;
+    width:250px;
     padding-left: 10px;
     padding-right: 10px;
     font-size: 12px;

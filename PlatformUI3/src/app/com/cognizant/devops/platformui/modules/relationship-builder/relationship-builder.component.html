@@ -83,36 +83,37 @@
 
         <!-- <-- Radio Button -->
         <div>
+          
+          <table>
+            <tbody>
+              <tr>
 
+                <td><label class="SubHeading">Display Co-Relation</label></td>
+                <mat-radio-group>
 
-          <tr>
+                  <td>
+                    <mat-radio-button value="1" color="primary" (click)="getCorrelation()">Correlation.json</mat-radio-button>
+                  </td>
+                  <td>
+                    <mat-radio-button value="2" color="primary" (click)="getCorrelationNeo4j()">Neo4j</mat-radio-button>
 
-            <td style="width:30px"><label class="SubHeading">Display Co-Relation</label></td>
-            <mat-radio-group>
+                  </td>
+                  
+                  <td>
+                    <mat-radio-button value="2" color="primary" (click)="getCorrelationBoth()">Both</mat-radio-button>
 
-              <td>
-                <mat-radio-button value="1" color="primary" (click)="getCorrelation()">Correlation.json</mat-radio-button>
-              </td>
-              <td>
-                <mat-radio-button value="2" color="primary" (click)="getCorrelationNeo4j()">Neo4j</mat-radio-button>
+                  </td>
 
-              </td>
-
-              <td>
-                <mat-radio-button value="2" color="primary" (click)="getCorrelationBoth()">Both</mat-radio-button>
-
-              </td>
-
-            </mat-radio-group>
-          </tr>
-
-
-
+                </mat-radio-group>
+              </tr>
+            </tbody>
+          </table>
+          
         </div>
         <!-- ending-->
         <br>
 
-        <button style="margin-top: 30px" mat-raised-button (click)="showDetailsDialog()" class="configureBut">
+        <button style="margin-top: 100px" mat-raised-button (click)="showDetailsDialog()" class="configureBut">
           View Correlation.json
         </button>
       </div>
@@ -131,7 +132,8 @@
 
 
       <div class="divTablesHeading">
-        <table>
+          <input id='myInput' (keyup)='searchTable()' type='text'>
+        <table id='myTable'>
           <tbody style="display:grid;max-height:50vh;margin-top: 10px">
             <tr class="dat-rowNew" style="margin-top:20px" *ngFor="let dummy of relationDataSource">
 

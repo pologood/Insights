@@ -55,6 +55,8 @@ export class RelationshipBuilderComponent implements OnInit {
   noShowDetail2: boolean = false;
   showDetail2: boolean = false;
   finalDataSource = {};
+
+  MAX_ROWS_PER_TABLE = 5;
   showDetail3: boolean = false;
   noShowDetailCorr: boolean = false;
   relationPropertiesSize: boolean = false;
@@ -160,6 +162,7 @@ export class RelationshipBuilderComponent implements OnInit {
   getCorrelationNeo4j() {
     //this.neo4jResponse = undefined;
     this.relationDataSource = [];
+    this.BothDataSorce = [];
     var self = this;
     this.relationDataSourceNeo4j = [];
     this.relationshipBuilderService.loadUiServiceLocationNeo4j().then(
@@ -192,10 +195,13 @@ export class RelationshipBuilderComponent implements OnInit {
             let relationLabel = new RelationLabel(self.names[0], self.names[1], self.names[2], true);
             self.relationmappingLabels.push(relationLabel);
             self.relationDataSourceNeo4j.push(self.names[2]);
+
+
           }
           console.log(self.relationmappingLabels);
 
         }
+        self.showDetail = true;
         this.dataComponentColumns = ['relationName'];
       });
 
@@ -203,6 +209,79 @@ export class RelationshipBuilderComponent implements OnInit {
 
   }
   getCorrelationBoth() {
+    try {
+
+      this.relationDataSourceNeo4j = [];
+      this.relationDataSource = [];
+      this.servicesDataSource = [];
+      var self = this;
+      this.relationshipBuilderService.loadUiServiceLocation().then(
+        (corelationResponse) => {
+
+          self.corelationResponseMaster = corelationResponse;
+          this.corrprop = corelationResponse.data;
+
+          if (this.corrprop != null) {
+            for (var key in this.corrprop) {
+
+              var element = this.corrprop[key];
+
+              var a = (element.relationName);
+              var t = (element.destination);
+              var b = (element.destination.toolName);
+              var az = typeof (t);
+
+              var c = (element.source.toolName);
+              this.relationDataSource.push(a)
+              this.servicesDataSource.push(element);
+              self.BothDataSorce = self.relationDataSource;
+
+
+            }
+          }
+          self.showDetail = true;
+          this.dataComponentColumns = ['relationName'];
+        });
+    }
+    catch (error) {
+      console.log(error);
+    }
+    //fromneo4j
+
+    this.relationDataSourceNeo4j = [];
+    this.relationshipBuilderService.loadUiServiceLocationNeo4j().then(
+      (neo4jResponse) => {
+
+
+        self.neo4jResponseData = neo4jResponse.data;
+
+
+        if (self.neo4jResponseData != undefined && self.neo4jResponseData.length > 1) {
+
+          for (var masterData of this.neo4jResponseData) {
+            self.names = [];
+
+            for (const key in masterData) {
+
+              self.names.push(masterData[key]);
+
+            }
+            console.log(self.names);
+            let relationLabel = new RelationLabel(self.names[0], self.names[1], self.names[2], true);
+            self.relationmappingLabels.push(relationLabel);
+            self.relationDataSourceNeo4j.push(self.names[2]);
+            self.BothDataSorce = self.relationDataSourceNeo4j;
+
+
+          }
+          console.log(self.relationmappingLabels);
+
+        }
+        self.showDetail = true;
+        this.dataComponentColumns = ['relationName'];
+      });
+
+
 
   }
 
@@ -211,6 +290,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
   getCorrelation() {
     try {
+      this.BothDataSorce = [];
       this.relationDataSourceNeo4j = [];
       this.relationDataSource = [];
       this.servicesDataSource = [];
@@ -241,7 +321,7 @@ export class RelationshipBuilderComponent implements OnInit {
               var c = (element.source.toolName);
               this.relationDataSource.push(a)
               this.servicesDataSource.push(element);
-              this.BothDataSorce = this.relationDataSource;
+
 
             }
           }

@@ -205,6 +205,10 @@ th, td {
     width:250px;
     padding-left: 10px;
     padding-right: 10px;
+     border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
     font-size: 12px;
 }
 .input

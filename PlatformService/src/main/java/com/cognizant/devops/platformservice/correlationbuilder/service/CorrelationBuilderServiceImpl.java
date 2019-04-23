@@ -48,6 +48,37 @@ public class CorrelationBuilderServiceImpl implements CorrelationBuilderService 
 		return config;
 	} 
 	
+	
+	
+	
+	
+	@Override
+	public Object getNeo4jJson() throws InsightsCustomException {
+		// TODO Auto-generated method stub
+		//Path dir = Paths.get(filePath);
+		String agentPath = System.getenv().get("INSIGHTS_HOME") + File.separator + ConfigOptions.CONFIG_DIR;
+		Path dir = Paths.get(agentPath);
+		Object config = null;
+		try (Stream<Path> paths = Files.find(dir, Integer.MAX_VALUE,
+				(path, attrs) -> attrs.isRegularFile() && path.toString().endsWith(ConfigOptions.NEO4J_TEMPLATE));
+				FileReader reader = new FileReader(paths.limit(1).findFirst().get().toFile())) {
+
+			JsonParser parser = new JsonParser();
+			Object obj = parser.parse(reader);
+			//config = ((JsonArray) obj).toString();
+			config=obj;
+		} catch (IOException e) {
+			log.error("Offline file reading issue", e);
+			throw new InsightsCustomException("Offline file reading issue -" + e.getMessage());
+		}
+		log.error(agentPath);
+		log.error("config"+config); 
+		return config;
+	} 
+	
+	
+	
+	
 	@Override
 	public String saveConfig(String config) throws InsightsCustomException {
 		String configFilePath = System.getenv().get("INSIGHTS_HOME") + File.separator + ConfigOptions.CONFIG_DIR;

@@ -9,5 +9,7 @@ import com.google.gson.JsonObject;
 public interface CorrelationBuilderService {
 	
 	public Object getCorrelationJson() throws IOException, InsightsCustomException;
+	public Object getNeo4jJson() throws IOException, InsightsCustomException;
 	public String saveConfig(String configDetails)throws InsightsCustomException;
+	
 }

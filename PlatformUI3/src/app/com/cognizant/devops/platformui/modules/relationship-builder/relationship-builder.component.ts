@@ -202,7 +202,9 @@ export class RelationshipBuilderComponent implements OnInit {
     //console.log(self.neo4jResponseData);
 
   }
+  getCorrelationBoth() {
 
+  }
 
 
 

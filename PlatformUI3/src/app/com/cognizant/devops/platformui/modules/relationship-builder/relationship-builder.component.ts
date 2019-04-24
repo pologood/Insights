@@ -219,7 +219,7 @@ export class RelationshipBuilderComponent implements OnInit {
         (corelationResponse) => {
           self.corelationResponseMaster = corelationResponse;
           self.corrprop = corelationResponse.data;
-
+          //console.log(corelationResponse.data)
 
           if (self.corrprop != undefined && self.corrprop.length > 1) {
             for (var masterData of this.corrprop) {
@@ -352,34 +352,22 @@ export class RelationshipBuilderComponent implements OnInit {
   Delete() {
     this.isListView = true;
     this.isEditData = true;
-
-
-
-
-
-    //console.log(this.selectedDummyAgent);
-    // console.log(this.servicesDataSource);
-    for (var key in this.servicesDataSource) {
-      if (this.servicesDataSource[key].relationName != this.selectedDummyAgent) {
-        this.updatedDatasource.push(this.servicesDataSource[key])
+    console.log(this.corrprop);
+    console.log(this.selectedDummyAgent);
+    for (var key in this.corrprop) {
+      if (this.corrprop[key].relationName != this.selectedDummyAgent.relationName) {
+        this.updatedDatasource.push(this.corrprop[key])
       }
     }
-    //console.log(this.selectedDummyAgent);
     console.log(this.updatedDatasource);
-
     //var deleteMappingJson = JSON.stringify(this.updatedDatasource);
     var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
-    //console.log(deleteMappingJson);
-
     this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
       (corelationResponse2) => {
-        //console.log(corelationResponse2)
-        // console.log(this.updatedDatasource);
-        // console.log(this.relationDataSource);
-        // console.log(this.servicesDataSource);
         if (corelationResponse2.status == "success") {
           this.updatedDatasource = [];
           this.relationDataSource = [];
+          this.relationDataSource=[];
           this.servicesDataSource = [];
           this.getCorrelationConfig();
         }

@@ -18,7 +18,6 @@ export class RelationLabel {
     destination: string;
     source: string;
     relationName: string;
-  
     isdataNeo4j?: boolean = true;
 
 
@@ -33,6 +32,6 @@ export class RelationLabel {
         this.source = source;
         this.relationName = relationName;
         this.isdataNeo4j = isdataNeo4j;
-       
+
     }
 }

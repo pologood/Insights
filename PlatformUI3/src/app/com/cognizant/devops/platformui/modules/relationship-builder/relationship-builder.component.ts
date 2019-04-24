@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { RelationshipBuilderService } from '@insights/app/modules/relationship-builder/relationship-builder.service';
 import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-correlationjson';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
+import { from } from 'rxjs';
+import {MatTableDataSource} from '@angular/material';
 //import { Control} from '@angular/common';
 @Component({
   selector: 'app-relationship-builder',
@@ -12,8 +15,11 @@ export class RelationshipBuilderComponent implements OnInit {
   selectedDummyAgent: any = undefined;
   element: any = undefined;
   updatedDatasource = [];
+  BothDataSorce = [];
+  relationmappingLabels: RelationLabel[] = [];
+  neo4jResponseData: any = [];
   property1selected: boolean = false;
-  //neo4jResponse
+  neo4jResponse: any;
   property2selected: boolean = false;
   isbuttonenabled: boolean = false;
   dictResponse: any;
@@ -41,6 +47,7 @@ export class RelationshipBuilderComponent implements OnInit {
   agent1TableData: any;
   agent2TableData: any;
   finalArrayToSend = [];
+  names = [];
   listFilter: boolean;
   readChange: boolean = false;
   readChange2: boolean = false;
@@ -66,20 +73,24 @@ export class RelationshipBuilderComponent implements OnInit {
   selectedMappingAgent: any;
   selectedMappingAgent2: any;
   NewDataSource = {};
+  masterData: any;
 
 
   relData: any;
   relationDataSource = [];
+  relationDataSourceNeo4j = [];
 
   constructor(private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog) {
     this.dataDictionaryInfo();
-    this.getCorrelationNeo4j();
-    this.getCorrelation();
+    // this.getAgentMappingDetail();
+
+
+
   }
 
   ngOnInit() {
   }
-
+  
   async dataDictionaryInfo() {
     try {
       // Loads Agent , Data Component and Services
@@ -148,27 +159,86 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
   getCorrelationNeo4j() {
+    //this.neo4jResponse = undefined;
+    this.relationDataSource = [];
+    var self = this;
+    this.relationDataSourceNeo4j = [];
     this.relationshipBuilderService.loadUiServiceLocationNeo4j().then(
       (neo4jResponse) => {
-        console.log(neo4jResponse);
+
+        //console.log(neo4jResponse);
+        //console.log(neo4jResponse.data);
+        self.neo4jResponseData = neo4jResponse.data;
+
+        // console.log(neo4jResponse.data[0]);
+        if (self.neo4jResponseData != undefined && self.neo4jResponseData.length > 1) {
+          //console.log("g");
+          for (var masterData of this.neo4jResponseData) {
+            self.names = [];
+            //console.log("hello")
+            for (const key in masterData) {
+              //console.log(masterData[key]);
+              self.names.push(masterData[key]);
+
+              //console.log(masterData[key]);
+              //console.log(self.names);
+
+
+
+
+              //console.log(relationLabel);
+
+            }
+            console.log(self.names);
+            let relationLabel = new RelationLabel(self.names[0], self.names[1], self.names[2], true);
+            self.relationmappingLabels.push(relationLabel);
+            self.relationDataSourceNeo4j.push(self.names[2]);
+          }
+          console.log(self.relationmappingLabels);
+
+        }
+        this.dataComponentColumns = ['relationName'];
       });
+
+    //console.log(self.neo4jResponseData);
+
+  }
+  getCorrelationBoth() {
 
   }
 
-
-
-
-
-
+  searchTable() {
+    var input, filter, found, table, tr, td, i, j;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        for (j = 0; j < td.length; j++) {
+            if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                found = true;
+            }
+        }
+        if (found) {
+            tr[i].style.display = "";
+            found = false;
+        } else {
+            tr[i].style.display = "none";
+        }
+    }
+}
   getCorrelation() {
     try {
+      this.relationDataSourceNeo4j = [];
       this.relationDataSource = [];
       this.servicesDataSource = [];
       var self = this;
       this.relationshipBuilderService.loadUiServiceLocation().then(
         (corelationResponse) => {
 
-          var ax = typeof (corelationResponse);
+
+          // var ax = typeof (corelationResponse);
           // console.log(ax);
           self.corelationResponseMaster = corelationResponse;
           this.corrprop = corelationResponse.data;
@@ -179,7 +249,7 @@ export class RelationshipBuilderComponent implements OnInit {
             for (var key in this.corrprop) {
               // console.log(key);
               var element = this.corrprop[key];
-              var ay = typeof (element);
+              // var ay = typeof (element);
               // console.log(ay);
               var a = (element.relationName);
               var t = (element.destination);
@@ -190,6 +260,7 @@ export class RelationshipBuilderComponent implements OnInit {
               var c = (element.source.toolName);
               this.relationDataSource.push(a)
               this.servicesDataSource.push(element);
+              this.BothDataSorce = this.relationDataSource;
 
             }
           }
@@ -354,4 +425,25 @@ export class RelationshipBuilderComponent implements OnInit {
   deleteMapping() {
 
   }
+
+
+  /* 
+    getAgentMappingDetail() {
+  
+      this.masterData = undefined;
+  
+      var self = this;
+      this.relationshipBuilderService.loadUiServiceLocationNeo4j()
+        .then(function (data) {
+  
+          self.selectedMappingAgent = undefined;
+          self.masterData = data;
+        });
+      console.log(self.masterData);
+  
+    } */
+
+
+
+
 }

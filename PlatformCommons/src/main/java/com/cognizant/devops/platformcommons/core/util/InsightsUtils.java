@@ -347,7 +347,7 @@ public class InsightsUtils {
 	
 	public static String getUtcTime(String timezone) {
 		SimpleDateFormat  dtf = new SimpleDateFormat(DATE_TIME_FORMAT);
-		dtf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		dtf.setTimeZone(TimeZone.getTimeZone(timezone));
 		return  dtf.format(new Date());
 	}
 

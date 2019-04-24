@@ -33,12 +33,12 @@ import com.google.gson.JsonObject;
 public abstract class ComponentHealthLogger {
 	
 	private static final Logger log = LogManager.getLogger(ComponentHealthLogger.class);
-	private  static final String strTimeZone = "GMT";
+	private  static final String TIMEZONE = "GMT";
 	
 	public boolean createComponentStatusNode(String label,String version,String message,String status,Map<String,String> parameter){
 		JsonObject response = null;
 		try {
-			String utcdate = InsightsUtils.getUtcTime(strTimeZone);
+			String utcdate = InsightsUtils.getUtcTime(TIMEZONE);
 			List<JsonObject> dataList = new ArrayList<JsonObject>();
 			List<String> labels = new ArrayList<String>();
 			labels.addAll(Arrays.asList(label.split(":")));

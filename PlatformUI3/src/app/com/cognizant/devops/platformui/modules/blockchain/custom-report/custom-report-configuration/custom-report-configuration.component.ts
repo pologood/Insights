@@ -20,6 +20,7 @@ import { MessageDialogService } from '@insights/app/modules/application-dialog/m
 import { FormControl, Validators, FormGroup, FormBuilder, AbstractControl } from '@angular/forms';
 import { QueryBuilderService } from '@insights/app/modules/blockchain/custom-report/custom-report-service';
 import { saveAs as importedSaveAs} from "file-saver"; 
+import { DataSharedService } from '@insights/common/data-shared-service';
 
 @Component({
   selector: 'app-custom-reportconfiguration',
@@ -38,10 +39,11 @@ export class CustomReportConfigComponent implements OnInit {
   queryConfigstatus;
   selectedFile: File = null;
   showFile: boolean = false;
+  currentUserName: string;
 
   ngOnInit() {
     console.log("compoenntconfig --");
-
+  
     this.route.queryParams.subscribe(params => {
       this.receivedParam = JSON.parse(params["reportparam"]);
       this.showThrobber = true;
@@ -55,7 +57,7 @@ export class CustomReportConfigComponent implements OnInit {
 
   constructor(private router: Router, private route: ActivatedRoute,
     public messageDialog: MessageDialogService, private formBuilder: FormBuilder,
-    public queryBuilderService: QueryBuilderService) {
+    public queryBuilderService: QueryBuilderService,  private dataShare: DataSharedService) {
     console.log("compoenntconfig cccc--");
     this.queryForm = this.formBuilder.group({
       reportname: ['', [Validators.required]],
@@ -128,6 +130,8 @@ export class CustomReportConfigComponent implements OnInit {
     let result;
     const fd = new FormData();
     console.log('this.selectedFile-',this.selectedFile);
+    this.currentUserName = this.dataShare.getUserName();
+    console.log("this.currentUserName--",this.currentUserName);
     if (this.selectedFile) {
       fd.append('json', this.selectedFile, this.selectedFile.name);
     }
@@ -140,7 +144,7 @@ export class CustomReportConfigComponent implements OnInit {
         let upload = await this.queryBuilderService.uploadFile(fd);
         console.log('this.selectedFile upload-',upload);
         if (upload.status == "success") {
-            result = await this.queryBuilderService.saveOrUpdateQuery(this.queryForm.value,this.selectedFile.name);
+            result = await this.queryBuilderService.saveOrUpdateQuery(this.queryForm.value,this.selectedFile.name, this.currentUserName);
             console.log('result --', result);
             this.queryConfigstatus = "Query Added Successfully"
         } else {
@@ -155,7 +159,7 @@ export class CustomReportConfigComponent implements OnInit {
           let upload = await this.queryBuilderService.uploadFile(fd);
           if (upload.status == "success") {
             const { queryPath, ...param} = updateParam;
-            result = await this.queryBuilderService.saveOrUpdateQuery(param, queryPath);
+            result = await this.queryBuilderService.saveOrUpdateQuery(param, queryPath, this.currentUserName);
             console.log('result --', result);
             this.queryConfigstatus = "Query Updated Successfully"
           } else {
@@ -164,7 +168,7 @@ export class CustomReportConfigComponent implements OnInit {
           }
         } else {
           const { queryPath, ...param} = updateParam;
-          result = await this.queryBuilderService.saveOrUpdateQuery(param, queryPath);
+          result = await this.queryBuilderService.saveOrUpdateQuery(param, queryPath, this.currentUserName);
           console.log('result --', result);
           this.queryConfigstatus = "Query Updated Successfully"
         }

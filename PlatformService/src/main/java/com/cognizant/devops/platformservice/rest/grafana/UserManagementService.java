@@ -236,7 +236,7 @@ public class UserManagementService {
 		StringBuffer grafanaCookie = new StringBuffer();
 		if(cookies != null){
 			for(Cookie cookie : cookies){
-				grafanaCookie.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+				grafanaCookie.append(cookie.getName()).append("=").append(cookie.getValue()).append("; HttpOnly");
 			}
 		}else{
 			try {

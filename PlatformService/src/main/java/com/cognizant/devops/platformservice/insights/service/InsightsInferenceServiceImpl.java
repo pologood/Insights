@@ -54,6 +54,7 @@ public class InsightsInferenceServiceImpl implements InsightsInferenceService {
 		this.messageSource = messageSource;
 	}
 
+	@Override
 	public List<InsightsInference> getInferenceDetails(String schedule) {
 		return getInferences(schedule);
 	}
@@ -180,7 +181,7 @@ public class InsightsInferenceServiceImpl implements InsightsInferenceService {
 	private List<InferenceResult> getInferenceData(String inputSchedule) throws Exception {
 		String esQuery = getQuery();
 
-		esQuery = getUpdatedQueryWithDate(esQuery, inputSchedule, 5); // Since
+		esQuery = getUpdatedQueryWithDate(esQuery, inputSchedule, 50000); // Since
 																		// should
 																		// come
 																		// from

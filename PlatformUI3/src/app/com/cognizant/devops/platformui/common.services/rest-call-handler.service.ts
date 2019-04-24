@@ -138,7 +138,7 @@ export class RestCallHandlerService {
   }
 
 
-  public postFormData(url: string, fd: FormData): Observable<any> {
+  public postFormData(url: string, fd: any): Observable<any> {
 
     var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
     var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')

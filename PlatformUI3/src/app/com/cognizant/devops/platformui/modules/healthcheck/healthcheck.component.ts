@@ -16,10 +16,13 @@
 import { Component, OnInit, Inject, ViewEncapsulation } from '@angular/core';
 import { InsightsInitService } from '@insights/common/insights-initservice';
 import { HealthCheckService } from '@insights/app/modules/healthcheck/healthcheck.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ShowDetailsDialog } from '@insights/app/modules/healthcheck/healthcheck-show-details-dialog';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DataSharedService } from '@insights/common/data-shared-service';
+import { QueryBuilderService } from '../blockchain/custom-report/custom-report-service';
+import { MessageDialogService } from '../application-dialog/message-dialog-service';
+import {saveAs as importedSaveAs} from "file-saver"; 
 
 @Component({
   selector: 'app-healthcheck',
@@ -50,10 +53,15 @@ export class HealthCheckComponent implements OnInit {
   agentNameList: any = [];
   selectAgentTool: any;
   timeZone: string = "";
+  showMessage: string;
+  reportLogsColumns: string[];
+  reportLogsDataSource = new MatTableDataSource<any>();
   constructor(private healthCheckService: HealthCheckService, private dialog: MatDialog,
-    private dataShare: DataSharedService) {
+    private dataShare: DataSharedService, private queryBuilderService:QueryBuilderService, 
+    private messageDialog: MessageDialogService) {
     this.loadAgentCheckInfo();
     this.loadOtherHealthCheckInfo();
+    this.loadReportsLogs();
   }
 
   ngOnInit() {
@@ -212,6 +220,35 @@ export class HealthCheckComponent implements OnInit {
     }
   }
 
+  async loadReportsLogs(){
+    this.reportLogsDataSource = new MatTableDataSource();
+    let custReportList = await this.queryBuilderService.fetchQueries();
+    console.log("custReportList---",custReportList);
+
+    if (custReportList != null && custReportList.data.length > 0) {
+      let logList = [];
+      
+      this.showThrobber = false;
+      this.reportLogsColumns = ['reportName','logFile'];
+      this.reportLogsDataSource.data = custReportList.data;
+      //this.reportLogsDataSource.sort = this.sort;
+      //this.reportLogsDataSource.paginator = this.paginator;
+    } else {
+      //this.showMessage = "Something wrong with Service, Please try again.";
+      this.messageDialog.showApplicationsMessage("No Report available !", "ERROR");
+    }
+
+  }
+
+  downloadLog(logfile) {
+    console.log("download starts for ", logfile);
+    this.healthCheckService.downloadLog(logfile).subscribe((data) => {
+      console.log(data);
+        importedSaveAs(data,logfile);
+    },error => {
+          console.log(error);
+    });
+  }
 }
 
 

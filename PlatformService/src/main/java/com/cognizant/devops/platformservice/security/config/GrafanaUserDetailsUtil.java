@@ -58,7 +58,7 @@ public class GrafanaUserDetailsUtil {
 		if (requestCookies != null) {
 			for (Cookie cookie : requestCookies) {
 				cookieMap.put(ValidationUtils.checkHTTPResponseSplitting(cookie.getName(), Boolean.TRUE),
-						ValidationUtils.checkHTTPResponseSplitting(cookie.getValue(), Boolean.TRUE));
+						ValidationUtils.checkHTTPResponseSplitting(cookie.getValue(), Boolean.TRUE) + "; HttpOnly");
 				cookie.setHttpOnly(true);
 			}
 		}
@@ -83,7 +83,8 @@ public class GrafanaUserDetailsUtil {
 					Map<String, String> headers = new HashMap<String, String>();
 					StringBuffer grafanaCookie = new StringBuffer();
 					for (Map.Entry<String, String> cookie : grafanaResponseCookies.entrySet()) {
-						grafanaCookie.append(cookie.getKey()).append("=").append(cookie.getValue()).append(";");
+						grafanaCookie.append(cookie.getKey()).append("=").append(cookie.getValue())
+								.append("; HttpOnly");
 					}
 					headers.put("Cookie", grafanaCookie.toString());
 					String grafanaCurrentOrg = getGrafanaCurrentOrg(headers);

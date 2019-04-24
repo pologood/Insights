@@ -55,7 +55,6 @@ public class PlatformMappingData {
 		try {
 			ToolsLayoutDAL toolLayoutDal = new ToolsLayoutDAL();
 			boolean checkToolName = ValidationUtils.checkString(toolName);
-
 			if (checkToolName) {
 				throw new InsightsCustomException("Agent name not valid");
 			}
@@ -70,11 +69,15 @@ public class PlatformMappingData {
 	@RequestMapping(value = "/toolsField", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody JsonObject loadToolsField(@RequestParam String toolName) {
 		Neo4jDBHandler dbHandler = new Neo4jDBHandler();
-		String query = "MATCH (n:" +toolName+ ":DATA) return n limit 1";
-		try { 
+		try {
+			boolean checkToolName = ValidationUtils.checkString(toolName);
+			if (checkToolName) {
+				throw new InsightsCustomException("Agent name not valid");
+			}
+			String query = "MATCH (n:" + toolName + ":DATA) return n limit 1";
 			GraphResponse response = dbHandler.executeCypherQuery(query);
 			return PlatformServiceUtil.buildSuccessResponseWithData(response);
-		} catch (GraphDBException e) {
+		} catch (GraphDBException | InsightsCustomException e) {
 			log.error(e);
 			return PlatformServiceUtil.buildFailureResponse(ErrorMessage.DB_INSERTION_FAILED);
 		}
@@ -85,11 +88,15 @@ public class PlatformMappingData {
 	public @ResponseBody JsonObject loadToolsFieldValue(@RequestParam String toolName,
 			@RequestParam(required = false) String fieldName) {
 		Neo4jDBHandler dbHandler = new Neo4jDBHandler();
-		String query = "MATCH (n:" +toolName + ") return distinct(n." +fieldName +")";
 		try { 
+			boolean checkToolName = ValidationUtils.checkString(toolName);
+			if (checkToolName) {
+				throw new InsightsCustomException("Agent name not valid");
+			}
+			String query = "MATCH (n:" + toolName + ") return distinct(n." + fieldName + ")";
 			GraphResponse response = dbHandler.executeCypherQuery(query);
 			return PlatformServiceUtil.buildSuccessResponseWithData(response);
-		} catch (GraphDBException e) {
+		} catch (GraphDBException | InsightsCustomException e) {
 			log.error(e);
 			return PlatformServiceUtil.buildFailureResponse(ErrorMessage.DB_INSERTION_FAILED);
 		}

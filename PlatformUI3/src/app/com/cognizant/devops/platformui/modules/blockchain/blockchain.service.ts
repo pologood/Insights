@@ -16,7 +16,7 @@
 import { Injectable } from '@angular/core';
 import { RestCallHandlerService } from '@insights/common/rest-call-handler.service';
 import { Observable } from 'rxjs';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 import { DataSharedService } from '@insights/common/data-shared-service';
 
 
@@ -54,10 +54,12 @@ export class BlockChainService implements IBlockChainService {
     exportToPdf(pdfData): Observable<Blob> {
         var authToken = this.dataShare.getAuthorizationToken();
         var EXPORT_TO_PDF = "/PlatformAuditService/traceability/getAuditReport";
+        let params= new HttpParams();
+        params = params.append("pdfName","Traceability_report.pdf");
         var headers_object = new HttpHeaders();
         headers_object = headers_object.append("Content-Type", "application/json");
         headers_object = headers_object.append("Authorization", authToken);
-        return this.httpClient.post(EXPORT_TO_PDF, pdfData, { headers: headers_object, responseType: 'blob' });
+        return this.httpClient.post(EXPORT_TO_PDF, pdfData, {headers:headers_object, responseType: 'blob',params});
     }
 
     getProcessFlow(): Promise<any> {

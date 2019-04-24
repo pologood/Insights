@@ -167,7 +167,7 @@ public class AccessGroupManagement {
 			cookieMap = new HashMap<String, String>();
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
-					cookieMap.put(cookie.getName(), cookie.getValue());
+					cookieMap.put(cookie.getName(), cookie.getValue().concat("; HttpOnly"));
 					cookie.setHttpOnly(true);
 				}
 			}

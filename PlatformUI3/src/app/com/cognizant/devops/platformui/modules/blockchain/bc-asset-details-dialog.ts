@@ -171,10 +171,10 @@ export class AssetDetailsDialog implements OnInit {
     exportToPdf() {        
         this.blockChainService.exportToPdf(this.pdfData)
             .subscribe((data) => {
-                var pdfFileName = 'Traceability_report.pdf';
-                importedSaveAs(data, pdfFileName);
+                var pdfFileName = 'Traceability_report.pdf';
+                importedSaveAs(data);
             },
-            error => {
+            error => {
                 console.log(error);
                 });              
     }

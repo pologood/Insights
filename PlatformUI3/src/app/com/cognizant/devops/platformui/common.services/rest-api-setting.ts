@@ -24,7 +24,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let token = this.tokenExtractor.getToken() as string;
-    //console.log(" token  " + token);
     if (token !== null) {
       request = request.clone({
         setHeaders: { "XSRF-TOKEN": token }

@@ -26,5 +26,8 @@
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 		</Root>
+		<logger name="org.hibernate">
+  <level value="error"/> 
+</logger>
 	</Loggers>
 </Configuration>

@@ -18,7 +18,7 @@
 <div class="mainDivContainer">
   <div layout layout-align="left" class="titleStyle">
     <div>Configuration |
-      <a class="greenTitleTxt">Co-relationship Builder </a>
+      <a class="greenTitleTxt">Co-Relation Builder </a>
     </div>
   </div>
   <div class="orangeStripCss"></div>
@@ -29,7 +29,7 @@
     <div layout="row" style="width: 100%;margin-top: 6px; height: 80%;">
 
 
-      <div layout layout-align="end center" style="margin-left: 410px;">
+      <div layout layout-align="end center" style="margin-left: 455px;">
 
         <label class="mainText"> Select Tools </label>
         <mat-select [(ngModel)]="selectedAgent1" [style.height.px]="20" [style.width.%]="20" (ngModelChange)="loadAgent1Info(selectedAgent1)"
@@ -79,14 +79,48 @@
         <b>&nbsp; Co-relationship Name</b>
       </div>
       <div class="arrange-horizontally">
-        <label class="SubHeading"> List of Co-Relationship's </label>
-        <button mat-raised-button (click)="showDetailsDialog()" class="configureBut">
+
+
+        <!-- <-- Radio Button -->
+        <div>
+          
+          <table>
+            <tbody>
+              <tr>
+
+                <td><label class="SubHeading">Display Co-Relation</label></td>
+                <mat-radio-group>
+
+                  <td>
+                    <mat-radio-button value="1" color="primary" (click)="getCorrelation()">Correlation.json</mat-radio-button>
+                  </td>
+                  <td>
+                    <mat-radio-button value="2" color="primary" (click)="getCorrelationNeo4j()">Neo4j</mat-radio-button>
+
+                  </td>
+                  
+                  <td>
+                    <mat-radio-button value="2" color="primary" (click)="getCorrelationBoth()">Both</mat-radio-button>
+
+                  </td>
+
+                </mat-radio-group>
+              </tr>
+            </tbody>
+          </table>
+          
+        </div>
+        <!-- ending-->
+        <br>
+
+        <button style="margin-top: 100px" mat-raised-button (click)="showDetailsDialog()" class="configureBut">
           View Correlation.json
         </button>
       </div>
       <!-- <div class="ListFooter">(There can be only ONE Relationship between a Set of Tools)</div> -->
       <div class="divTablesHeading">
-        <table>
+          <input id='myInput' (keyup)='searchTable()' type='text'>
+        <table id='myTable'>
           <tbody style="display:grid;max-height:50vh;margin-top: 10px">
             <tr class="dat-rowNew" style="margin-top:20px" *ngFor="let dummy of relationDataSource">
               <mat-radio-group [(ngModel)]="selectedDummyAgent">
@@ -99,8 +133,32 @@
           </tbody>
         </table>
       </div>
-      <div>
+
+
+
+
+      <div class="divTablesHeading">
+        <table>
+          <tbody style="display:grid;max-height:50vh;margin-top: 10px">
+            <tr class="dat-rowNew" style="margin-top:20px" *ngFor="let dummy of relationDataSourceNeo4j">
+
+              <td style="text-align:left;padding-left: 15px;padding-top: 8px;align-items: center;">{{dummy}}</td>
+
+            </tr>
+          </tbody>
+        </table>
       </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
     </div>
@@ -111,8 +169,8 @@
       <div class="showTable" style="text-align: center; padding: 5px;">
         <b>&nbsp; Tool Properties(Select one property to BUILD Relationship)</b>
       </div>
-      <input type="text" #newName style="margin-left: 325px; width: 300px ;margin-top: 10px" [(ngModel)]='listFilter'
-        required placeholder="Please input a Co-Relation name">
+      <input type="text" class="inputcss" #newName style="margin-left: 310px; width: 250px ;margin-top: 10px"
+        [(ngModel)]='listFilter' required placeholder="Please input a Co-Relation name">
 
       <div style="height:100%;width:100%;overflow:visible;">
         <div style="width:47%;display:inline-block;margin-left:8px ;vertical-align:top;">

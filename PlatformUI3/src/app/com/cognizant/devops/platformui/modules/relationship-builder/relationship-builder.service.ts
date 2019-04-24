@@ -36,6 +36,23 @@ export class RelationshipBuilderService implements IRelationshipBuilderService {
         return UIConfigResponse;*/
     }
 
+
+
+    async loadUiServiceLocationNeo4j(): Promise<any> {
+        /* var restHandler = this.restCallHandlerService;
+        return restHandler.get("CO_RELATIONSHIP_JSON"); */
+
+        /*  var self = this;
+         var uiConfigJsonUrl = "config/neo4jdata.json"
+         let UIConfigResponse = await this.getJSONUsingObservable(uiConfigJsonUrl).toPromise();
+         //console.log(UIConfigResponse);
+         return UIConfigResponse; */
+        var restHandler = this.restCallHandlerService;
+        return restHandler.get("CO_RELATIONSHIP_JSON_NEO4J");
+    }
+
+
+
     loadToolsAndCategories(): Promise<any> {
         var restHandler = this.restCallHandlerService;
         return restHandler.get("DATA_DICTIONARY_TOOLS_AND_CATEGORY");
@@ -47,6 +64,9 @@ export class RelationshipBuilderService implements IRelationshipBuilderService {
          return restHandler.postWithParameter("SAVE_RELATIONSHIP_JSON", { 'configDetails': config }).toPromise();
  
      } */
+
+
+
 
     saveCorrelationConfig(config: String): Promise<any> {
         var restHandler = this.restCallHandlerService;

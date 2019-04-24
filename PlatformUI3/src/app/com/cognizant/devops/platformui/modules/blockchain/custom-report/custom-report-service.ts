@@ -20,7 +20,7 @@ import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 
 export interface IQueryBuilderService {
-    saveOrUpdateQuery(form: any,fileName:any): Promise<any>;
+    saveOrUpdateQuery(form: any,fileName:any, user:string): Promise<any>;
     fetchQueries(): Promise<any>;
     deleteQuery(reportnmae): Promise<any>;
     uploadFile(formData : FormData): Promise<any>;
@@ -33,11 +33,11 @@ export class QueryBuilderService implements IQueryBuilderService {
     constructor(private restCallHandlerService: RestCallHandlerService, private httpClient:HttpClient, private cookieService: CookieService) {
     }
 
-    saveOrUpdateQuery(form: any,fileName: any): Promise<any> {
+    saveOrUpdateQuery(form: any,fileName: any, user:string): Promise<any> {
         console.log(form);
-        return this.restCallHandlerService.postWithParameter("CREATE_UPDATE_CYPHER_QUERY",
-            { 'reportName': form.reportname, 'frequency': form.frequency, 'subscribers': form.subscribers, 'fileName': fileName, 'queryType': form.querytype},
-            { 'Content-Type': 'application/x-www-form-urlencoded' }).toPromise();
+        let queryObj =  { 'reportName': form.reportname, 'frequency': form.frequency, 'subscribers': form.subscribers, 'fileName': fileName, 'queryType': form.querytype, 'user':user};
+        console.log(queryObj);
+        return this.restCallHandlerService.postFormData("CREATE_UPDATE_CYPHER_QUERY",queryObj).toPromise();
     }
 
     fetchQueries(): Promise<any> {
@@ -45,9 +45,7 @@ export class QueryBuilderService implements IQueryBuilderService {
     }
 
     deleteQuery(reportname): Promise<any> {
-        return this.restCallHandlerService.postWithParameter("DELETE_CYPHER_QUERY",
-        { 'reportName': reportname},
-        { 'Content-Type': 'application/x-www-form-urlencoded' }).toPromise();
+        return this.restCallHandlerService.postFormData("DELETE_CYPHER_QUERY",reportname).toPromise();
     }
 
     uploadFile(formData): Promise<any> {

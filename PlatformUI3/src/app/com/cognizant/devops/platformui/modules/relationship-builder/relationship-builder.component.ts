@@ -205,7 +205,7 @@ export class RelationshipBuilderComponent implements OnInit {
           }
 
         }
-        self.showDetail = true;
+        // self.showDetail = true;
       });
 
     // console.log(this.relationmappingLabels);
@@ -235,7 +235,7 @@ export class RelationshipBuilderComponent implements OnInit {
             }
 
           }
-          self.showDetail = true;
+          //self.showDetail = true;
         });
       console.log(this.relationmappingLabels);
     }
@@ -345,9 +345,20 @@ export class RelationshipBuilderComponent implements OnInit {
   }
 
   Refresh() {
-    var self = this;
-    this.router.navigateByUrl('@insights/app/modules/relationship-builder', { skipLocationChange: true }).then(() =>
-      self.router.navigate(["InSights/Home/relationship-builder"]));
+    /*  var self = this;
+     this.router.navigateByUrl('@insights/app/modules/relationship-builder', { skipLocationChange: true }).then(() =>
+       self.router.navigate(["InSights/Home/relationship-builder"])); */
+
+    this.showDetail = false;
+    this.showDetail2 = false;
+    this.agentDataSource = [];
+    this.selectedProperty1 = "";
+    this.selectedProperty2 = "";
+
+    this.selectedRadio = "";
+    this.getCorrelationBoth();
+
+    this.dataDictionaryInfo();
 
   }
 

@@ -144,7 +144,7 @@
       <!-- <div class="ListFooter">(There can be only ONE Relationship between a Set of Tools)</div> -->
 
       <div class="divTablesHeadingLeft">
-        <table mat-table [dataSource]="getRelationsName()">
+        <table mat-table id="myTable" [dataSource]="getRelationsName()">
 
 
           <ng-container matColumnDef="radio">
@@ -207,7 +207,7 @@
             </div>
           </div>
           <table *ngIf="showDetail" style="margin-left: 3%;">
-            <tbody style="display: grid; max-height: 50vh; overflow: auto;">
+            <tbody style="display: grid; max-height: 41vh; overflow: auto;">
               <tr class="dat-row" *ngFor="let element of agent1TableData">
                 <mat-radio-group [(ngModel)]="selectedProperty1">
                   <ng-container matColumnDef="radio">
@@ -233,7 +233,7 @@
             </div>
           </div>
           <table *ngIf="showDetail2" style="margin-left: 4%;">
-            <tbody style="display: grid; max-height: 50vh; overflow: auto;">
+            <tbody style="display: grid; max-height: 41vh; overflow: auto;">
               <tr class="dat-row" *ngFor="let element1 of agent2TableData">
 
                 <mat-radio-group [(ngModel)]="selectedProperty2">

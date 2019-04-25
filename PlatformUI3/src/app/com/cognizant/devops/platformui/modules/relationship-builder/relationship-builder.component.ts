@@ -264,6 +264,7 @@ export class RelationshipBuilderComponent implements OnInit {
     filter = input.value.toUpperCase();
     table = document.getElementById("myTable");
     tr = table.getElementsByTagName("tr");
+    console.log(tr);
     for (i = 0; i < tr.length; i++) {
       td = tr[i].getElementsByTagName("td");
       for (j = 0; j < td.length; j++) {
@@ -367,14 +368,14 @@ export class RelationshipBuilderComponent implements OnInit {
             this.updatedDatasource.push(this.corrprop[key])
           }
         }
-        console.log(this.updatedDatasource);
+        // console.log(this.updatedDatasource);
         //var deleteMappingJson = JSON.stringify(this.updatedDatasource);
         var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
         this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
           (corelationResponse2) => {
-            console.log(corelationResponse2);
+            // console.log(corelationResponse2);
             if (corelationResponse2.status == "success") {
-              console.log("Check");
+              // console.log("Check");
               this.updatedDatasource = [];
               this.relationDataSource = [];
               this.relationDataSource = [];
@@ -460,7 +461,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
     var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
-    for (let masterData of this.corrprop) { 
+    for (let masterData of this.corrprop) {
       this.servicesDataSource.push(masterData);
     }
     this.servicesDataSource.push(newData);

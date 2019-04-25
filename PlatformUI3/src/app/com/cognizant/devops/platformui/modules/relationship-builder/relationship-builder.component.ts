@@ -82,7 +82,7 @@ export class RelationshipBuilderComponent implements OnInit {
   selectedMappingAgent2: any;
   NewDataSource = {};
   masterData: any;
-  selectedRadio: any = 'all';
+  selectedRadio: any;
 
 
   relData: any;
@@ -207,7 +207,8 @@ export class RelationshipBuilderComponent implements OnInit {
         }
         self.showDetail = true;
       });
-    console.log(this.relationmappingLabels);
+
+    // console.log(this.relationmappingLabels);
 
   }
 
@@ -222,9 +223,9 @@ export class RelationshipBuilderComponent implements OnInit {
         (corelationResponse) => {
           self.corelationResponseMaster = corelationResponse;
           self.corrprop = corelationResponse.data;
-          //console.log(corelationResponse.data)
+          console.log(corelationResponse.data)
 
-          if (self.corrprop != undefined && self.corrprop.length > 1) {
+          if (self.corrprop != undefined && self.corrprop.length > 0) {
             for (var masterData of this.corrprop) {
 
               let relationLabel = new RelationLabel(masterData.destination.toolName, masterData.source.toolName, masterData.relationName, false);
@@ -234,11 +235,7 @@ export class RelationshipBuilderComponent implements OnInit {
             }
 
           }
-
-
-
           self.showDetail = true;
-
         });
       console.log(this.relationmappingLabels);
     }
@@ -249,24 +246,17 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
   public getRelationsName(): any {
-    // console.log(this.selectedRadio)
-    //console.log(this.relationmappingLabels);
+    console.log(this.selectedRadio)
+    console.log(this.relationmappingLabels);
     this.dataComponentColumns = ['radio', 'relationName'];
     if (this.selectedRadio == 'all') {
-
       return this.relationmappingLabels;
     } else if (this.selectedRadio == 'neo4j') {
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
     } else if (this.selectedRadio == 'file') {
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
-    } else {
-      return this.relationmappingLabels;
     }
   }
-
-
-
-
 
   searchTable() {
     var input, filter, found, table, tr, td, i, j;
@@ -360,11 +350,11 @@ export class RelationshipBuilderComponent implements OnInit {
 
   }
 
-  Delete() {
+  relationDelete() {
     this.isListView = true;
     this.isEditData = true;
-    console.log(this.corrprop);
-    console.log(this.selectedDummyAgent);
+    //console.log(this.corrprop);
+    // console.log(this.selectedDummyAgent);
 
     var title = "Delete Correlation";
     var dialogmessage = "You are deleting " + "<b>" + this.selectedDummyAgent.relationName + "</b>" + "- the action of deleting a co-relationship CANNOT be UNDONE, moreover deleting an existing co-relationship may impact other functionalities. Are you sure you want to DELETE <b>" + this.selectedDummyAgent.relationName + "</b>";
@@ -382,17 +372,23 @@ export class RelationshipBuilderComponent implements OnInit {
         var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
         this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
           (corelationResponse2) => {
+            console.log(corelationResponse2);
             if (corelationResponse2.status == "success") {
+              console.log("Check");
               this.updatedDatasource = [];
               this.relationDataSource = [];
               this.relationDataSource = [];
               this.servicesDataSource = [];
-              this.getCorrelationConfig();
+              this.getCorrelationBoth();
               this.getRelationsName();
+
+
             }
           });
+
       }
     });
+
   }
 
 
@@ -405,18 +401,16 @@ export class RelationshipBuilderComponent implements OnInit {
   enableSaveProperty1() {
     this.property1selected = true;
     if (this.property2selected == true) {
-      console.log("true");
+      //console.log("true");
       this.isSaveEnabled = true;
     }
-
-
   }
 
 
   enableSaveProperty2() {
     this.property2selected = true;
     if (this.property1selected == true) {
-      console.log("true");
+      //console.log("true");
       this.isSaveEnabled = true;
     }
   }
@@ -467,7 +461,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
     this.finalDataSource = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
     this.servicesDataSource.push(this.finalDataSource);
-    console.log(this.servicesDataSource);
+    //console.log(this.servicesDataSource);
     var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
     this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
       (corelationResponse2) => {

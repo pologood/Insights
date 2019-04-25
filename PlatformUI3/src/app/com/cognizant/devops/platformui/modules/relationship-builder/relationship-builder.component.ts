@@ -246,8 +246,8 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
   public getRelationsName(): any {
-    console.log(this.selectedRadio)
-    console.log(this.relationmappingLabels);
+    //console.log(this.selectedRadio)
+    // console.log(this.relationmappingLabels);
     this.dataComponentColumns = ['radio', 'relationName'];
     if (this.selectedRadio == 'all') {
       return this.relationmappingLabels;
@@ -459,16 +459,20 @@ export class RelationshipBuilderComponent implements OnInit {
     this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
 
 
-    this.finalDataSource = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
-    this.servicesDataSource.push(this.finalDataSource);
-    //console.log(this.servicesDataSource);
+    var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
+    for (let masterData of this.corrprop) { 
+      this.servicesDataSource.push(masterData);
+    }
+    this.servicesDataSource.push(newData);
+    console.log(this.servicesDataSource);
     var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
     this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
       (corelationResponse2) => {
 
         if (corelationResponse2.status == "success") {
 
-          this.getCorrelationConfig();
+          this.getCorrelationBoth();
+          this.getRelationsName();
         }
       });
 

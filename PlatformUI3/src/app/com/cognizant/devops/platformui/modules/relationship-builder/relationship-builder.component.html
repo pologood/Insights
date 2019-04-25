@@ -167,19 +167,22 @@
       <div class="divTablesHeadingLeft">
         <table mat-table [dataSource]="getRelationsName()">
 
-
-          <ng-container matColumnDef="radio">
+            
+          <ng-container  matColumnDef="radio">
             <!-- <th mat-header-cell *matHeaderCellDef></th> -->
             <td mat-cell *matCellDef="let element " style="width:15% !important">
-              <mat-radio-button [value]="element" color="primary" (click)="enableDelete()"></mat-radio-button>
+                <mat-radio-group [(ngModel)]="selectedDummyAgent">
+              <mat-radio-button   [value]="element" color="primary" (click)="enableDelete()"></mat-radio-button>
+                </mat-radio-group>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="relationName">
             <!-- <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"></th> -->
-            <td mat-cell *matCellDef="let element" class="tableText">
+            <td mat-cell  *matCellDef="let element" class="tableText">
               {{element.relationName}} </td>
           </ng-container>
+          
           <tr mat-header-row *matHeaderRowDef="dataComponentColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: dataComponentColumns;"> </tr>
         </table>

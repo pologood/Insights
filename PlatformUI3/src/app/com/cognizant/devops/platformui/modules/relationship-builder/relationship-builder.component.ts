@@ -246,7 +246,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
   getRelationsName() {
-    console.log(this.selectedRadio)
+    //console.log(this.selectedRadio)
     if (this.selectedRadio == 'all') {
       return this.relationmappingLabels;
     } else if (this.selectedRadio == 'neo4j') {

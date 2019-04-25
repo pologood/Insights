@@ -57,7 +57,7 @@ export class RelationshipBuilderComponent implements OnInit {
   noShowDetail2: boolean = false;
   showDetail2: boolean = false;
   finalDataSource = {};
-
+  isDisabledState: boolean = false;
   MAX_ROWS_PER_TABLE = 5;
   showDetail3: boolean = false;
   noShowDetailCorr: boolean = false;
@@ -242,15 +242,16 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
   public getRelationsName(): any {
-    console.log(this.selectedRadio)
-    console.log(this.relationmappingLabels);
+    // console.log(this.selectedRadio)
+    //console.log(this.relationmappingLabels);
     this.dataComponentColumns = ['radio', 'relationName'];
     if (this.selectedRadio == 'all') {
+        
       return this.relationmappingLabels;
     } else if (this.selectedRadio == 'neo4j') {
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
     } else if (this.selectedRadio == 'file') {
-      return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
+           return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
     } else {
       return this.relationmappingLabels;
     }

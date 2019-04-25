@@ -96,7 +96,7 @@ export class DataSharedService {
 
  public setSession() {
    var date = new Date();
-    var minutes = 1;
+    var minutes = 30;
     date.setTime(date.getTime() + (minutes * 60 * 1000)); 
     var dateDashboardSessionExpiration =date.getTime();   
     console.log(dateDashboardSessionExpiration + "  @@@@@@  "+date)      

@@ -4,6 +4,7 @@ import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
 import { from } from 'rxjs';
+import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
 import { MatTableDataSource } from '@angular/material';
 //import { Control} from '@angular/common';
 @Component({
@@ -84,7 +85,7 @@ export class RelationshipBuilderComponent implements OnInit {
   relationDataSource = [];
   relationDataSourceNeo4j = [];
 
-  constructor(private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog) {
+  constructor(private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, ) {
     this.dataDictionaryInfo();
     this.getCorrelationBoth();
   }
@@ -246,12 +247,12 @@ export class RelationshipBuilderComponent implements OnInit {
     //console.log(this.relationmappingLabels);
     this.dataComponentColumns = ['radio', 'relationName'];
     if (this.selectedRadio == 'all') {
-        
+
       return this.relationmappingLabels;
     } else if (this.selectedRadio == 'neo4j') {
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
     } else if (this.selectedRadio == 'file') {
-           return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
+      return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
     } else {
       return this.relationmappingLabels;
     }
@@ -355,26 +356,37 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isEditData = true;
     console.log(this.corrprop);
     console.log(this.selectedDummyAgent);
-    for (var key in this.corrprop) {
-      if (this.corrprop[key].relationName != this.selectedDummyAgent.relationName) {
-        this.updatedDatasource.push(this.corrprop[key])
-      }
-    }
-    console.log(this.updatedDatasource);
-    //var deleteMappingJson = JSON.stringify(this.updatedDatasource);
-    var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
-    this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
-      (corelationResponse2) => {
-        if (corelationResponse2.status == "success") {
-          this.updatedDatasource = [];
-          this.relationDataSource = [];
-          this.relationDataSource = [];
-          this.servicesDataSource = [];
-          this.getCorrelationConfig();
-          this.getRelationsName();
+
+    var title = "Delete Correlation";
+    var dialogmessage = "You are deleting " + "<b>" + this.selectedDummyAgent.relationName + "</b>" + "- the action of deleting a co-relationship CANNOT be UNDONE, moreover deleting an existing co-relationship may impact other functionalities. Are you sure you want to DELETE <b>" + this.selectedDummyAgent.relationName + "</b>";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'yes') {
+        for (var key in this.corrprop) {
+          if (this.corrprop[key].relationName != this.selectedDummyAgent.relationName) {
+            this.updatedDatasource.push(this.corrprop[key])
+          }
         }
-      });
+        console.log(this.updatedDatasource);
+        //var deleteMappingJson = JSON.stringify(this.updatedDatasource);
+        var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
+        this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
+          (corelationResponse2) => {
+            if (corelationResponse2.status == "success") {
+              this.updatedDatasource = [];
+              this.relationDataSource = [];
+              this.relationDataSource = [];
+              this.servicesDataSource = [];
+              this.getCorrelationConfig();
+              this.getRelationsName();
+            }
+          });
+      }
+    });
   }
+
+
   enableDelete() {
     this.isbuttonenabled = true;
     //console.log(this.isbuttonenabled);

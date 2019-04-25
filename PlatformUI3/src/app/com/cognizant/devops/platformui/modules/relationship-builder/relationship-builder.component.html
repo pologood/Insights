@@ -97,6 +97,8 @@
     <div class="column2" style="margin-bottom: 1%;margin-left:10px;margin-right: 7px;border :white;border-radius: 10px;background-color:white;height: 69vh;">
       <div class="showTable" style="text-align: center; padding: 5px;">
         <b>&nbsp; Co-relation in Correlation.json & Neo4j</b>
+        <br><a style="font-size:12px">(<b>Please Note:-</b>Correlation in <b>Neo4j</b> are non editable and greyed out)
+        </a>
       </div>
       <div class="arrange-horizontally">
 
@@ -167,22 +169,22 @@
       <div class="divTablesHeadingLeft">
         <table mat-table [dataSource]="getRelationsName()">
 
-            
-          <ng-container  matColumnDef="radio">
-            <!-- <th mat-header-cell *matHeaderCellDef></th> -->
+
+          <ng-container matColumnDef="radio">
+            <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element " style="width:15% !important">
-                <mat-radio-group [(ngModel)]="selectedDummyAgent">
-              <mat-radio-button   [value]="element" color="primary" (click)="enableDelete()"></mat-radio-button>
-                </mat-radio-group>
+              <mat-radio-group [(ngModel)]="selectedDummyAgent">
+                <mat-radio-button [value]="element" color="primary" (click)="enableDelete()"></mat-radio-button>
+              </mat-radio-group>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="relationName">
-            <!-- <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"></th> -->
-            <td mat-cell  *matCellDef="let element" class="tableText">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element" class="tableText">
               {{element.relationName}} </td>
           </ng-container>
-          
+
           <tr mat-header-row *matHeaderRowDef="dataComponentColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: dataComponentColumns;"> </tr>
         </table>
@@ -198,7 +200,9 @@
     <div class="column1" style="margin-bottom: 1%;margin-left: 7px;border :white;border-radius: 10px;background-color:white;height: 69vh;">
 
       <div class="showTable" style="text-align: center; padding: 5px;">
-        <b>&nbsp; Tool Properties(Select one property to BUILD Relationship)</b>
+        <b>&nbsp; Tool Properties</b> (Please select Tool Properties to build a Co-Relation) <br>
+        <a style="font-size:12px"> (Please delete and re-create existing relation to change properties with UNIQUE
+          name) </a>
       </div>
       <input type="text" class="inputcss" #newName style="margin-left: 310px; width: 250px ;margin-top: 10px"
         [(ngModel)]='listFilter' required placeholder="Please input a Co-Relation name">

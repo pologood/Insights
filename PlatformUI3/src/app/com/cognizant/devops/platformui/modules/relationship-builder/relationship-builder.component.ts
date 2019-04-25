@@ -25,7 +25,7 @@ export class RelationshipBuilderComponent implements OnInit {
   dictResponse: any;
   corelationResponse: any;
   corelationResponseMaster: any;
-  dataComponentColumns: string[];
+  dataComponentColumns = [];
   agentDataSource = [];
   AddDestination = {};
   newSource = [];
@@ -77,7 +77,7 @@ export class RelationshipBuilderComponent implements OnInit {
   selectedMappingAgent2: any;
   NewDataSource = {};
   masterData: any;
-  selectedRadio: any;
+  selectedRadio: any = 'all';
 
 
   relData: any;
@@ -87,9 +87,6 @@ export class RelationshipBuilderComponent implements OnInit {
   constructor(private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog) {
     this.dataDictionaryInfo();
     this.getCorrelationBoth();
-
-
-
   }
 
   ngOnInit() {
@@ -97,14 +94,15 @@ export class RelationshipBuilderComponent implements OnInit {
 
   getCorrelationBoth() {
     this.relationmappingLabels = [];
+    this.dataComponentColumns = ['radio', 'relationName'];
     this.getCorrelationNeo4j();
     this.getCorrelationConfig();
-    console.log(this.relationmappingLabels);
-    console.log(this.relationmappingLabels.length);
+    //console.log(this.relationmappingLabels);
+    // console.log(this.relationmappingLabels.length);
 
     //if (this.relationmappingLabels.length > 0) {
     //this.userDatasource = this.relationmappingLabels;
-    console.log(this.userDatasource)
+    //console.log(this.userDatasource)
     //} else {
     //console.log("No data found ");
     //}
@@ -200,9 +198,7 @@ export class RelationshipBuilderComponent implements OnInit {
           }
 
         }
-
         self.showDetail = true;
-        this.dataComponentColumns = ['relationName'];
       });
     console.log(this.relationmappingLabels);
 
@@ -235,7 +231,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
           self.showDetail = true;
-          this.dataComponentColumns = ['radio', 'relationName'];
+
         });
       console.log(this.relationmappingLabels);
     }
@@ -247,12 +243,16 @@ export class RelationshipBuilderComponent implements OnInit {
 
   public getRelationsName(): any {
     console.log(this.selectedRadio)
+    console.log(this.relationmappingLabels);
+    this.dataComponentColumns = ['radio', 'relationName'];
     if (this.selectedRadio == 'all') {
       return this.relationmappingLabels;
     } else if (this.selectedRadio == 'neo4j') {
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
     } else if (this.selectedRadio == 'file') {
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
+    } else {
+      return this.relationmappingLabels;
     }
   }
 
@@ -367,9 +367,10 @@ export class RelationshipBuilderComponent implements OnInit {
         if (corelationResponse2.status == "success") {
           this.updatedDatasource = [];
           this.relationDataSource = [];
-          this.relationDataSource=[];
+          this.relationDataSource = [];
           this.servicesDataSource = [];
           this.getCorrelationConfig();
+          this.getRelationsName();
         }
       });
   }
@@ -450,7 +451,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
         if (corelationResponse2.status == "success") {
 
-          this.getCorrelationBoth();
+          this.getCorrelationConfig();
         }
       });
 

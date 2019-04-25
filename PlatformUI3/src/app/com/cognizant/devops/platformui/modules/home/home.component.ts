@@ -84,6 +84,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loadCustomerLogo();
+    
   }
 
   constructor(private grafanaService: GrafanaAuthenticationService,
@@ -96,7 +97,7 @@ export class HomeComponent implements OnInit {
       this.depth = 0;
     }
     this.loadCustomerLogo();
-    this.grafanaService.validateSession();
+    //this.grafanaService.validateSession();
     this.isValidUser = true;
     this.framesize = window.frames.innerHeight;
     this.leftNavWidthInPer = 20;
@@ -196,12 +197,18 @@ export class HomeComponent implements OnInit {
     this.displayLandingPage = false;
     this.isToolbarDisplay = item.isToolbarDisplay
 
+  var isSessionExpired= this.dataShare.validateSession();
+  
+    
     if (!item.children || !item.children.length) {
       if (item.iconName == 'grafanaOrg') {
         this.selectedOrg = (this.selectedItem == undefined ? '' : this.selectedItem.displayName);
         this.selectedOrgName = this.getSelectedOrgName(this.selectedOrg);
         this.switchOrganizations(item.orgId, item.route, this.selectedOrgName);
       } else if (item.displayName == 'About') {
+        var isSessionExpired= this.dataShare.validateSession();
+  if(!isSessionExpired)
+{
         // window.open(this.aboutPageURL, "_blank");
         let aboutDialogRef = this.dialog.open(AboutDialog, {
           panelClass: 'healthcheck-show-details-dialog-container',
@@ -214,19 +221,24 @@ export class HomeComponent implements OnInit {
              this.router.navigateByUrl('InSights/Home/healthcheck', { skipLocationChange: true });
            }
          });*/
+}
       } else if (item.displayName == 'Help') {
         window.open(this.helpPageURL, "_blank");
       } else if (item.displayName == 'Logout') {
+        
         this.logout();
       } else {
         this.router.navigateByUrl(item.route, { skipLocationChange: true });
       }
-    } /*else {
+    } 
+    /*else {
       if (item.displayName == 'grafana') {
         console.log("in grafana");
       }
     }*/
   }
+
+  
 
   public loadMenuItem() {
     this.navItems = [
@@ -455,8 +467,7 @@ export class HomeComponent implements OnInit {
       .then(function (data) {
         //console.log(data);
       });
-    this.deleteAllPreviousCookies();
-    this.router.navigate(['/login']);
+    this.dataShare.clearSessionData();
   }
 
   switchOrganizations(orgId, route, orgName) {
@@ -487,12 +498,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  deleteAllPreviousCookies(): void {
-    let allCookies = this.cookieService.getAll();
-    for (let key of Object.keys(allCookies)) {
-      this.cookieService.delete(key);
-    }
-  }
+  
 
   showLandingPage() {
     // console.log("ByUrl " + this.router.url);

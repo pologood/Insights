@@ -21,6 +21,7 @@ import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, MAT
 import { ConfirmationMessageDialog } from '@insights/app/modules/application-dialog/confirmation-message-dialog';
 import { AddGroupMessageDialog } from '@insights/app/modules/user-onboarding/add-group-message-dialog';
 import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
+import { DataSharedService } from '@insights/common/data-shared-service';
 
 @Component({
   selector: 'app-user-onboarding',
@@ -59,7 +60,7 @@ export class UserOnboardingComponent implements OnInit {
   ];
 
   constructor(private userOnboardingService: UserOnboardingService, private sanitizer: DomSanitizer,
-    public dialog: MatDialog, public messageDialog: MessageDialogService) {
+    public dialog: MatDialog, public messageDialog: MessageDialogService, private dataShare: DataSharedService) {
     var self = this;
 
     this.framesize = window.frames.innerHeight;
@@ -197,9 +198,13 @@ export class UserOnboardingComponent implements OnInit {
   }
 
   displayaccessGroupCreateField() {
+    
     this.displayAccessGroupDetail = !this.displayAccessGroupDetail;
     if (this.accessGroupName != undefined) {
       var self = this;
+       var isSessionExpired= this.dataShare.validateSession();
+  if(!isSessionExpired)
+{
       const dialogRef = this.dialog.open(AddGroupMessageDialog, {
         panelClass: 'DialogBox',
         width: '50%',
@@ -208,6 +213,8 @@ export class UserOnboardingComponent implements OnInit {
         data: {
         }
       });
+
+    
       dialogRef.afterClosed().subscribe(result => {
         if (result != undefined && result != 'no') { //'yes'
           self.userOnboardingService.createOrg(result)
@@ -232,8 +239,9 @@ export class UserOnboardingComponent implements OnInit {
       this.showApplicationMessage = "";
     }, 2000);
   }
-
+  }
   addGlobalUser() {
 
   }
 }
+

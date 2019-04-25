@@ -20,17 +20,21 @@ import { RestAPIurlService } from '@insights/common/rest-apiurl.service'
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
+import { DataSharedService } from '@insights/common/data-shared-service';
 
 @Injectable()
 export class RestCallHandlerService {
   asyncResult: any;
   constructor(private http: HttpClient, private restAPIUrlService: RestAPIurlService,
-    private cookieService: CookieService) {
+    private cookieService: CookieService, private dataShare: DataSharedService) {
 
   }
 
   public async get(url: string, requestParams?: Object, additionalheaders?: Object): Promise<any> {
 
+    var isSessionExpired= this.dataShare.validateSession();
+  if(!isSessionExpired)
+{
     var dataresponse;
     var authToken = this.cookieService.get('Authorization');
     /* var headers;
@@ -55,10 +59,18 @@ export class RestCallHandlerService {
     //console.log(this.asyncResult)//.toString
     return this.asyncResult;
   }
+  else{
+    console.log("SessionTimedout")
+  }
+}
 
 
   public post(url: string, requestParams?: Object, additionalheaders?: Object): Observable<any> {
-
+var isSessionExpired= this.dataShare.validateSession();
+if(url=="USER_AUTHNTICATE"){
+  isSessionExpired=false; 
+   if(!isSessionExpired)
+   {
     var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
     //console.log(restCallUrl);
     var dataresponse;
@@ -95,6 +107,11 @@ export class RestCallHandlerService {
     dataresponse = this.http.post(restCallUrl, {}, allData);
     return dataresponse;
 
+}
+else{
+  console.log("Session Expire")
+}
+}
   }
 
   public postWithParameter(url: string, requestParams?: Object, additionalheaders?: Object): Observable<any> {

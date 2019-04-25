@@ -4,6 +4,8 @@ import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
 import { from } from 'rxjs';
+import { Router } from "@angular/router";
+import { ActivatedRoute } from '@angular/router';
 import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
 import { MatTableDataSource } from '@angular/material';
 //import { Control} from '@angular/common';
@@ -17,6 +19,7 @@ export class RelationshipBuilderComponent implements OnInit {
   element: any = undefined;
   updatedDatasource = [];
   BothDataSorce = [];
+
   relationmappingLabels: RelationLabel[] = [];
   neo4jResponseData: any = [];
   property1selected: boolean = false;
@@ -44,6 +47,7 @@ export class RelationshipBuilderComponent implements OnInit {
   userDatasource = [];
   isListView = false;
   isEditData = false;
+  isrefresh: boolean = false;
   isSaveEnabled: boolean = false;
   selectedAgent2: any;
   agent1TableData: any;
@@ -85,7 +89,7 @@ export class RelationshipBuilderComponent implements OnInit {
   relationDataSource = [];
   relationDataSourceNeo4j = [];
 
-  constructor(private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, ) {
+  constructor(private router: Router, private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, ) {
     this.dataDictionaryInfo();
     this.getCorrelationBoth();
   }
@@ -126,6 +130,7 @@ export class RelationshipBuilderComponent implements OnInit {
   }
   async loadAgent1Info(selectedAgent1) {
     try {
+      this.isrefresh = true;
       this.noShowDetail = true;
       this.clicked = false;
       this.buttonOn = false;
@@ -151,6 +156,7 @@ export class RelationshipBuilderComponent implements OnInit {
   }
   async loadAgent1Info2(selectedAgent2) {
     try {
+      this.isrefresh = true;
       this.noShowDetail2 = true;
       this.noShowDetailCorr = false;
       this.showDetail3 = false;
@@ -348,6 +354,9 @@ export class RelationshipBuilderComponent implements OnInit {
   }
 
   Refresh() {
+    var self = this;
+    this.router.navigateByUrl('@insights/app/modules/relationship-builder', { skipLocationChange: true }).then(() =>
+      self.router.navigate(["InSights/Home/relationship-builder"]));
 
   }
 
@@ -389,6 +398,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
   enableDelete() {
     this.isbuttonenabled = true;
+    this.isrefresh = true;
     //console.log(this.isbuttonenabled);
   }
 

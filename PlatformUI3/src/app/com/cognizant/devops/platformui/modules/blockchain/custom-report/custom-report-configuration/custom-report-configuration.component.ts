@@ -133,14 +133,14 @@ export class CustomReportConfigComponent implements OnInit {
     this.currentUserName = this.dataShare.getUserName();
     console.log("this.currentUserName--",this.currentUserName);
     if (this.selectedFile) {
-      fd.append('json', this.selectedFile, this.selectedFile.name);
+      fd.append('file', this.selectedFile, this.selectedFile.name);
     }
     if (actionType == 'add') {
       console.log('add');
       console.log('inside add', this.queryForm.value);
       console.log('this.selectedFile add-',this.selectedFile);
       console.log('this.selectedFile add name-',this.selectedFile.name);
-        fd.append('json', this.selectedFile, this.selectedFile.name);
+        fd.append('file', this.selectedFile, this.selectedFile.name);
         let upload = await this.queryBuilderService.uploadFile(fd);
         console.log('this.selectedFile upload-',upload);
         if (upload.status == "success") {

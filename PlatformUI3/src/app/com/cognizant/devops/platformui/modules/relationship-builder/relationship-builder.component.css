@@ -204,10 +204,13 @@ th, td {
     margin: 0 auto;
 }
 
-.mat-table {
-    background-color: #FF8F1C !important;
-}
-
+.mat-table {
+    overflow: scroll;
+    width: 100%;
+    max-height: 50px
+    
+    
+  }
 .ListFooter
 {
     font-size: 10px;

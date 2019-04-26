@@ -24,6 +24,7 @@ export class RelationshipBuilderComponent implements OnInit {
   neo4jResponseData: any = [];
   property1selected: boolean = false;
   neo4jResponse: any;
+  searchValue: string = '';
   property2selected: boolean = false;
   isbuttonenabled: boolean = false;
   dictResponse: any;
@@ -54,7 +55,7 @@ export class RelationshipBuilderComponent implements OnInit {
   agent2TableData: any;
   finalArrayToSend = [];
   names = [];
-  listFilter: boolean;
+  listFilter: any;
   readChange: boolean = false;
   readChange2: boolean = false;
   showDetail: boolean = false;
@@ -250,10 +251,13 @@ export class RelationshipBuilderComponent implements OnInit {
     // console.log(this.relationmappingLabels);
     this.dataComponentColumns = ['radio', 'relationName'];
     if (this.selectedRadio == 'all') {
+      this.isrefresh = true;
       return this.relationmappingLabels;
     } else if (this.selectedRadio == 'neo4j') {
+      this.isrefresh = true;
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
     } else if (this.selectedRadio == 'file') {
+      this.isrefresh = true;
       return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
     }
   }
@@ -354,10 +358,13 @@ export class RelationshipBuilderComponent implements OnInit {
     this.agentDataSource = [];
     this.selectedProperty1 = "";
     this.selectedProperty2 = "";
-
+    this.searchValue = null;
     this.selectedRadio = "";
     this.getCorrelationBoth();
-
+    this.isbuttonenabled = false;
+    this.isSaveEnabled = false;
+    this.listFilter = "";
+    this.isrefresh = false;
     this.dataDictionaryInfo();
 
   }

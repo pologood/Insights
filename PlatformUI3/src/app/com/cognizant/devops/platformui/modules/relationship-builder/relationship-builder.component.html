@@ -183,7 +183,7 @@
           with UNIQUE name) </a>
       </div>
       <input type="text" class="inputcss" #newName style="margin-left: 291px; width: 250px; margin-top: 10px"
-        [(ngModel)]='listFilter' required placeholder="Please input a Co-Relation name">
+        [(ngModel)]='listFilter' [value]="searchValue" required placeholder="Please input a Co-Relation name">
 
       <div style="height: 100%; width: 100%; overflow: visible;">
         <div style="width: 47%; display: inline-block; margin-left: 8px; vertical-align: top;">

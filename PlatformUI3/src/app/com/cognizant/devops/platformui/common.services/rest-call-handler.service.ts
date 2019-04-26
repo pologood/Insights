@@ -22,7 +22,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
 import { DataSharedService } from '@insights/common/data-shared-service';
 
-
 @Injectable()
 export class RestCallHandlerService {
   asyncResult: any;
@@ -33,56 +32,75 @@ export class RestCallHandlerService {
 
   public async get(url: string, requestParams?: Object, additionalheaders?: Object): Promise<any> {
 
-    var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
+    var isSessionExpired = this.dataShare.validateSession();
+    if (!isSessionExpired) {
+      var dataresponse;
+      var authToken = this.dataShare.getAuthorizationToken();
+      /* var headers;
+      var defaultHeader = {
+        'Authorization': authToken
+      }; */
 
-    const headers = new HttpHeaders()
-      .set("Authorization", authToken);
-    //console.log(headers);
-    var restCallUrl = this.constructGetUrl(url, requestParams);
-    this.asyncResult = await this.http.get(restCallUrl, { headers }).toPromise();
-    //console.log(this.asyncResult)//.toString
-    return this.asyncResult;
+      const headers = new HttpHeaders()
+        .set("Authorization", authToken);
+      //console.log(headers);
+      var restCallUrl = this.constructGetUrl(url, requestParams);
+      this.asyncResult = await this.http.get(restCallUrl, { headers }).toPromise();
+      //console.log(this.asyncResult)//.toString
+      return this.asyncResult;
+    }
+    else {
+      console.log("SessionTimedout")
+    }
   }
 
 
   public post(url: string, requestParams?: Object, additionalheaders?: Object): Observable<any> {
-
-    var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
-    //console.log(restCallUrl);
-    var dataresponse;
-    var headers;
-    var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
-    var defaultHeader = {
-      'Authorization': authToken
-    };
-    if (this.checkValidObject(additionalheaders)) {
-      headers = this.extend(defaultHeader, additionalheaders);
-    } else {
-      headers = defaultHeader;
-    }
-    headers = defaultHeader;
-    var allData = {
-      method: 'POST',
-      headers: headers,
-      transformRequest: function (data) {
-        if (data && Object.keys(data).length !== 0 && data.constructor == Object) {
-          var postParameter = '';
-          for (var key in data) {
-            //console.log(key+""+ requestParams[key]);
-            if (data.hasOwnProperty(key)) {
-              postParameter = postParameter.concat(key + '=' + requestParams[key] + '&');
-            }
-          }
-          postParameter = postParameter.slice(0, -1);
-          return postParameter;
+    var isSessionExpired = this.dataShare.validateSession();
+    if (url == "USER_AUTHNTICATE") {
+      isSessionExpired = false;
+      if (!isSessionExpired) {
+        var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
+        //console.log(restCallUrl);
+        var dataresponse;
+        var headers;
+        var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
+        var defaultHeader = {
+          'Authorization': authToken
+        };
+        if (this.checkValidObject(additionalheaders)) {
+          headers = this.extend(defaultHeader, additionalheaders);
+        } else {
+          headers = defaultHeader;
         }
-        return;
+        headers = defaultHeader;
+        var allData = {
+          method: 'POST',
+          headers: headers,
+          transformRequest: function (data) {
+            if (data && Object.keys(data).length !== 0 && data.constructor == Object) {
+              var postParameter = '';
+              for (var key in data) {
+                //console.log(key+""+ requestParams[key]);
+                if (data.hasOwnProperty(key)) {
+                  postParameter = postParameter.concat(key + '=' + requestParams[key] + '&');
+                }
+              }
+              postParameter = postParameter.slice(0, -1);
+              return postParameter;
+            }
+            return;
+          }
+        }
+        //console.log(allData)
+        dataresponse = this.http.post(restCallUrl, {}, allData);
+        return dataresponse;
+
+      }
+      else {
+        console.log("Session Expire")
       }
     }
-    //console.log(allData)
-    dataresponse = this.http.post(restCallUrl, {}, allData);
-    return dataresponse;
-
   }
 
   public postWithParameter(url: string, requestParams?: Object, additionalheaders?: Object): Observable<any> {

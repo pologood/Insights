@@ -65,6 +65,16 @@ font-size: 14px !important;
 }
 
 
+.tableTextgreyed
+{
+    color: #676666;
+    font-family: inherit;
+    font-weight: bold;
+    width:115% !important;
+}
+
+
+
 .btnAlign{
     /* margin-right: 1px;  */
   position: absolute;
@@ -326,7 +336,6 @@ font-size: 14px;
     margin-bottom: 6px;
     text-align: left;
     /* width: 100vh; */
-    padding-left: 15px;
 }
 .dat-row{
     height: 40px !important;

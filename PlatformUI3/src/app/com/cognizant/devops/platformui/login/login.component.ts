@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
   ngOnInit() {
     this.createAndValidateForm();
     this.dataShare.storeTimeZone();
+    
     //this.deleteAllPreviousCookies();
   }
 
@@ -110,13 +111,13 @@ export class LoginComponent implements OnInit, ILoginComponent {
           if (data.status === 'SUCCESS') {
             self.showThrobber = false;
             var date = new Date();
+
             var dateDashboardSessionExpiration = new Date(new Date().getTime() + 86400 * 1000);
             var minutes = 30;
             date.setTime(date.getTime() + (minutes * 60 * 1000));
-            //this.cookieService.set('Authorization', token, date);
+
             this.dataShare.setAuthorizationToken(token);
-            //this.cookieService.set('DashboardSessionExpiration', dateDashboardSessionExpiration.toString());
-            this.cookies = "";
+            this.dataShare.setSession();this.cookies = "";
             for (var key in grafcookies) {
               console.log(key + "    " + grafcookies[key])
               this.cookieService.set(key, grafcookies[key], date);

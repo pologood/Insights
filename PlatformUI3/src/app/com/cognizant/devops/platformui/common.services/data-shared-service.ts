@@ -18,6 +18,8 @@ import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { CommonModule, DatePipe } from '@angular/common';
+import { CookieService } from 'ngx-cookie-service';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Injectable()
 export class DataSharedService {
@@ -25,7 +27,8 @@ export class DataSharedService {
   private userSource = new BehaviorSubject<String>('admin');
   currentUser = this.userSource.asObservable();
 
-  constructor(@Inject(SESSION_STORAGE) private storage: StorageService, private datePipe: DatePipe) { }
+  constructor(@Inject(SESSION_STORAGE) private storage: StorageService, private datePipe: DatePipe, private cookieService: CookieService,
+  public router: Router ) { }
 
   public changeUser(user: String) {
     this.userSource.next(user)
@@ -107,4 +110,47 @@ export class DataSharedService {
     return dateWithTimeZone;
   }
 
+ public setSession() {
+   var date = new Date();
+    var minutes = 30;
+    date.setTime(date.getTime() + (minutes * 60 * 1000)); 
+    var dateDashboardSessionExpiration =date.getTime();   
+    console.log(dateDashboardSessionExpiration + "  @@@@@@  "+date)      
+    this.storage.set("dateDashboardSessionExpiration", dateDashboardSessionExpiration);
+  }
+
+  public validateSession(): boolean {
+    var authToken = this.cookieService.get('Authorization');
+    if (authToken === undefined) {
+      this.cookieService.delete('Authorization');
+      this.router.navigate(['/login']);
+    } else {
+      var dashboardSessionExpirationTime = new Date(this.storage.get('dateDashboardSessionExpiration'));
+      var date = new Date();
+      console.log(dashboardSessionExpirationTime + "  ===== " + date);  
+if(((this.storage.get('dateDashboardSessionExpiration'))==undefined)||(dashboardSessionExpirationTime < date) ) { 
+        console.log("session Expire");   
+       this.clearSessionData()
+        return true;
+      } else {
+        console.log("session present");
+        var minutes = 30;
+       date.setTime(date.getTime() + (minutes * 60 * 1000));
+        this.cookieService.set('Authorization', authToken, date);
+        return false;
+      }
+    }
+  }
+clearSessionData(): void {
+  this.deleteAllPreviousCookies(); 
+     this.storage.clear();
+    this.router.navigateByUrl('/login');
+  }
+ 
+ deleteAllPreviousCookies(): void {
+    let allCookies = this.cookieService.getAll();
+    for (let key of Object.keys(allCookies)) {
+      this.cookieService.delete(key);
+    }
+  }
 }

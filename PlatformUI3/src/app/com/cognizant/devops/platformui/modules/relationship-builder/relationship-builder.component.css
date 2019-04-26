@@ -199,9 +199,13 @@ th, td {
     background-color: #FF8F1C;
     margin-left: 16px;
     margin-right: 16px;
-    width: 271% !important;
+    width: 294% !important;
     height: 1px;
     margin: 0 auto;
+}
+
+.mat-table {
+    background-color: #FF8F1C !important;
 }
 
 .ListFooter
@@ -284,7 +288,7 @@ th, td {
 
 .column1{
     float: right;
-    width: 55%;
+    width: 52%;
     box-shadow: 0 2px 2px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
     -o-box-shadow: 2px  0 5px  rgba(0,0,0,.2);
     
@@ -315,7 +319,7 @@ font-size: 14px;
 
 .column2{
     float: left;
-    width:42%;
+    width:46%;
     box-shadow: 0 2px 2px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
     -o-box-shadow: 2px  0 5px  rgba(0,0,0,.2);
 }

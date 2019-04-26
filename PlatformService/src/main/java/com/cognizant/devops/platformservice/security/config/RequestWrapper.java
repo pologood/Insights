@@ -26,7 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.cognizant.devops.platformservice.customsettings.CustomAppSettings;
+import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 
 public final class RequestWrapper extends HttpServletRequestWrapper {
 	private static Logger LOG = LogManager.getLogger(CustomAppSettings.class);
@@ -49,14 +51,14 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 		int count = values.length;
 		String[] encodedValues = new String[count];
 		for (int i = 0; i < count; i++) {
-			encodedValues[i] = cleanXSS(values[i]);
+			encodedValues[i] = ValidationUtils.cleanXSS(values[i]);
 		}
 
 		LOG.debug("arg0 message " + request.getRequestURI() + "    " + request.toString());
 		Enumeration<String> parameterNames = request.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
 			String paramName = parameterNames.nextElement();
-			String paramValues = cleanXSS(request.getParameter(paramName));
+			String paramValues = ValidationUtils.cleanXSS(request.getParameter(paramName));
 			LOG.debug("arg0 ==== paramValues " + paramValues + " " + paramName);
 		}
 
@@ -71,7 +73,7 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 			return null;
 		}
 		LOG.info("In getParameter RequestWrapper ........ value .......");
-		return cleanXSS(value);
+		return ValidationUtils.cleanXSS(value);
 	}
 
 	@Override
@@ -81,47 +83,23 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 		if (value == null)
 			return null;
 		LOG.info("In getHeader RequestWrapper ........... value ....");
-		return cleanXSS(value);
+		return ValidationUtils.cleanXSS(value);
 	}
 
-	private String cleanXSS(String value) {
-		// You'll need to remove the spaces from the html entities below
-		LOG.debug("In cleanXSS RequestWrapper ..............." + value);
-		// value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-		// value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-		// value = value.replaceAll("'", "& #39;");
-		value = value.replaceAll("eval\\((.*)\\)", "");
-		value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
 
-		value = value.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
-		value = value.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
-		value = value.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>", "");
-		value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
-		value = value.replace("\\n", "").replace("\\r", "");
-		// value = value.replaceAll("<script>", "");
-		// value = value.replaceAll("</script>", "");
-		LOG.debug("Out cleanXSS RequestWrapper ........ value ......." + value);
-		return value;
-	}
 
 	@Override
 	public Cookie[] getCookies() {
-		Cookie cookie = null;
+		LOG.debug(" in RequestWrapper cookies =============== ");
 		Cookie[] cookies = null;
-		cookies = request.getCookies();
-		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
-				cookie = cookies[i];
-				LOG.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue());
-				// if ((cookie.getName()).compareTo("first_name") == 0) {
-				cookie.setMaxAge(0);
-				cookie.setValue(cleanXSS(cookie.getValue()));
-				response.addCookie(cookie);
-				// }
-			}
-		} else {
-			LOG.debug("No cookies founds");
-		}
+		Cookie cookie = null;
+		cookies = PlatformServiceUtil.validateCookies(request.getCookies());
+		/*
+		 * for (int i = 0; i < cookies.length; i++) { cookie = cookies[i];
+		 * response.addCookie(cookie); }
+		 */
 		return cookies;
 	}
+
+
 }

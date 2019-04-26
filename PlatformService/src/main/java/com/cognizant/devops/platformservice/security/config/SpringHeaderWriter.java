@@ -21,15 +21,22 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.header.HeaderWriter;
 import org.springframework.stereotype.Component;
 
+import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
+import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
+
 @Component
 public class SpringHeaderWriter implements HeaderWriter {
+	private static final Logger log = LogManager.getLogger(PlatformServiceUtil.class);
 
 	@Override
 	public void writeHeaders(HttpServletRequest request, HttpServletResponse response) {
+		log.debug(" Write Header ============ ");
 		response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, request.getHeader(HttpHeaders.ORIGIN));
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
@@ -42,11 +49,10 @@ public class SpringHeaderWriter implements HeaderWriter {
         if(attribute != null){
         	Map<String, String> grafanaHeaders = (Map<String, String>)attribute;
         	for(Map.Entry<String, String> entry : grafanaHeaders.entrySet()){
-				Cookie cookie = new Cookie(entry.getKey(), entry.getValue());
+				Cookie cookie = new Cookie(entry.getKey(), ValidationUtils.cleanXSS(entry.getValue()));
 				cookie.setHttpOnly(true);
 				cookie.setMaxAge(60 * 30);
 				response.addCookie(cookie);
-        		//response.setHeader(entry.getKey(), entry.getValue());
         	}
         }
 	}

@@ -21,6 +21,11 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class ValidationUtils {
 	private static final Logger log = LogManager.getLogger(ComponentHealthLogger.class);
 	private static Pattern agentNamePattern = Pattern.compile("[^A-Za-z]", Pattern.CASE_INSENSITIVE);
@@ -69,4 +74,50 @@ public class ValidationUtils {
 		return returnBoolean;
 	}
 
+	public static JsonObject validateStringForHTMLContent(JsonObject data) {
+		String strRegEx = "<[^>]*>";
+		String jsonString = "";
+		JsonObject json = null;
+
+		log.debug(" validateStringForHTMLContent  before  " + data);
+		// String jsonString = new Gson().toJson(data);
+		log.debug(" validateStringForHTMLContent  before data   " + data.getClass());
+
+		if (data instanceof JsonObject) {
+			jsonString = data.toString();
+			log.debug(" validateStringForHTMLContent  after  assigment  " + jsonString);
+			if (jsonString != null) {
+				jsonString = jsonString.replaceAll(strRegEx, "");
+				// replace &nbsp; with space
+				jsonString = jsonString.replace("&nbsp;", " ");
+				// replace &amp; with &
+				jsonString = jsonString.replace("&amp;", "&");
+				// OR remove all HTML entities
+				// jsonString = jsonString.replaceAll("&.*?;", "");
+			}
+			log.debug(" validateStringForHTMLContent  after  " + jsonString);
+			json = new Gson().fromJson(jsonString, JsonObject.class);
+		}
+		return json;
+	}
+
+	public static String cleanXSS(String value) {
+		// You'll need to remove the spaces from the html entities below
+		log.debug("In cleanXSS RequestWrapper ..............." + value);
+		// value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
+		// value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
+		// value = value.replaceAll("'", "& #39;");
+		value = value.replaceAll("eval\\((.*)\\)", "");
+		value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+
+		value = value.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
+		value = value.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
+		value = value.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>", "");
+		value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
+		value = value.replace("\\n", "").replace("\\r", "");
+		// value = value.replaceAll("<script>", "");
+		// value = value.replaceAll("</script>", "");
+		log.debug("Out cleanXSS RequestWrapper ........ value ......." + value);
+		return value;
+	}
 }

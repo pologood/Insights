@@ -18,14 +18,13 @@ import { Injectable } from '@angular/core';
 import { InsightsInitService } from '@insights/common/insights-initservice';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs'
-import { DataSharedService } from '@insights/common/data-shared-service';
+
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private dataShare: DataSharedService) { }
+  constructor() { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.dataShare.validateSession();
     request = request.clone({
       withCredentials: true
     });

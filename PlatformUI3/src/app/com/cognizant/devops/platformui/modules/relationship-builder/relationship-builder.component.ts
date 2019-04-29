@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
 import { ActivatedRoute } from '@angular/router';
 import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
 import { MatTableDataSource } from '@angular/material';
+import { DataSharedService } from '@insights/common/data-shared-service';
 //import { Control} from '@angular/common';
 @Component({
   selector: 'app-relationship-builder',
@@ -90,7 +91,7 @@ export class RelationshipBuilderComponent implements OnInit {
   relationDataSource = [];
   relationDataSourceNeo4j = [];
 
-  constructor(private router: Router, private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, ) {
+  constructor(private router: Router, private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, private dataShare: DataSharedService) {
     this.dataDictionaryInfo();
     this.getCorrelationBoth();
   }
@@ -332,18 +333,19 @@ export class RelationshipBuilderComponent implements OnInit {
    }
   */
   showDetailsDialog() {
+    var isSessionExpired = this.dataShare.validateSession();
+    if (!isSessionExpired) {
+      let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+        panelClass: 'showjson-dialog-container',
+        height: '500px',
+        width: '700px',
+        disableClose: true,
+        data: this.corelationResponseMaster,
 
-    let showJsonDialog = this.dialog.open(ShowJsonDialog, {
-      panelClass: 'showjson-dialog-container',
-      height: '500px',
-      width: '700px',
-      disableClose: true,
-      data: this.corelationResponseMaster,
-
-    });
-    //console.log(showJsonDialog);
+      });
+      //console.log(showJsonDialog);
+    }
   }
-
   addproperty() {
 
   }
@@ -499,11 +501,4 @@ export class RelationshipBuilderComponent implements OnInit {
   deleteMapping() {
 
   }
-
-
-
-
-
-
-
 }

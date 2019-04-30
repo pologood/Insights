@@ -378,6 +378,8 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isSaveEnabled = false;
     this.listFilter = "";
     this.isrefresh = false;
+    this.buttonOn = false;
+    this.selectedAgent1 = "";
     this.dataDictionaryInfo();
 
   }

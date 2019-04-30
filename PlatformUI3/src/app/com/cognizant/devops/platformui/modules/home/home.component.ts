@@ -384,7 +384,7 @@ export class HomeComponent implements OnInit {
           },
 
           {
-            displayName: 'Co-relationship Builder',
+            displayName: 'Co-Relation Builder',
             iconName: 'feature',
             route: 'InSights/Home/relationship-builder',
             isToolbarDisplay: true,

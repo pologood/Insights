@@ -46,10 +46,11 @@ export class ShowJsonDialog implements OnInit {
     headerSet = new Set();
     corelationResponse: any;
     sample: any
-
+    title1: any
     constructor(private relationshipBuilderService: RelationshipBuilderService, public dialogRef: MatDialogRef<ShowJsonDialog>,
         @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.sample = JSON.stringify((data), null, '\t')//data.data;// JSON.parse(data.data);  JSON.stringify(data.data, null, 4)
+        this.sample = JSON.stringify((data.message), null, '\t')//data.data;// JSON.parse(data.data);  JSON.stringify(data.data, null, 4)
+        this.title1 = data.title
     }
 
     ngOnInit() {

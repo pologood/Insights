@@ -297,6 +297,13 @@ th, td {
     
 }
 
+.Neo4jDataButtonCss[disabled]
+
+{
+background-color: #9e9a9a !important;
+color: #FFFFFF !important;
+}
+
 .Neo4jDataButtonCss
 {
    
@@ -411,6 +418,12 @@ table tr:last-child td:last-child {
     background-color:white!important;
 }
 
+
+.button[disabled] .mat-raised-button
+{
+    color: #FFFFFF;
+    background-color: #676666;
+}
 
 
 .form-control {

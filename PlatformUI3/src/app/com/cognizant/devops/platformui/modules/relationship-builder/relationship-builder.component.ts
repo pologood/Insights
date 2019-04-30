@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RelationshipBuilderService } from '@insights/app/modules/relationship-builder/relationship-builder.service';
 import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-correlationjson';
+import { ShowNeo4jRelation } from '@insights/app/modules/relationship-builder/show-neo4jRelation';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
 import { from } from 'rxjs';
@@ -249,6 +250,96 @@ export class RelationshipBuilderComponent implements OnInit {
     }
   }
 
+  async showDetailsDialogForNeo4j(data1, data2) {
+
+
+    try {
+      this.showDetail3 = false;
+      this.noShowDetailCorr = false;
+      this.clicked = true;
+      this.buttonOn = true;
+      this.showNoToolsSelectedForCorrelation = true
+      //console.log(data1.toolName, data2.toolName);
+      let usersResponseData3 = await this.relationshipBuilderService.loadToolsRelationshipAndProperties(data1.toolName, data1.categoryName, data2.toolName, data2.categoryName);
+      if (usersResponseData3.data != undefined && usersResponseData3.status == "success") {
+
+        // console.log(usersResponseData3)
+
+        // console.log(usersResponseData3.data)
+        if (usersResponseData3.data["relationName"] != undefined) {
+          this.showDetail3 = true;
+          this.noShowDetailCorr = false;
+          this.corrprop = usersResponseData3.data["relationName"];
+          console.log(this.corrprop);
+
+
+          var isSessionExpired = this.dataShare.validateSession();
+          if (!isSessionExpired) {
+            let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+              panelClass: 'showjson-dialog-container',
+              height: '500px',
+              width: '700px',
+              disableClose: true,
+              /*  data: this.corrprop,
+               title: 'Message', */
+              data:
+              {
+                message: this.corrprop,
+                title: "Neo4j"
+
+              }
+
+
+
+
+
+
+            });
+            //console.log(showJsonDialog);
+          }
+          //console.log(Object.keys(usersResponseData3.data["properties"]).length);
+
+        }
+      } else {
+        this.noShowDetailCorr = true;
+        this.showDetail3 = false;
+
+
+        var isSessionExpired = this.dataShare.validateSession();
+        if (!isSessionExpired) {
+          let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+            panelClass: 'showjson-dialog-container',
+            height: '500px',
+            width: '700px',
+            disableClose: true,
+            /*  data: this.corrprop,
+             title: 'Message', */
+            data:
+            {
+              message: 'No Relations Found',
+              title: "Neo4j"
+
+            }
+
+
+
+
+
+
+          });
+          //console.log(showJsonDialog);
+        }
+
+
+
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+
+  }
+
   showDetailsDialog() {
     var isSessionExpired = this.dataShare.validateSession();
     if (!isSessionExpired) {
@@ -257,7 +348,11 @@ export class RelationshipBuilderComponent implements OnInit {
         height: '500px',
         width: '700px',
         disableClose: true,
-        data: this.corelationResponseMaster,
+        data:
+        {
+          message: this.corelationResponseMaster,
+          title: "Correlation.json"
+        }
 
       });
       //console.log(showJsonDialog);

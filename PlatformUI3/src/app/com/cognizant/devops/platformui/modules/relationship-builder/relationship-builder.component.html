@@ -174,7 +174,9 @@
         [(ngModel)]='listFilter' [value]="searchValue" required placeholder="Please input a Co-Relation name">
 
 
-      <button mat-raised-button (click)="hello()" class="Neo4jDataButtonCss">Click to see the
+      <button mat-raised-button [disabled]="(noShowDetail||noShowDetail2||!selectedAgent1 || !selectedAgent2||buttonOn) "
+        (click)="showDetailsDialogForNeo4j(selectedAgent1,selectedAgent2)" class="Neo4jDataButtonCss">Click
+        to see the
         exsisting Correlation in Neo4j</button>
 
       <div style="height: 100%; width: 100%; overflow: visible;">

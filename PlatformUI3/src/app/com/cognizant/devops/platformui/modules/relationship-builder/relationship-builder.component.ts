@@ -277,8 +277,8 @@ export class RelationshipBuilderComponent implements OnInit {
           if (!isSessionExpired) {
             let showJsonDialog = this.dialog.open(ShowJsonDialog, {
               panelClass: 'showjson-dialog-container',
-              height: '500px',
-              width: '700px',
+              height: '300px',
+              width: '500px',
               disableClose: true,
               /*  data: this.corrprop,
                title: 'Message', */
@@ -309,8 +309,8 @@ export class RelationshipBuilderComponent implements OnInit {
         if (!isSessionExpired) {
           let showJsonDialog = this.dialog.open(ShowJsonDialog, {
             panelClass: 'showjson-dialog-container',
-            height: '500px',
-            width: '700px',
+            height: '300px',
+            width: '500px',
             disableClose: true,
             /*  data: this.corrprop,
              title: 'Message', */

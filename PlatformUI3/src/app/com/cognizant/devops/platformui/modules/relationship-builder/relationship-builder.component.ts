@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RelationshipBuilderService } from '@insights/app/modules/relationship-builder/relationship-builder.service';
 import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-correlationjson';
-import { ShowNeo4jRelation } from '@insights/app/modules/relationship-builder/show-neo4jRelation';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
 import { from } from 'rxjs';
@@ -317,7 +316,7 @@ export class RelationshipBuilderComponent implements OnInit {
             data:
             {
               message: 'No Relations Found',
-              title: "Neo4j"
+              title: "Co-Relations in Neo4j"
 
             }
 
@@ -391,7 +390,8 @@ export class RelationshipBuilderComponent implements OnInit {
     // console.log(this.selectedDummyAgent);
 
     var title = "Delete Correlation";
-    var dialogmessage = "You are deleting " + "<b>" + this.selectedDummyAgent.relationName + "</b>" + "- the action of deleting a co-relationship CANNOT be UNDONE, moreover deleting an existing co-relationship may impact other functionalities. Are you sure you want to DELETE <b>" + this.selectedDummyAgent.relationName + "</b>";
+    console.log(this.selectedDummyAgent);
+    var dialogmessage = "You are deleting " + "<b>" + this.selectedDummyAgent + "</b>" + "- the action of deleting a co-relationship CANNOT be UNDONE, moreover deleting an existing co-relationship may impact other functionalities. Are you sure you want to DELETE <b>" + this.selectedDummyAgent + "</b>";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
@@ -412,9 +412,9 @@ export class RelationshipBuilderComponent implements OnInit {
               this.updatedDatasource = [];
               this.relationDataSource = [];
               this.servicesDataSource = [];
-              console.log("Before")
+              //  console.log("Before")
               this.getCorrelation();
-              console.log("After")
+              //console.log("After")
 
 
             }
@@ -457,51 +457,59 @@ export class RelationshipBuilderComponent implements OnInit {
   saveData(newName) {
     this.isListView = true;
     this.isEditData = true;
+    var title = "Save Co-Relation";
+    var dialogmessage = "You are saving " + "<b>" + newName.value + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
-    //DESTINATION
-    this.fieldDestProp.push(this.selectedProperty2);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'yes') {
+        //DESTINATION
+        this.fieldDestProp.push(this.selectedProperty2);
 
-    var res = [];
-    for (var x in this.selectedAgent2) {
-      this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
-    }
-
-    var toolname = res[0];
-    var toolcatergory = res[1];
-
-    this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
-
-
-
-    //FOR SOURCE 
-    this.fieldSourceProp.push(this.selectedProperty1);
-
-    var res1 = [];
-    for (var x in this.selectedAgent2) {
-      this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
-    }
-
-    var toolname1 = res1[0];
-    var toolcatergory1 = res1[1];
-
-    this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
-
-
-    var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
-
-    this.servicesDataSource.push(newData);
-    console.log(this.servicesDataSource);
-    var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
-    this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
-      (corelationResponse2) => {
-
-        if (corelationResponse2.status == "success") {
-
-          this.getCorrelation();
-
-
+        var res = [];
+        for (var x in this.selectedAgent2) {
+          this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
         }
-      });
+
+        var toolname = res[0];
+        var toolcatergory = res[1];
+
+        this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
+
+
+
+        //FOR SOURCE 
+        this.fieldSourceProp.push(this.selectedProperty1);
+
+        var res1 = [];
+        for (var x in this.selectedAgent2) {
+          this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
+        }
+
+        var toolname1 = res1[0];
+        var toolcatergory1 = res1[1];
+
+        this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
+
+
+        var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
+
+        this.servicesDataSource.push(newData);
+        console.log(this.servicesDataSource);
+        var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
+        this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
+          (corelationResponse2) => {
+
+            if (corelationResponse2.status == "success") {
+
+              this.getCorrelation();
+
+
+            }
+          });
+      }
+    });
+
 
   }
   deleteMapping() {

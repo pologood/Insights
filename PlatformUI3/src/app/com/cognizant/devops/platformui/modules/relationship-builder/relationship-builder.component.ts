@@ -23,6 +23,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
   relationmappingLabels: RelationLabel[] = [];
   neo4jResponseData: any = [];
+  prefixname: string = '';
   property1selected: boolean = false;
   neo4jResponse: any;
   searchValue: string = '';
@@ -55,6 +56,7 @@ export class RelationshipBuilderComponent implements OnInit {
   agent1TableData: any;
   agent2TableData: any;
   finalArrayToSend = [];
+  finalRelationName: string = '';
   names = [];
   listFilter: any;
   readChange: boolean = false;
@@ -284,7 +286,7 @@ export class RelationshipBuilderComponent implements OnInit {
               data:
               {
                 message: this.corrprop,
-                title: "Neo4j"
+                title: "Co-Relations in Neo4j"
 
               }
 
@@ -457,8 +459,14 @@ export class RelationshipBuilderComponent implements OnInit {
   saveData(newName) {
     this.isListView = true;
     this.isEditData = true;
+    // console.log(typeof (newName.value));
+
+    this.prefixname = "FROM_" + this.selectedAgent1.toolName + "_TO_" + this.selectedAgent2.toolName + "_";
+    console.log(this.prefixname);
+    this.finalRelationName = this.prefixname + newName.value;
+    console.log(this.finalRelationName);
     var title = "Save Co-Relation";
-    var dialogmessage = "You are saving " + "<b>" + newName.value + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
+    var dialogmessage = "You are saving " + "<b>" + this.finalRelationName + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
@@ -492,7 +500,9 @@ export class RelationshipBuilderComponent implements OnInit {
         this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
 
 
-        var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
+        var newData = {
+          'destination': this.AddDestination, 'source': this.AddSource, 'relationName': this.finalRelationName
+        }
 
         this.servicesDataSource.push(newData);
         console.log(this.servicesDataSource);

@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
 import { MatTableDataSource } from '@angular/material';
 import { DataSharedService } from '@insights/common/data-shared-service';
+import { count } from 'rxjs/operators';
 //import { Control} from '@angular/common';
 @Component({
   selector: 'app-relationship-builder',
@@ -53,11 +54,14 @@ export class RelationshipBuilderComponent implements OnInit {
   isrefresh: boolean = false;
   isSaveEnabled: boolean = false;
   selectedAgent2: any;
+  destinationcheck = [];
+  sourcecheck = [];
   agent1TableData: any;
   agent2TableData: any;
   finalArrayToSend = [];
   finalRelationName: string = '';
   names = [];
+  showApplicationMessage: String = "";
   listFilter: any;
   readChange: boolean = false;
   readChange2: boolean = false;
@@ -79,6 +83,7 @@ export class RelationshipBuilderComponent implements OnInit {
   agent1Tool: any;
   agent1Category: any;
   agent2Tool: any;
+  count: any;
   agent2Category: any;
   public data: any;
   corrData: any;
@@ -230,6 +235,7 @@ export class RelationshipBuilderComponent implements OnInit {
               // var ay = typeof (element);
               // console.log(ay);
               var a = (element.relationName);
+              //  console.log("Hi" + element.relationName);
               var t = (element.destination);
               var b = (element.destination.toolName);
 
@@ -237,8 +243,9 @@ export class RelationshipBuilderComponent implements OnInit {
               this.relationDataSource.push(a)
               console.log(this.relationDataSource);
               this.servicesDataSource.push(element);
-
-
+              console.log(b);
+              this.destinationcheck.push(b);
+              this.sourcecheck.push(c);
             }
           }
           this.relData = this.relationDataSource;
@@ -421,10 +428,13 @@ export class RelationshipBuilderComponent implements OnInit {
 
             }
           });
-
+        this.Refresh();
       }
     });
 
+    this.count = 0;
+    this.destinationcheck = [];
+    this.sourcecheck = [];
   }
 
 
@@ -459,67 +469,110 @@ export class RelationshipBuilderComponent implements OnInit {
   saveData(newName) {
     this.isListView = true;
     this.isEditData = true;
+    var counter = 0;
     // console.log(typeof (newName.value));
 
     this.prefixname = "FROM_" + this.selectedAgent1.toolName + "_TO_" + this.selectedAgent2.toolName + "_";
-    console.log(this.prefixname);
+    // console.log(this.prefixname);
     this.finalRelationName = this.prefixname + newName.value;
-    console.log(this.finalRelationName);
-    var title = "Save Co-Relation";
-    var dialogmessage = "You are saving " + "<b>" + this.finalRelationName + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
-    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
+    // console.log(this.destinationcheck);
+    //  console.log(this.sourcecheck);
+    /* 
+    Validation for NAME
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == 'yes') {
-        //DESTINATION
-        this.fieldDestProp.push(this.selectedProperty2);
+        for (var x in this.relData) {
+          if (x == this.finalRelationName) {
+            ++counter;
+            break;
+          }
+    
+        } */
+    this.count = 0;
+    for (var x in this.destinationcheck) {
+      // console.log("Round" + x)
+      //console.log(this.sourcecheck[x])
+      // console.log(this.destinationcheck[x])
 
-        var res = [];
-        for (var x in this.selectedAgent2) {
-          this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
-        }
-
-        var toolname = res[0];
-        var toolcatergory = res[1];
-
-        this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
-
-
-
-        //FOR SOURCE 
-        this.fieldSourceProp.push(this.selectedProperty1);
-
-        var res1 = [];
-        for (var x in this.selectedAgent2) {
-          this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
-        }
-
-        var toolname1 = res1[0];
-        var toolcatergory1 = res1[1];
-
-        this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
-
-
-        var newData = {
-          'destination': this.AddDestination, 'source': this.AddSource, 'relationName': this.finalRelationName
-        }
-
-        this.servicesDataSource.push(newData);
-        console.log(this.servicesDataSource);
-        var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
-        this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
-          (corelationResponse2) => {
-
-            if (corelationResponse2.status == "success") {
-
-              this.getCorrelation();
-
-
-            }
-          });
+      // console.log("Back to Loop")
+      if ((this.destinationcheck[x] == this.selectedAgent2.toolName) && (this.sourcecheck[x] == this.selectedAgent1.toolName)) {
+        console.log("present");
+        this.count = this.count + 1;
+        //console.log(this.count)
+        break;
       }
-    });
+      else {
+        console.log("not present");
 
+      }
+    }
+
+
+
+
+    if (this.count == 0) {
+
+      var title = "Save Co-Relation";
+      var dialogmessage = "You are saving " + "<b>" + this.finalRelationName + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
+      const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result == 'yes') {
+          //DESTINATION
+          this.fieldDestProp.push(this.selectedProperty2);
+
+          var res = [];
+          for (var x in this.selectedAgent2) {
+            this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
+          }
+
+          var toolname = res[0];
+          var toolcatergory = res[1];
+
+          this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
+
+
+
+          //FOR SOURCE 
+          this.fieldSourceProp.push(this.selectedProperty1);
+
+          var res1 = [];
+          for (var x in this.selectedAgent2) {
+            this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
+          }
+
+          var toolname1 = res1[0];
+          var toolcatergory1 = res1[1];
+
+          this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
+
+
+          var newData = {
+            'destination': this.AddDestination, 'source': this.AddSource, 'relationName': this.finalRelationName
+          }
+
+          this.servicesDataSource.push(newData);
+          console.log(this.servicesDataSource);
+          var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
+          this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
+            (corelationResponse2) => {
+
+              if (corelationResponse2.status == "success") {
+
+                this.getCorrelation();
+
+
+              }
+            });
+        }
+      });
+      // this.count = 0;
+    }
+    else if (this.count == 1) {
+      //self.showConfirmMessage = "Failed to save settings";
+      this.showApplicationMessage = "Failed to save settings"
+      this.messageDialog.showApplicationsMessage("Relationship already exists in Correlation.json.Please try again after deleting the existing relation.", "ERROR");
+      this.count = 0;
+    }
 
   }
   deleteMapping() {

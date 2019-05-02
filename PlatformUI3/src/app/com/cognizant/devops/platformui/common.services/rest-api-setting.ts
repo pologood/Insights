@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Observable } from 'rxjs'
-import { DataSharedService } from '@insights/common/data-shared-service';
+
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

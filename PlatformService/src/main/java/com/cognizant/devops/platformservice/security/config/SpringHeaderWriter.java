@@ -50,8 +50,9 @@ public class SpringHeaderWriter implements HeaderWriter {
         	Map<String, String> grafanaHeaders = (Map<String, String>)attribute;
         	for(Map.Entry<String, String> entry : grafanaHeaders.entrySet()){
 				Cookie cookie = new Cookie(entry.getKey(), ValidationUtils.cleanXSS(entry.getValue()));
-				cookie.setHttpOnly(true);
+				// cookie.setHttpOnly(true); //3
 				cookie.setMaxAge(60 * 30);
+				cookie.setPath("/");
 				response.addCookie(cookie);
         	}
         }

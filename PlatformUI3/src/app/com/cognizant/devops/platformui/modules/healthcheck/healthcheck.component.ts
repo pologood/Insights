@@ -22,7 +22,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { DataSharedService } from '@insights/common/data-shared-service';
 import { QueryBuilderService } from '../blockchain/custom-report/custom-report-service';
 import { MessageDialogService } from '../application-dialog/message-dialog-service';
-import {saveAs as importedSaveAs} from "file-saver"; 
+import { saveAs as importedSaveAs } from "file-saver";
 
 @Component({
   selector: 'app-healthcheck',
@@ -57,7 +57,7 @@ export class HealthCheckComponent implements OnInit {
   reportLogsColumns: string[];
   reportLogsDataSource = new MatTableDataSource<any>();
   constructor(private healthCheckService: HealthCheckService, private dialog: MatDialog,
-    private dataShare: DataSharedService, private queryBuilderService:QueryBuilderService, 
+    private dataShare: DataSharedService, private queryBuilderService: QueryBuilderService,
     private messageDialog: MessageDialogService) {
     this.loadAgentCheckInfo();
     this.loadOtherHealthCheckInfo();
@@ -66,11 +66,13 @@ export class HealthCheckComponent implements OnInit {
 
   ngOnInit() {
     this.timeZone = this.dataShare.getStoragedProperty("timeZone");
-    //console.log(this.timeZone);
+    console.log(this.timeZone);
   }
 
   async loadAgentCheckInfo() {
     try {
+      this.timeZone = this.dataShare.getStoragedProperty("timeZone");
+      console.log(this.timeZone);
       this.showThrobberAgent = true;
       this.showContentAgent = !this.showThrobberAgent;
       this.agentResponse = await this.healthCheckService.loadServerAgentConfiguration();
@@ -164,31 +166,32 @@ export class HealthCheckComponent implements OnInit {
 
   // Displays Show Details dialog box when Details column is clicked
   showDetailsDialog(toolName: string, categoryName: string, agentId: string) {
-     var isSessionExpired= this.dataShare.validateSession();
-  if(!isSessionExpired)
-{
-    var rcategoryName = categoryName.replace(/ +/g, "");
-    if (toolName == "-") {
-      var filePath = "${INSIGHTS_HOME}/logs/" + rcategoryName + "/" + rcategoryName + ".log";
-      var detailType = categoryName;
-    } else {
-      var rtoolName = toolName.charAt(0).toUpperCase() + toolName.slice(1).toLowerCase();
-      var filePath = "${INSIGHTS_HOME}/logs/PlatformAgent/log_" + rtoolName + "Agent.log";
-      var detailType = rtoolName;
+    var isSessionExpired = this.dataShare.validateSession();
+    if (!isSessionExpired) {
+      var rcategoryName = categoryName.replace(/ +/g, "");
+      if (toolName == "-") {
+        var filePath = "${INSIGHTS_HOME}/logs/" + rcategoryName + "/" + rcategoryName + ".log";
+        var detailType = categoryName;
+      } else {
+        var rtoolName = toolName.charAt(0).toUpperCase() + toolName.slice(1).toLowerCase();
+        var filePath = "${INSIGHTS_HOME}/logs/PlatformAgent/log_" + rtoolName + "Agent.log";
+        var detailType = rtoolName;
+      }
+      let showDetailsDialog = this.dialog.open(ShowDetailsDialog, {
+        panelClass: 'healthcheck-show-details-dialog-container',
+        height: '500px',
+        width: '900px',
+        disableClose: true,
+        data: {
+          toolName: toolName, categoryName: categoryName, pathName: filePath,
+          detailType: detailType, agentId: agentId, timeZone: this.timeZone
+        },
+
+      });
     }
-    let showDetailsDialog = this.dialog.open(ShowDetailsDialog, {
-      panelClass: 'healthcheck-show-details-dialog-container',
-      height: '500px',
-      width: '900px',
-      disableClose: true,
-      data: { toolName: toolName, categoryName: categoryName, pathName: filePath, 
-        detailType: detailType, agentId: agentId ,timeZone:this.timeZone},
-      
-    });
-  }
-  else{
-    console.log("Heathcheck")
-  }
+    else {
+      console.log("Heathcheck")
+    }
   }
 
   //Transfers focus of Heath Check page as per User's selection
@@ -227,16 +230,16 @@ export class HealthCheckComponent implements OnInit {
     }
   }
 
-  async loadReportsLogs(){
+  async loadReportsLogs() {
     this.reportLogsDataSource = new MatTableDataSource();
     let custReportList = await this.queryBuilderService.fetchQueries();
-    console.log("custReportList---",custReportList);
+    console.log("custReportList---", custReportList);
 
     if (custReportList != null && custReportList.data.length > 0) {
       let logList = [];
-      
+
       this.showThrobber = false;
-      this.reportLogsColumns = ['reportName','logFile'];
+      this.reportLogsColumns = ['reportName', 'logFile'];
       this.reportLogsDataSource.data = custReportList.data;
       //this.reportLogsDataSource.sort = this.sort;
       //this.reportLogsDataSource.paginator = this.paginator;
@@ -251,9 +254,9 @@ export class HealthCheckComponent implements OnInit {
     console.log("download starts for ", logfile);
     this.healthCheckService.downloadLog(logfile).subscribe((data) => {
       console.log(data);
-        importedSaveAs(data,logfile);
-    },error => {
-          console.log(error);
+      importedSaveAs(data, logfile);
+    }, error => {
+      console.log(error);
     });
   }
 }

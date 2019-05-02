@@ -124,11 +124,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//.and().sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 			.and().sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 				.and().headers().addHeaderWriter(springHeaderWriter)
-				.and().csrf()
-				.ignoringAntMatchers(CSRF_IGNORE) // URI where CSRF check will not be applied
+				.and().csrf().ignoringAntMatchers(CSRF_IGNORE) // URI where CSRF check will not be applied
 					.csrfTokenRepository(csrfTokenRepository()) // defines a repository where tokens are stored
-					.and()
-					.addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
+				.and().addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
 		; // Csrf filter in which we will add
 				//.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // disable()
 		//

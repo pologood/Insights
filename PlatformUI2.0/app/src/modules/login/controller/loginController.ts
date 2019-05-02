@@ -18,10 +18,10 @@
 
 module ISightApp {
     export class LoginController {
-        static $inject = ['loginService', 'restEndpointService', '$location', '$document', '$cookies','$http', '$resource', 'restAPIUrlService'];
-        constructor(private loginService: ILoginService, private restEndpointService: IRestEndpointService, private $location, private $document, private $cookies, private $http, private $resource, private restAPIUrlService:IRestAPIUrlService) {
+        static $inject = ['loginService', 'restEndpointService', '$location', '$document', '$cookies', '$http', '$resource', 'restAPIUrlService'];
+        constructor(private loginService: ILoginService, private restEndpointService: IRestEndpointService, private $location, private $document, private $cookies, private $http, private $resource, private restAPIUrlService: IRestAPIUrlService) {
             var self = this;
-            
+
             var restCallUrl = restAPIUrlService.getRestCallUrl("GET_LOGO_IMAGE");
 
             var resource = this.$resource(restCallUrl,
@@ -30,15 +30,15 @@ module ISightApp {
                     allData: {
                         method: 'GET'
                     }
-            });
-            
-            resource.allData().$promise.then(function(data){
-                    if(data.data.encodedString && data.data.encodedString.length > 0){
-                        self.imageSrc = 'data:image/jpg;base64,' + data.data.encodedString;                    
-                    }else{
-                        self.showDefaultImg = true;
-                    }
-                   
+                });
+
+            resource.allData().$promise.then(function (data) {
+                if (data.data.encodedString && data.data.encodedString.length > 0) {
+                    self.imageSrc = 'data:image/jpg;base64,' + data.data.encodedString;
+                } else {
+                    self.showDefaultImg = true;
+                }
+
             });
 
         }
@@ -53,7 +53,7 @@ module ISightApp {
         imageSrc: string = "";
         showDefaultImg: boolean = false;
 
-        
+
         userAuthentication(username: string, password: string): void {
             if (username === '' || username === undefined || password === '' || password === undefined) {
                 this.logMsg = '';
@@ -115,10 +115,10 @@ module ISightApp {
 
                             document.body.appendChild(form);
                             form.submit();
-                        } else if (data.error.message) {
+                        } else if (data.status === "failure") {
                             self.showThrobber = false;
                             self.isLoginError = true;
-                            self.logMsg = data.error.message;
+                            self.logMsg = data.message;
                             self.isDisabled = false;
                         }
                     });

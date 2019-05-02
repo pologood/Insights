@@ -16,7 +16,6 @@
 package com.cognizant.devops.platformservice.security.config;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,7 +29,6 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
-import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.cognizant.devops.platformservice.customsettings.CustomAppSettings;
 
 public class CustomCsrfFilter extends OncePerRequestFilter {
@@ -43,16 +41,12 @@ public class CustomCsrfFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-
-		//LOG.debug("  arg0  CsrfToken  " + CsrfToken.class.getName() + "   " + csrf);
-
+		LOG.debug("  arg0  CsrfToken  " + CsrfToken.class.getName() + "   " + csrf);
 		if (csrf != null) {
-
 			Cookie cookie = WebUtils.getCookie(request, CSRF_COOKIE_NAME);
 			String token = csrf.getToken();
 
-			//LOG.debug("  arg0  CsrfToken  value " + token);
-
+			LOG.debug("  arg0  CsrfToken  value " + token);
 			if (cookie == null || token != null && !token.equals(cookie.getValue())) {
 				cookie = new Cookie(CSRF_COOKIE_NAME, token);
 				cookie.setPath("/");

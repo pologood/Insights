@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RelationshipBuilderService } from '@insights/app/modules/relationship-builder/relationship-builder.service';
 import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-correlationjson';
+import { ShowNeo4jRelation } from '@insights/app/modules/relationship-builder/show-neo4jRelation';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
 import { from } from 'rxjs';
@@ -8,6 +9,7 @@ import { Router } from "@angular/router";
 import { ActivatedRoute } from '@angular/router';
 import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
 import { MatTableDataSource } from '@angular/material';
+import { DataSharedService } from '@insights/common/data-shared-service';
 //import { Control} from '@angular/common';
 @Component({
   selector: 'app-relationship-builder',
@@ -90,30 +92,18 @@ export class RelationshipBuilderComponent implements OnInit {
   relationDataSource = [];
   relationDataSourceNeo4j = [];
 
-  constructor(private router: Router, private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, ) {
+  constructor(private router: Router, private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, private dataShare: DataSharedService) {
     this.dataDictionaryInfo();
-    this.getCorrelationBoth();
+    this.getCorrelation();
+
+
+
   }
 
   ngOnInit() {
   }
 
-  getCorrelationBoth() {
-    this.relationmappingLabels = [];
-    this.dataComponentColumns = ['radio', 'relationName'];
-    this.getCorrelationNeo4j();
-    this.getCorrelationConfig();
-    //console.log(this.relationmappingLabels);
-    // console.log(this.relationmappingLabels.length);
 
-    //if (this.relationmappingLabels.length > 0) {
-    //this.userDatasource = this.relationmappingLabels;
-    //console.log(this.userDatasource)
-    //} else {
-    //console.log("No data found ");
-    //}
-
-  }
 
   async dataDictionaryInfo() {
     try {
@@ -184,85 +174,13 @@ export class RelationshipBuilderComponent implements OnInit {
   }
 
 
-  getCorrelationNeo4j() {
-    //this.neo4jResponse = undefined;
-    this.relationDataSource = [];
-
-    this.BothDataSorce = [];
-    var self = this;
-    this.relationDataSourceNeo4j = []; //var neo4jResponse = await async
-    this.relationshipBuilderService.loadUiServiceLocationNeo4j().then(
-      (neo4jResponse) => {
-
-        self.neo4jResponseData = neo4jResponse.data;
-        if (self.neo4jResponseData != undefined && self.neo4jResponseData.length > 1) {
-          for (var masterData of this.neo4jResponseData) {
-
-            let relationLabel = new RelationLabel(masterData.destination, masterData.source, masterData.relationName, true);
-            self.relationmappingLabels.push(relationLabel);
-
-            self.relationDataSourceNeo4j.push(masterData.relationName);
-
-          }
-
-        }
-        // self.showDetail = true;
-      });
-
-    // console.log(this.relationmappingLabels);
-
-  }
-
-  getCorrelationConfig() {
-    try {
-
-      this.relationDataSourceNeo4j = [];
-      this.relationDataSource = [];
-      this.servicesDataSource = [];
-      var self = this;
-      this.relationshipBuilderService.loadUiServiceLocation().then(
-        (corelationResponse) => {
-          self.corelationResponseMaster = corelationResponse;
-          self.corrprop = corelationResponse.data;
-          console.log(corelationResponse.data)
-
-          if (self.corrprop != undefined && self.corrprop.length > 0) {
-            for (var masterData of this.corrprop) {
-
-              let relationLabel = new RelationLabel(masterData.destination.toolName, masterData.source.toolName, masterData.relationName, false);
-              self.relationmappingLabels.push(relationLabel);
-              self.relationDataSource.push(masterData.relationName);
-
-            }
-
-          }
-          //self.showDetail = true;
-        });
-      console.log(this.relationmappingLabels);
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
 
 
-  public getRelationsName(): any {
-    //console.log(this.selectedRadio)
-    // console.log(this.relationmappingLabels);
-    this.dataComponentColumns = ['radio', 'relationName'];
-    if (this.selectedRadio == 'all') {
-      this.isrefresh = true;
-      return this.relationmappingLabels;
-    } else if (this.selectedRadio == 'neo4j') {
-      this.isrefresh = true;
-      return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
-    } else if (this.selectedRadio == 'file') {
-      this.isrefresh = true;
-      return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
-    }
-  }
 
-  searchTable() {
+
+
+
+  /* searchTable() {
     var input, filter, found, table, tr, td, i, j;
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
@@ -283,67 +201,163 @@ export class RelationshipBuilderComponent implements OnInit {
         tr[i].style.display = "none";
       }
     }
+  } */
+
+
+
+  getCorrelation() {
+    try {
+
+      this.relationDataSource = [];
+      this.servicesDataSource = [];
+      var self = this;
+      this.relationshipBuilderService.loadUiServiceLocation().then(
+        (corelationResponse) => {
+
+
+          // var ax = typeof (corelationResponse);
+          // console.log(ax);
+          self.corelationResponseMaster = corelationResponse;
+          this.corrprop = corelationResponse.data;
+          //console.log(corelationResponse);
+          // console.log(self.corelationResponseMaster);
+          // console.log(this.corrprop);
+          if (this.corrprop != null) {
+            for (var key in this.corrprop) {
+              // console.log(key);
+              var element = this.corrprop[key];
+              // var ay = typeof (element);
+              // console.log(ay);
+              var a = (element.relationName);
+              var t = (element.destination);
+              var b = (element.destination.toolName);
+
+              var c = (element.source.toolName);
+              this.relationDataSource.push(a)
+              console.log(this.relationDataSource);
+              this.servicesDataSource.push(element);
+
+
+            }
+          }
+          this.relData = this.relationDataSource;
+          //console.log(this.relData);
+          this.dataComponentColumns = ['radio', 'relationName'];
+        });
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
-  /*  getCorrelation() {
-     try {
-       this.BothDataSorce = [];
-       this.relationDataSourceNeo4j = [];
-       this.relationDataSource = [];
-       this.servicesDataSource = [];
-       var self = this;
-       this.relationshipBuilderService.loadUiServiceLocation().then(
-         (corelationResponse) => {
- 
- 
-           // var ax = typeof (corelationResponse);
-           // console.log(ax);
-           self.corelationResponseMaster = corelationResponse;
-           this.corrprop = corelationResponse.data;
-           //console.log(corelationResponse);
-           // console.log(self.corelationResponseMaster);
-           // console.log(this.corrprop);
-           if (this.corrprop != null) {
-             for (var key in this.corrprop) {
-               // console.log(key);
-               var element = this.corrprop[key];
-               // var ay = typeof (element);
-               // console.log(ay);
-               var a = (element.relationName);
-               var t = (element.destination);
-               var b = (element.destination.toolName);
-               var az = typeof (t);
-               //console.log(t);
-               // console.log(b);
-               var c = (element.source.toolName);
-               this.relationDataSource.push(a)
-               this.servicesDataSource.push(element);
- 
- 
-             }
-           }
-           //this.relData = this.relationDataSource;
-           //console.log(this.relData);
-           this.dataComponentColumns = ['relationName'];
-         });
-     }
-     catch (error) {
-       console.log(error);
-     }
-   }
-  */
+
+  async showDetailsDialogForNeo4j(data1, data2) {
+
+
+    try {
+      this.showDetail3 = false;
+      this.noShowDetailCorr = false;
+      this.clicked = true;
+      this.buttonOn = true;
+      this.showNoToolsSelectedForCorrelation = true
+      //console.log(data1.toolName, data2.toolName);
+      let usersResponseData3 = await this.relationshipBuilderService.loadToolsRelationshipAndProperties(data1.toolName, data1.categoryName, data2.toolName, data2.categoryName);
+      if (usersResponseData3.data != undefined && usersResponseData3.status == "success") {
+
+        // console.log(usersResponseData3)
+
+        // console.log(usersResponseData3.data)
+        if (usersResponseData3.data["relationName"] != undefined) {
+          this.showDetail3 = true;
+          this.noShowDetailCorr = false;
+          this.corrprop = usersResponseData3.data["relationName"];
+          console.log(this.corrprop);
+
+
+          var isSessionExpired = this.dataShare.validateSession();
+          if (!isSessionExpired) {
+            let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+              panelClass: 'showjson-dialog-container',
+              height: '300px',
+              width: '500px',
+              disableClose: true,
+              /*  data: this.corrprop,
+               title: 'Message', */
+              data:
+              {
+                message: this.corrprop,
+                title: "Neo4j"
+
+              }
+
+
+
+
+
+
+            });
+            //console.log(showJsonDialog);
+          }
+          //console.log(Object.keys(usersResponseData3.data["properties"]).length);
+
+        }
+      } else {
+        this.noShowDetailCorr = true;
+        this.showDetail3 = false;
+
+
+        var isSessionExpired = this.dataShare.validateSession();
+        if (!isSessionExpired) {
+          let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+            panelClass: 'showjson-dialog-container',
+            height: '300px',
+            width: '500px',
+            disableClose: true,
+            /*  data: this.corrprop,
+             title: 'Message', */
+            data:
+            {
+              message: 'No Relations Found',
+              title: "Neo4j"
+
+            }
+
+
+
+
+
+
+          });
+          //console.log(showJsonDialog);
+        }
+
+
+
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+
+  }
+
   showDetailsDialog() {
+    var isSessionExpired = this.dataShare.validateSession();
+    if (!isSessionExpired) {
+      let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+        panelClass: 'showjson-dialog-container',
+        height: '500px',
+        width: '700px',
+        disableClose: true,
+        data:
+        {
+          message: this.corelationResponseMaster,
+          title: "Correlation.json"
+        }
 
-    let showJsonDialog = this.dialog.open(ShowJsonDialog, {
-      panelClass: 'showjson-dialog-container',
-      height: '500px',
-      width: '700px',
-      disableClose: true,
-      data: this.corelationResponseMaster,
-
-    });
-    //console.log(showJsonDialog);
+      });
+      //console.log(showJsonDialog);
+    }
   }
-
   addproperty() {
 
   }
@@ -360,11 +374,12 @@ export class RelationshipBuilderComponent implements OnInit {
     this.selectedProperty2 = "";
     this.searchValue = null;
     this.selectedRadio = "";
-    this.getCorrelationBoth();
     this.isbuttonenabled = false;
     this.isSaveEnabled = false;
     this.listFilter = "";
     this.isrefresh = false;
+    this.buttonOn = false;
+    this.selectedAgent1 = "";
     this.dataDictionaryInfo();
 
   }
@@ -382,7 +397,7 @@ export class RelationshipBuilderComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {
         for (var key in this.corrprop) {
-          if (this.corrprop[key].relationName != this.selectedDummyAgent.relationName) {
+          if (this.corrprop[key].relationName != this.selectedDummyAgent) {
             this.updatedDatasource.push(this.corrprop[key])
           }
         }
@@ -396,10 +411,10 @@ export class RelationshipBuilderComponent implements OnInit {
               // console.log("Check");
               this.updatedDatasource = [];
               this.relationDataSource = [];
-              this.relationDataSource = [];
               this.servicesDataSource = [];
-              this.getCorrelationBoth();
-              this.getRelationsName();
+              console.log("Before")
+              this.getCorrelation();
+              console.log("After")
 
 
             }
@@ -443,15 +458,9 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isListView = true;
     this.isEditData = true;
 
-    //this.updatedDatasource.push({});
-    //console.log(newName);
-    //this.updatedDatasource.push({ destination: this.selectedAgent2, source: this.selectedAgent1, relationName: newName.value });
-    //this.updatedDatasource.push({});
-    // console.log(this.updatedDatasource);
-    //console.log(this.selectedAgent2);
+    //DESTINATION
     this.fieldDestProp.push(this.selectedProperty2);
-    //console.log(this.fieldDestProp);
-    // console.log(typeof (this.selectedAgent2));
+
     var res = [];
     for (var x in this.selectedAgent2) {
       this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
@@ -479,9 +488,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
     var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
-    for (let masterData of this.corrprop) {
-      this.servicesDataSource.push(masterData);
-    }
+
     this.servicesDataSource.push(newData);
     console.log(this.servicesDataSource);
     var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
@@ -490,8 +497,9 @@ export class RelationshipBuilderComponent implements OnInit {
 
         if (corelationResponse2.status == "success") {
 
-          this.getCorrelationBoth();
-          this.getRelationsName();
+          this.getCorrelation();
+
+
         }
       });
 
@@ -499,11 +507,4 @@ export class RelationshipBuilderComponent implements OnInit {
   deleteMapping() {
 
   }
-
-
-
-
-
-
-
 }

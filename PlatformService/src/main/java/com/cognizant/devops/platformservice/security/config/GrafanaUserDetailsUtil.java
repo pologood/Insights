@@ -47,14 +47,14 @@ public class GrafanaUserDetailsUtil {
 
 
 	public static UserDetails getUserDetails(HttpServletRequest httpRequest) {
-		log.debug("\n\nInside getUserDetails function call!");
+		log.debug("\\n\\nInside getUserDetails function call!");
 		ApplicationConfigProvider.performSystemCheck();
 		String authHeader = ValidationUtils.cleanXSS(httpRequest.getHeader("Authorization"));
 
 		Cookie[] requestCookies = PlatformServiceUtil.validateCookies(httpRequest.getCookies());
 		Map<String, String> grafanaResponseCookies = new HashMap<String, String>();
 		Map<String, String> cookieMap = new HashMap<String, String>();
-
+		log.debug(" authHeader " + authHeader);
 		if (requestCookies != null) {
 			for (Cookie cookie : requestCookies) {
 				cookieMap.put(ValidationUtils.cleanXSS(cookie.getName()),
@@ -70,6 +70,7 @@ public class GrafanaUserDetailsUtil {
 			String[] authTokens = decodedAuthHeader.split(":");
 			userName = authTokens[0];
 			credential = authTokens[1];
+			log.debug(" userName " + userName + " credential " + credential);
 			String grafanaUser = cookieMap.get("grafana_user");
 			String grafanaSession = cookieMap.get("grafana_sess");
 			if (userName.equals(grafanaUser) && grafanaSession != null) {

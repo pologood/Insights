@@ -31,7 +31,7 @@ import com.cognizant.devops.platformservice.customsettings.CustomAppSettings;
 import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 
 public final class RequestWrapper extends HttpServletRequestWrapper {
-	private static Logger LOG = LogManager.getLogger(CustomAppSettings.class);
+	private static Logger log = LogManager.getLogger(CustomAppSettings.class);
 	HttpServletRequest request;
 	HttpServletResponse response;
 
@@ -43,7 +43,7 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
 	@Override
 	public String[] getParameterValues(String parameter) {
-		LOG.debug("In getParameterValues .. parameter .......");
+		log.debug("In getParameterValues .. parameter .......");
 		String[] values = super.getParameterValues(parameter);
 		if (values == null) {
 			return null;
@@ -54,12 +54,12 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 			encodedValues[i] = ValidationUtils.cleanXSS(values[i]);
 		}
 
-		LOG.debug("arg0 message " + request.getRequestURI() + "    " + request.toString());
+		log.debug("arg0 message " + request.getRequestURI() + "    " + request.toString());
 		Enumeration<String> parameterNames = request.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
 			String paramName = parameterNames.nextElement();
 			String paramValues = ValidationUtils.cleanXSS(request.getParameter(paramName));
-			LOG.debug("arg0 ==== paramValues " + paramValues + " " + paramName);
+			log.debug("arg0 ==== paramValues " + paramValues + " " + paramName);
 		}
 
 		return encodedValues;
@@ -67,22 +67,22 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
 	@Override
 	public String getParameter(String parameter) {
-		LOG.debug("In getParameter .. parameter .......");
+		log.debug("In getParameter .. parameter .......");
 		String value = super.getParameter(parameter);
 		if (value == null) {
 			return null;
 		}
-		LOG.info("In getParameter RequestWrapper ........ value .......");
+		log.info("In getParameter RequestWrapper ........ value .......");
 		return ValidationUtils.cleanXSS(value);
 	}
 
 	@Override
 	public String getHeader(String name) {
-		LOG.debug("In getHeader .. parameter .......");
+		log.debug("In getHeader .. parameter .......");
 		String value = super.getHeader(name);
 		if (value == null)
 			return null;
-		LOG.info("In getHeader RequestWrapper ........... value ....");
+		log.info("In getHeader RequestWrapper ........... value ....");
 		return ValidationUtils.cleanXSS(value);
 	}
 
@@ -90,14 +90,22 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 
 	@Override
 	public Cookie[] getCookies() {
-		LOG.debug(" in RequestWrapper cookies =============== ");
+		log.debug(" in RequestWrapper cookies =============== ");
 		Cookie[] cookies = null;
 		Cookie cookie = null;
+		/*
+		 * Cookie[] request_cookie = request.getCookies(); for (int i = 0; i <
+		 * request_cookie.length; i++) { cookie = request_cookie[i];
+		 * log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue()); }
+		 */
+
 		cookies = PlatformServiceUtil.validateCookies(request.getCookies());
+
 		/*
 		 * for (int i = 0; i < cookies.length; i++) { cookie = cookies[i];
-		 * response.addCookie(cookie); }
+		 * log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue()); }
 		 */
+
 		return cookies;
 	}
 

@@ -171,7 +171,6 @@ export class LoginComponent implements OnInit, ILoginComponent {
 
   deleteAllPreviousCookies(): void {
     let allCookies = this.cookieService.getAll();
-
     for (let key of Object.keys(allCookies)) {
       this.cookieService.delete(key);
     }

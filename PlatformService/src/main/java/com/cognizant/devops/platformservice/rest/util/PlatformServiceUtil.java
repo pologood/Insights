@@ -15,8 +15,10 @@
  ******************************************************************************/
 package com.cognizant.devops.platformservice.rest.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
@@ -75,10 +77,12 @@ public class PlatformServiceUtil {
 	}
 
 	public static Cookie[] validateCookies(Cookie[] request_cookies) {
-		Cookie[] cookies = new Cookie[100];
+		Cookie[] cookies = null;
 		Cookie cookie = null;
+		List<Cookie> cookiesList = new ArrayList<Cookie>();
 		if (request_cookies != null) {
 			log.debug("Request Cookies length " + request_cookies.length);
+			cookies = new Cookie[request_cookies.length];
 			for (int i = 0; i < request_cookies.length; i++) {
 				cookie = request_cookies[i];
 				log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue());
@@ -86,12 +90,17 @@ public class PlatformServiceUtil {
 					cookie.setMaxAge(30 * 60);
 					cookie.setHttpOnly(true);
 					cookie.setValue(ValidationUtils.cleanXSS(cookie.getValue()));
-					cookies[i] = cookie;
+					//cookies[i] = cookie;
+					cookiesList.add(cookie);
+
 				} else {
 					log.debug("Cookie Name Not found in master cookies list name as " + cookie.getName());
 				}
 			}
+			cookies = cookiesList.toArray(cookies);
+			log.debug("Request return Cookies length " + cookies.length);
 		} else {
+			cookies = request_cookies;
 			log.debug("No cookies founds");
 		}
 		return cookies;

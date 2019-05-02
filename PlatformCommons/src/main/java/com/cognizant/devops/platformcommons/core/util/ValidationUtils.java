@@ -102,21 +102,23 @@ public class ValidationUtils {
 	}
 
 	public static String cleanXSS(String value) {
-		// You'll need to remove the spaces from the html entities below
-		log.debug("In cleanXSS RequestWrapper ..............." + value);
-		// value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-		// value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-		// value = value.replaceAll("'", "& #39;");
-		value = value.replaceAll("eval\\((.*)\\)", "");
-		value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+		if (value != null || !("").equals(value)) {
+			// You'll need to remove the spaces from the html entities below
+			log.debug("In cleanXSS RequestWrapper ..............." + value);
+			// value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
+			// value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
+			// value = value.replaceAll("'", "& #39;");
+			value = value.replaceAll("eval\\((.*)\\)", "");
+			value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
 
-		value = value.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
-		value = value.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
-		value = value.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>", "");
-		value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
-		value = value.replace("\\n", "").replace("\\r", "");
-		// value = value.replaceAll("<script>", "");
-		// value = value.replaceAll("</script>", "");
+			value = value.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
+			value = value.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
+			value = value.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>", "");
+			value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
+			value = value.replace("\\n", "").replace("\\r", "");
+			// value = value.replaceAll("<script>", "");
+			// value = value.replaceAll("</script>", "");
+		}
 		log.debug("Out cleanXSS RequestWrapper ........ value ......." + value);
 		return value;
 	}

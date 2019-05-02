@@ -28,51 +28,47 @@ export class MessageDialogService {
     }
 
     public showApplicationsMessage(message, type): MatDialogRef<ApplicationMessageDialog> {
-         var isSessionExpired= this.dataShare.validateSession();
-  if(!isSessionExpired)
-{
-        const dialogRef = this.dialog.open(ApplicationMessageDialog, {
-            panelClass: 'DialogBox',
-            width: '40%',
-            height: '32%',
-            disableClose: true,
-            data: {
-                title: "Message",
-                message: message,
-                type: type
-            }
-        });
-        return dialogRef;
-    }
-    else{
-        console.log("Session Expire")
-    }
+        var isSessionExpired = this.dataShare.validateSession();
+        if (!isSessionExpired) {
+            const dialogRef = this.dialog.open(ApplicationMessageDialog, {
+                panelClass: 'DialogBox',
+                width: '40%',
+                height: '32%',
+                disableClose: true,
+                data: {
+                    title: "Message",
+                    message: message,
+                    type: type
+                }
+            });
+            return dialogRef;
+        }
+        else {
+            console.log("Session Expire")
+        }
     }
 
     public showConfirmationMessage(title, message, value, type, height): MatDialogRef<ConfirmationMessageDialog> {
-        var isSessionExpired= this.dataShare.validateSession();
-  if(!isSessionExpired)
-{
-        const dialogRef = this.dialog.open(ConfirmationMessageDialog, {
-            panelClass: 'DialogBox',
-            width: '45%',
-            height: height,
-            disableClose: true,
-            data: {
-                title: title,
-                message: message,
-                value: value,
-                type: type,
-                height: height
+        var isSessionExpired = this.dataShare.validateSession();
+        if (!isSessionExpired) {
+            const dialogRef = this.dialog.open(ConfirmationMessageDialog, {
+                panelClass: 'DialogBox',
+                width: '45%',
+                height: height,
+                disableClose: true,
+                data: {
+                    title: title,
+                    message: message,
+                    value: value,
+                    type: type,
+                    height: height
+                }
+            });
+            return dialogRef;
+        }
 
-            }
-        });
-        return dialogRef;
-    }
-  
-    else
-  {
-       console.log("Session Expire")
-  }
+        else {
+            console.log("Session Expire")
+        }
     }
 }

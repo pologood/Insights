@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loadCustomerLogo();
-    
+
   }
 
   constructor(private grafanaService: GrafanaAuthenticationService,
@@ -195,40 +195,39 @@ export class HomeComponent implements OnInit {
     this.displayLandingPage = false;
     this.isToolbarDisplay = item.isToolbarDisplay
 
-  var isSessionExpired= this.dataShare.validateSession();
-  
-    
+    var isSessionExpired = this.dataShare.validateSession();
+
+
     if (!item.children || !item.children.length) {
       if (item.iconName == 'grafanaOrg') {
         this.selectedOrg = (this.selectedItem == undefined ? '' : this.selectedItem.displayName);
         this.selectedOrgName = this.getSelectedOrgName(this.selectedOrg);
         this.switchOrganizations(item.orgId, item.route, this.selectedOrgName);
       } else if (item.displayName == 'About') {
-        var isSessionExpired= this.dataShare.validateSession();
-  if(!isSessionExpired)
-{
-        // window.open(this.aboutPageURL, "_blank");
-        let aboutDialogRef = this.dialog.open(AboutDialog, {
-          panelClass: 'healthcheck-show-details-dialog-container',
-          height: '49%',
-          width: '30%',
-          disableClose: true,
-        });
-        /* aboutDialogRef.afterClosed().subscribe(result => {
-           if (result == 'yes') {
-             this.router.navigateByUrl('InSights/Home/healthcheck', { skipLocationChange: true });
-           }
-         });*/
-}
+        var isSessionExpired = this.dataShare.validateSession();
+        if (!isSessionExpired) {
+          // window.open(this.aboutPageURL, "_blank");
+          let aboutDialogRef = this.dialog.open(AboutDialog, {
+            panelClass: 'healthcheck-show-details-dialog-container',
+            height: '49%',
+            width: '30%',
+            disableClose: true,
+          });
+          /* aboutDialogRef.afterClosed().subscribe(result => {
+             if (result == 'yes') {
+               this.router.navigateByUrl('InSights/Home/healthcheck', { skipLocationChange: true });
+             }
+           });*/
+        }
       } else if (item.displayName == 'Help') {
         window.open(this.helpPageURL, "_blank");
       } else if (item.displayName == 'Logout') {
-        
+
         this.logout();
       } else {
         this.router.navigateByUrl(item.route, { skipLocationChange: true });
       }
-    } 
+    }
     /*else {
       if (item.displayName == 'grafana') {
         console.log("in grafana");
@@ -236,7 +235,7 @@ export class HomeComponent implements OnInit {
     }*/
   }
 
-  
+
 
   public loadMenuItem() {
     this.navItems = [
@@ -383,7 +382,7 @@ export class HomeComponent implements OnInit {
           },
 
           {
-            displayName: 'Co-relationship Builder',
+            displayName: 'Co-Relation Builder',
             iconName: 'feature',
             route: 'InSights/Home/relationship-builder',
             isToolbarDisplay: true,
@@ -466,6 +465,7 @@ export class HomeComponent implements OnInit {
         //console.log(data);
       });
     this.dataShare.clearSessionData();
+    this.router.navigateByUrl('/login');
   }
 
   switchOrganizations(orgId, route, orgName) {
@@ -496,7 +496,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  
+
 
   showLandingPage() {
     // console.log("ByUrl " + this.router.url);

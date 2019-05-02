@@ -22,7 +22,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { DataSharedService } from '@insights/common/data-shared-service';
 import { QueryBuilderService } from '../blockchain/custom-report/custom-report-service';
 import { MessageDialogService } from '../application-dialog/message-dialog-service';
-import {saveAs as importedSaveAs} from "file-saver"; 
+import {saveAs as importedSaveAs} from "file-saver"; 
 
 @Component({
   selector: 'app-healthcheck',

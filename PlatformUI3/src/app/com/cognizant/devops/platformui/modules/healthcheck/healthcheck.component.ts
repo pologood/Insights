@@ -53,7 +53,6 @@ export class HealthCheckComponent implements OnInit {
   agentResponse: any;
   agentNameList: any = [];
   selectAgentTool: any;
-  timeZone: string = "";
   showMessage: string;
   reportLogsColumns: string[];
   reportLogsDataSource = new MatTableDataSource<any>();

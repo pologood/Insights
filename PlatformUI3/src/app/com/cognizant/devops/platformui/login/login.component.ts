@@ -30,6 +30,7 @@ import { ImageHandlerService } from '@insights/common/imageHandler.service';
 export interface ILoginComponent {
   createAndValidateForm(): void;
   userAuthentication(): void;
+
 }
 
 @Component({

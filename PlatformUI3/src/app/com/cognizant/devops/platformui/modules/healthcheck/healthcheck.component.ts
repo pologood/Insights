@@ -48,6 +48,7 @@ export class HealthCheckComponent implements OnInit {
   dataListDatasource = [];
   servicesDataSource = [];
   servicesListDatasource = [];
+  timeZone: string = "";
   healthResponse: any;
   agentResponse: any;
   agentNameList: any = [];

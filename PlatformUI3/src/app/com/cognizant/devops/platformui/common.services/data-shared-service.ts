@@ -18,14 +18,19 @@ import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { CommonModule, DatePipe } from '@angular/common';
+import { CookieService } from 'ngx-cookie-service';
+import { Router, NavigationExtras } from '@angular/router';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ApplicationMessageDialog } from '@insights/app/modules/application-dialog/application-message-dialog';
 
 @Injectable()
 export class DataSharedService {
-
+  sessionExpireMessage: String = "";
   private userSource = new BehaviorSubject<String>('admin');
   currentUser = this.userSource.asObservable();
 
-  constructor(@Inject(SESSION_STORAGE) private storage: StorageService, private datePipe: DatePipe) { }
+  constructor( @Inject(SESSION_STORAGE) private storage: StorageService, private datePipe: DatePipe, private cookieService: CookieService,
+    public router: Router, public dialog: MatDialog) { }
 
   public changeUser(user: String) {
     this.userSource.next(user)
@@ -74,9 +79,9 @@ export class DataSharedService {
     //const timeZoneOffset = date.getTimezoneOffset(); " ==== " + timeZoneOffset +
     var zone = this.datePipe.transform(date, 'ZZZZ')
     var zoneOffset = zone.slice(3, zone.length);
-    var dateStr = new Date().toTimeString();
-    var parts = dateStr.match(/\(([^)]+)\)/i); //time
-    var timezone = parts[1];
+    var dateStr = new Date().toTimeString();
+    var parts = dateStr.match(/\(([^)]+)\)/i); //time
+    var timezone = parts[1];
     this.storage.set("timeZone", timezone);
     this.storage.set("timeZoneOffSet", zone);
   }
@@ -91,4 +96,74 @@ export class DataSharedService {
     return dateWithTimeZone;
   }
 
+  public setSession() {
+    var date = new Date();
+    var minutes = 30;
+    date.setTime(date.getTime() + (minutes * 60 * 1000));
+    var dateDashboardSessionExpiration = date.getTime();
+    console.log(dateDashboardSessionExpiration + "  @@@@@@  " + date)
+    this.storage.set("dateDashboardSessionExpiration", dateDashboardSessionExpiration);
+  }
+
+  public validateSession(): boolean {
+    var authToken = this.cookieService.get('Authorization');;
+    var sessionExpireMessage = "The existing session has expired. You will be redirected to the home page. Request you to Login again to continue using Insights. Thank you!"
+    if (authToken === undefined) {
+      this.cookieService.delete('Authorization');
+      this.router.navigate(['/login']);
+    } else {
+      var dashboardSessionExpirationTime = new Date(this.storage.get('dateDashboardSessionExpiration'));
+      var date = new Date();
+      console.log(dashboardSessionExpirationTime + "  ===== " + date);
+      if ((this.storage.get('dateDashboardSessionExpiration')) == undefined) {
+        this.clearSessionData()
+        return true;
+      }
+      if ((dashboardSessionExpirationTime < date)) {
+        var dialogRef = this.sessionExpiredMessage(sessionExpireMessage, "WARN", true);
+        this.clearSessionData()
+        return true;
+
+      } else {
+        console.log("session present");
+        var minutes = 30;
+        date.setTime(date.getTime() + (minutes * 60 * 1000));
+        this.cookieService.set('Authorization', authToken, date);
+        return false;
+      }
+    }
+  }
+
+  clearSessionData(): void {
+    this.deleteAllPreviousCookies();
+    this.storage.clear();
+  }
+
+
+  deleteAllPreviousCookies(): void {
+    let allCookies = this.cookieService.getAll();
+    for (let key of Object.keys(allCookies)) {
+      this.cookieService.delete(key);
+    }
+  }
+
+  //Method used only for session expired
+  public sessionExpiredMessage(message, type, values): MatDialogRef<ApplicationMessageDialog> {
+    console.log(" in sessionExpiredMessage ")
+    const dialogRef = this.dialog.open(ApplicationMessageDialog, {
+      panelClass: 'DialogBox',
+      width: '40%',
+      height: '33%',
+      disableClose: true,
+      data: {
+        title: "Message",
+        message: message,
+        type: type,
+        values: true
+      }
+    });
+
+    return dialogRef;
+
+  }
 }

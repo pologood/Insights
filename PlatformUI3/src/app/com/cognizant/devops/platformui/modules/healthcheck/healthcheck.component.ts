@@ -164,6 +164,9 @@ export class HealthCheckComponent implements OnInit {
 
   // Displays Show Details dialog box when Details column is clicked
   showDetailsDialog(toolName: string, categoryName: string, agentId: string) {
+     var isSessionExpired= this.dataShare.validateSession();
+  if(!isSessionExpired)
+{
     var rcategoryName = categoryName.replace(/ +/g, "");
     if (toolName == "-") {
       var filePath = "${INSIGHTS_HOME}/logs/" + rcategoryName + "/" + rcategoryName + ".log";
@@ -182,6 +185,10 @@ export class HealthCheckComponent implements OnInit {
         detailType: detailType, agentId: agentId ,timeZone:this.timeZone},
       
     });
+  }
+  else{
+    console.log("Heathcheck")
+  }
   }
 
   //Transfers focus of Heath Check page as per User's selection

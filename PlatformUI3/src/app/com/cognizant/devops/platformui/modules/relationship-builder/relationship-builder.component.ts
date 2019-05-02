@@ -4,7 +4,11 @@ import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RelationLabel } from '@insights/app/modules/relationship-builder/relationship-builder.label';
 import { from } from 'rxjs';
+import { Router } from "@angular/router";
+import { ActivatedRoute } from '@angular/router';
+import { MessageDialogService } from '@insights/app/modules/application-dialog/message-dialog-service';
 import { MatTableDataSource } from '@angular/material';
+import { DataSharedService } from '@insights/common/data-shared-service';
 //import { Control} from '@angular/common';
 @Component({
   selector: 'app-relationship-builder',
@@ -16,16 +20,18 @@ export class RelationshipBuilderComponent implements OnInit {
   element: any = undefined;
   updatedDatasource = [];
   BothDataSorce = [];
+
   relationmappingLabels: RelationLabel[] = [];
   neo4jResponseData: any = [];
   property1selected: boolean = false;
   neo4jResponse: any;
+  searchValue: string = '';
   property2selected: boolean = false;
   isbuttonenabled: boolean = false;
   dictResponse: any;
   corelationResponse: any;
   corelationResponseMaster: any;
-  dataComponentColumns: string[];
+  dataComponentColumns = [];
   agentDataSource = [];
   AddDestination = {};
   newSource = [];
@@ -43,13 +49,14 @@ export class RelationshipBuilderComponent implements OnInit {
   userDatasource = [];
   isListView = false;
   isEditData = false;
+  isrefresh: boolean = false;
   isSaveEnabled: boolean = false;
   selectedAgent2: any;
   agent1TableData: any;
   agent2TableData: any;
   finalArrayToSend = [];
   names = [];
-  listFilter: boolean;
+  listFilter: any;
   readChange: boolean = false;
   readChange2: boolean = false;
   showDetail: boolean = false;
@@ -57,7 +64,7 @@ export class RelationshipBuilderComponent implements OnInit {
   noShowDetail2: boolean = false;
   showDetail2: boolean = false;
   finalDataSource = {};
-
+  isDisabledState: boolean = false;
   MAX_ROWS_PER_TABLE = 5;
   showDetail3: boolean = false;
   noShowDetailCorr: boolean = false;
@@ -84,9 +91,9 @@ export class RelationshipBuilderComponent implements OnInit {
   relationDataSource = [];
   relationDataSourceNeo4j = [];
 
-  constructor(private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog) {
+  constructor(private router: Router, private relationshipBuilderService: RelationshipBuilderService, private dialog: MatDialog, public messageDialog: MessageDialogService, private dataShare: DataSharedService) {
     this.dataDictionaryInfo();
-    this.getCorrelationBoth();
+    this.getCorrelation();
 
 
 
@@ -95,21 +102,7 @@ export class RelationshipBuilderComponent implements OnInit {
   ngOnInit() {
   }
 
-  getCorrelationBoth() {
-    this.relationmappingLabels = [];
-    this.getCorrelationNeo4j();
-    this.getCorrelationConfig();
-    console.log(this.relationmappingLabels);
-    console.log(this.relationmappingLabels.length);
 
-    //if (this.relationmappingLabels.length > 0) {
-    //this.userDatasource = this.relationmappingLabels;
-    console.log(this.userDatasource)
-    //} else {
-    //console.log("No data found ");
-    //}
-
-  }
 
   async dataDictionaryInfo() {
     try {
@@ -127,6 +120,7 @@ export class RelationshipBuilderComponent implements OnInit {
   }
   async loadAgent1Info(selectedAgent1) {
     try {
+      this.isrefresh = true;
       this.noShowDetail = true;
       this.clicked = false;
       this.buttonOn = false;
@@ -152,6 +146,7 @@ export class RelationshipBuilderComponent implements OnInit {
   }
   async loadAgent1Info2(selectedAgent2) {
     try {
+      this.isrefresh = true;
       this.noShowDetail2 = true;
       this.noShowDetailCorr = false;
       this.showDetail3 = false;
@@ -178,94 +173,19 @@ export class RelationshipBuilderComponent implements OnInit {
   }
 
 
-  getCorrelationNeo4j() {
-    //this.neo4jResponse = undefined;
-    this.relationDataSource = [];
-
-    this.BothDataSorce = [];
-    var self = this;
-    this.relationDataSourceNeo4j = []; //var neo4jResponse = await async
-    this.relationshipBuilderService.loadUiServiceLocationNeo4j().then(
-      (neo4jResponse) => {
-
-        self.neo4jResponseData = neo4jResponse.data;
-        if (self.neo4jResponseData != undefined && self.neo4jResponseData.length > 1) {
-          for (var masterData of this.neo4jResponseData) {
-
-            let relationLabel = new RelationLabel(masterData.destination, masterData.source, masterData.relationName, true);
-            self.relationmappingLabels.push(relationLabel);
-
-            self.relationDataSourceNeo4j.push(masterData.relationName);
-
-          }
-
-        }
-
-        self.showDetail = true;
-        this.dataComponentColumns = ['relationName'];
-      });
-    console.log(this.relationmappingLabels);
-
-  }
-
-  getCorrelationConfig() {
-    try {
-
-      this.relationDataSourceNeo4j = [];
-      this.relationDataSource = [];
-      this.servicesDataSource = [];
-      var self = this;
-      this.relationshipBuilderService.loadUiServiceLocation().then(
-        (corelationResponse) => {
-          self.corelationResponseMaster = corelationResponse;
-          self.corrprop = corelationResponse.data;
-
-
-          if (self.corrprop != undefined && self.corrprop.length > 1) {
-            for (var masterData of this.corrprop) {
-
-              let relationLabel = new RelationLabel(masterData.destination.toolName, masterData.source.toolName, masterData.relationName, false);
-              self.relationmappingLabels.push(relationLabel);
-              self.relationDataSource.push(masterData.relationName);
-
-            }
-
-          }
-
-
-
-          self.showDetail = true;
-          this.dataComponentColumns = ['radio', 'relationName'];
-        });
-      console.log(this.relationmappingLabels);
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
-
-
-  getRelationsName() {
-    console.log(this.selectedRadio)
-    if (this.selectedRadio == 'all') {
-      return this.relationmappingLabels;
-    } else if (this.selectedRadio == 'neo4j') {
-      return this.relationmappingLabels.filter(item => item.isdataNeo4j == true);
-    } else if (this.selectedRadio == 'file') {
-      return this.relationmappingLabels.filter(item => item.isdataNeo4j == false);
-    }
-  }
 
 
 
 
 
-  searchTable() {
+
+  /* searchTable() {
     var input, filter, found, table, tr, td, i, j;
     input = document.getElementById("myInput");
     filter = input.value.toUpperCase();
     table = document.getElementById("myTable");
     tr = table.getElementsByTagName("tr");
+    console.log(tr);
     for (i = 0; i < tr.length; i++) {
       td = tr[i].getElementsByTagName("td");
       for (j = 0; j < td.length; j++) {
@@ -280,131 +200,251 @@ export class RelationshipBuilderComponent implements OnInit {
         tr[i].style.display = "none";
       }
     }
+  } */
+
+
+
+  getCorrelation() {
+    try {
+
+      this.relationDataSource = [];
+      this.servicesDataSource = [];
+      var self = this;
+      this.relationshipBuilderService.loadUiServiceLocation().then(
+        (corelationResponse) => {
+
+
+          // var ax = typeof (corelationResponse);
+          // console.log(ax);
+          self.corelationResponseMaster = corelationResponse;
+          this.corrprop = corelationResponse.data;
+          //console.log(corelationResponse);
+          // console.log(self.corelationResponseMaster);
+          // console.log(this.corrprop);
+          if (this.corrprop != null) {
+            for (var key in this.corrprop) {
+              // console.log(key);
+              var element = this.corrprop[key];
+              // var ay = typeof (element);
+              // console.log(ay);
+              var a = (element.relationName);
+              var t = (element.destination);
+              var b = (element.destination.toolName);
+
+              var c = (element.source.toolName);
+              this.relationDataSource.push(a)
+              console.log(this.relationDataSource);
+              this.servicesDataSource.push(element);
+
+
+            }
+          }
+          this.relData = this.relationDataSource;
+          //console.log(this.relData);
+          this.dataComponentColumns = ['radio', 'relationName'];
+        });
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
-  /*  getCorrelation() {
-     try {
-       this.BothDataSorce = [];
-       this.relationDataSourceNeo4j = [];
-       this.relationDataSource = [];
-       this.servicesDataSource = [];
-       var self = this;
-       this.relationshipBuilderService.loadUiServiceLocation().then(
-         (corelationResponse) => {
- 
- 
-           // var ax = typeof (corelationResponse);
-           // console.log(ax);
-           self.corelationResponseMaster = corelationResponse;
-           this.corrprop = corelationResponse.data;
-           //console.log(corelationResponse);
-           // console.log(self.corelationResponseMaster);
-           // console.log(this.corrprop);
-           if (this.corrprop != null) {
-             for (var key in this.corrprop) {
-               // console.log(key);
-               var element = this.corrprop[key];
-               // var ay = typeof (element);
-               // console.log(ay);
-               var a = (element.relationName);
-               var t = (element.destination);
-               var b = (element.destination.toolName);
-               var az = typeof (t);
-               //console.log(t);
-               // console.log(b);
-               var c = (element.source.toolName);
-               this.relationDataSource.push(a)
-               this.servicesDataSource.push(element);
- 
- 
-             }
-           }
-           //this.relData = this.relationDataSource;
-           //console.log(this.relData);
-           this.dataComponentColumns = ['relationName'];
-         });
-     }
-     catch (error) {
-       console.log(error);
-     }
-   }
-  */
+
+  async showDetailsDialogForNeo4j(data1, data2) {
+
+
+    try {
+      this.showDetail3 = false;
+      this.noShowDetailCorr = false;
+      this.clicked = true;
+      this.buttonOn = true;
+      this.showNoToolsSelectedForCorrelation = true
+      //console.log(data1.toolName, data2.toolName);
+      let usersResponseData3 = await this.relationshipBuilderService.loadToolsRelationshipAndProperties(data1.toolName, data1.categoryName, data2.toolName, data2.categoryName);
+      if (usersResponseData3.data != undefined && usersResponseData3.status == "success") {
+
+        // console.log(usersResponseData3)
+
+        // console.log(usersResponseData3.data)
+        if (usersResponseData3.data["relationName"] != undefined) {
+          this.showDetail3 = true;
+          this.noShowDetailCorr = false;
+          this.corrprop = usersResponseData3.data["relationName"];
+          console.log(this.corrprop);
+
+
+          var isSessionExpired = this.dataShare.validateSession();
+          if (!isSessionExpired) {
+            let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+              panelClass: 'showjson-dialog-container',
+              height: '300px',
+              width: '500px',
+              disableClose: true,
+              /*  data: this.corrprop,
+               title: 'Message', */
+              data:
+              {
+                message: this.corrprop,
+                title: "Neo4j"
+
+              }
+
+
+
+
+
+
+            });
+            //console.log(showJsonDialog);
+          }
+          //console.log(Object.keys(usersResponseData3.data["properties"]).length);
+
+        }
+      } else {
+        this.noShowDetailCorr = true;
+        this.showDetail3 = false;
+
+
+        var isSessionExpired = this.dataShare.validateSession();
+        if (!isSessionExpired) {
+          let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+            panelClass: 'showjson-dialog-container',
+            height: '300px',
+            width: '500px',
+            disableClose: true,
+            /*  data: this.corrprop,
+             title: 'Message', */
+            data:
+            {
+              message: 'No Relations Found',
+              title: "Co-Relations in Neo4j"
+
+            }
+
+
+
+
+
+
+          });
+          //console.log(showJsonDialog);
+        }
+
+
+
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+
+  }
+
   showDetailsDialog() {
+    var isSessionExpired = this.dataShare.validateSession();
+    if (!isSessionExpired) {
+      let showJsonDialog = this.dialog.open(ShowJsonDialog, {
+        panelClass: 'showjson-dialog-container',
+        height: '500px',
+        width: '700px',
+        disableClose: true,
+        data:
+        {
+          message: this.corelationResponseMaster,
+          title: "Correlation.json"
+        }
 
-    let showJsonDialog = this.dialog.open(ShowJsonDialog, {
-      panelClass: 'showjson-dialog-container',
-      height: '500px',
-      width: '700px',
-      disableClose: true,
-      data: this.corelationResponseMaster,
-
-    });
-    //console.log(showJsonDialog);
+      });
+      //console.log(showJsonDialog);
+    }
   }
-
   addproperty() {
 
   }
 
   Refresh() {
+    /*  var self = this;
+     this.router.navigateByUrl('@insights/app/modules/relationship-builder', { skipLocationChange: true }).then(() =>
+       self.router.navigate(["InSights/Home/relationship-builder"])); */
+
+    this.showDetail = false;
+    this.showDetail2 = false;
+    this.agentDataSource = [];
+    this.selectedProperty1 = "";
+    this.selectedProperty2 = "";
+    this.searchValue = null;
+    this.selectedRadio = "";
+    this.isbuttonenabled = false;
+    this.isSaveEnabled = false;
+    this.listFilter = "";
+    this.isrefresh = false;
+    this.buttonOn = false;
+    this.selectedAgent1 = "";
+    this.dataDictionaryInfo();
 
   }
 
-  Delete() {
+  relationDelete() {
     this.isListView = true;
     this.isEditData = true;
+    //console.log(this.corrprop);
+    // console.log(this.selectedDummyAgent);
 
+    var title = "Delete Correlation";
+    console.log(this.selectedDummyAgent);
+    var dialogmessage = "You are deleting " + "<b>" + this.selectedDummyAgent + "</b>" + "- the action of deleting a co-relationship CANNOT be UNDONE, moreover deleting an existing co-relationship may impact other functionalities. Are you sure you want to DELETE <b>" + this.selectedDummyAgent + "</b>";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
-
-
-
-    //console.log(this.selectedDummyAgent);
-    // console.log(this.servicesDataSource);
-    for (var key in this.servicesDataSource) {
-      if (this.servicesDataSource[key].relationName != this.selectedDummyAgent) {
-        this.updatedDatasource.push(this.servicesDataSource[key])
-      }
-    }
-    //console.log(this.selectedDummyAgent);
-    console.log(this.updatedDatasource);
-
-    //var deleteMappingJson = JSON.stringify(this.updatedDatasource);
-    var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
-    //console.log(deleteMappingJson);
-
-    this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
-      (corelationResponse2) => {
-        //console.log(corelationResponse2)
-        // console.log(this.updatedDatasource);
-        // console.log(this.relationDataSource);
-        // console.log(this.servicesDataSource);
-        if (corelationResponse2.status == "success") {
-          this.updatedDatasource = [];
-          this.relationDataSource = [];
-          this.servicesDataSource = [];
-          this.getCorrelationConfig();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'yes') {
+        for (var key in this.corrprop) {
+          if (this.corrprop[key].relationName != this.selectedDummyAgent) {
+            this.updatedDatasource.push(this.corrprop[key])
+          }
         }
-      });
+        // console.log(this.updatedDatasource);
+        //var deleteMappingJson = JSON.stringify(this.updatedDatasource);
+        var deleteMappingJson = JSON.stringify({ 'data': this.updatedDatasource });
+        this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
+          (corelationResponse2) => {
+            // console.log(corelationResponse2);
+            if (corelationResponse2.status == "success") {
+              // console.log("Check");
+              this.updatedDatasource = [];
+              this.relationDataSource = [];
+              this.servicesDataSource = [];
+              //  console.log("Before")
+              this.getCorrelation();
+              //console.log("After")
+
+
+            }
+          });
+
+      }
+    });
+
   }
+
+
   enableDelete() {
     this.isbuttonenabled = true;
+    this.isrefresh = true;
     //console.log(this.isbuttonenabled);
   }
 
   enableSaveProperty1() {
     this.property1selected = true;
     if (this.property2selected == true) {
-      console.log("true");
+      //console.log("true");
       this.isSaveEnabled = true;
     }
-
-
   }
 
 
   enableSaveProperty2() {
     this.property2selected = true;
     if (this.property1selected == true) {
-      console.log("true");
+      //console.log("true");
       this.isSaveEnabled = true;
     }
   }
@@ -417,64 +457,62 @@ export class RelationshipBuilderComponent implements OnInit {
   saveData(newName) {
     this.isListView = true;
     this.isEditData = true;
+    var title = "Save Co-Relation";
+    var dialogmessage = "You are saving " + "<b>" + newName.value + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
-    //this.updatedDatasource.push({});
-    //console.log(newName);
-    //this.updatedDatasource.push({ destination: this.selectedAgent2, source: this.selectedAgent1, relationName: newName.value });
-    //this.updatedDatasource.push({});
-    // console.log(this.updatedDatasource);
-    //console.log(this.selectedAgent2);
-    this.fieldDestProp.push(this.selectedProperty2);
-    //console.log(this.fieldDestProp);
-    // console.log(typeof (this.selectedAgent2));
-    var res = [];
-    for (var x in this.selectedAgent2) {
-      this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
-    }
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == 'yes') {
+        //DESTINATION
+        this.fieldDestProp.push(this.selectedProperty2);
 
-    var toolname = res[0];
-    var toolcatergory = res[1];
-
-    this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
-
-
-
-    //FOR SOURCE 
-    this.fieldSourceProp.push(this.selectedProperty1);
-
-    var res1 = [];
-    for (var x in this.selectedAgent2) {
-      this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
-    }
-
-    var toolname1 = res1[0];
-    var toolcatergory1 = res1[1];
-
-    this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
-
-
-    this.finalDataSource = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
-    this.servicesDataSource.push(this.finalDataSource);
-    console.log(this.servicesDataSource);
-    var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
-    this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
-      (corelationResponse2) => {
-
-        if (corelationResponse2.status == "success") {
-
-          this.getCorrelationBoth();
+        var res = [];
+        for (var x in this.selectedAgent2) {
+          this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
         }
-      });
+
+        var toolname = res[0];
+        var toolcatergory = res[1];
+
+        this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
+
+
+
+        //FOR SOURCE 
+        this.fieldSourceProp.push(this.selectedProperty1);
+
+        var res1 = [];
+        for (var x in this.selectedAgent2) {
+          this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
+        }
+
+        var toolname1 = res1[0];
+        var toolcatergory1 = res1[1];
+
+        this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
+
+
+        var newData = { 'destination': this.AddDestination, 'source': this.AddSource, 'relationName': newName.value }
+
+        this.servicesDataSource.push(newData);
+        console.log(this.servicesDataSource);
+        var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
+        this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
+          (corelationResponse2) => {
+
+            if (corelationResponse2.status == "success") {
+
+              this.getCorrelation();
+
+
+            }
+          });
+      }
+    });
+
 
   }
   deleteMapping() {
 
   }
-
-
-
-
-
-
-
 }

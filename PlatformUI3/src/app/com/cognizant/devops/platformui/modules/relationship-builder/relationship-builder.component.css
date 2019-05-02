@@ -65,6 +65,16 @@ font-size: 14px !important;
 }
 
 
+.tableTextgreyed
+{
+    color: #676666;
+    font-family: inherit;
+    font-weight: bold;
+    width:115% !important;
+}
+
+
+
 .btnAlign{
     /* margin-right: 1px;  */
   position: absolute;
@@ -178,7 +188,7 @@ th, td {
 }
 
 .SubHeading{
-     font-size: 16px;
+     font-size: 18px;
     color:  #0033A0;
     font-weight:bold;
     margin-left: 1px;
@@ -189,11 +199,18 @@ th, td {
     background-color: #FF8F1C;
     margin-left: 16px;
     margin-right: 16px;
-    width: 271% !important;
+    width: 294% !important;
     height: 1px;
     margin: 0 auto;
 }
 
+.mat-table {
+    overflow: scroll;
+    width: 100%;
+    max-height: 50px
+    
+    
+  }
 .ListFooter
 {
     font-size: 10px;
@@ -223,7 +240,7 @@ th, td {
     margin-right: 10px;
     border-radius: 0px !important;
     height: 100%;
-    width:200px;
+    width:150px;
     padding-left: 10px;
     padding-right: 10px;
      border-top-left-radius: 0px !important;
@@ -272,12 +289,44 @@ th, td {
     padding:0px;
 }
 
-.column1{
+.column2{
     float: right;
-    width: 55%;
+    width: 37%;
     box-shadow: 0 2px 2px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
     -o-box-shadow: 2px  0 5px  rgba(0,0,0,.2);
     
+}
+
+.Neo4jDataButtonCss[disabled]
+
+{
+background-color: #9e9a9a !important;
+color: #FFFFFF !important;
+}
+
+.Neo4jDataButtonCss
+{
+   
+    
+/* float: right; */
+    background-color: #0033A0 !important;
+   /*  margin-bottom: 8px;
+    margin-left: -150px; 
+   /*  margin-top: 10px; */
+   /* margin-right: 10px;
+    border-radius: 0px !important;
+   
+    
+    padding-left: 10px;
+    padding-right: 10px;
+     border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important; */
+   font-size: 11px; 
+   margin-left: 60px;
+
+
 }
 
 .showTable {
@@ -295,17 +344,18 @@ th, td {
     color: #00B140;
     font-size: 15px;
     font-family: inherit;
+    margin-left: 5px;
   
 }
 .NoteCss
 {
     font-family: inherit;
-font-size: 14px;
+font-size: 13.6px;
 }
 
-.column2{
+.column1{
     float: left;
-    width:42%;
+    width:60%;
     box-shadow: 0 2px 2px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
     -o-box-shadow: 2px  0 5px  rgba(0,0,0,.2);
 }
@@ -326,7 +376,6 @@ font-size: 14px;
     margin-bottom: 6px;
     text-align: left;
     /* width: 100vh; */
-    padding-left: 15px;
 }
 .dat-row{
     height: 40px !important;
@@ -369,6 +418,12 @@ table tr:last-child td:last-child {
     background-color:white!important;
 }
 
+
+.button[disabled] .mat-raised-button
+{
+    color: #FFFFFF;
+    background-color: #676666;
+}
 
 
 .form-control {

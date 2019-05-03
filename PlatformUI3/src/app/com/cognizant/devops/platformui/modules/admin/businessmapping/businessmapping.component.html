@@ -89,7 +89,8 @@
             <td mat-cell class="listTable" *matCellDef="let element" style="width:20% !important"> {{element.businessmappinglabel}} </td>
           </ng-container>
           <ng-container matColumnDef="properties">
-            <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"> {{selectedAgent.toolName}} Properties ( Property Name : Property Value)</th>
+            <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"> {{selectedAgent.toolName}} Properties (PropertyName:Property
+              Value)</th>
             <td mat-cell class="listTable" *matCellDef="let element" style="width:51% !important ">
               <div [innerHTML]="element.propertiesString">
               </div>
@@ -120,13 +121,13 @@
 
         <!--Properties  Column -->
         <ng-container matColumnDef="toolproperties">
-          <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"> {{selectedAgent.toolName}} Property Name</th>
+          <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"> {{selectedAgent.toolName}} (Property Name)</th>
           <td mat-cell *matCellDef="let element"> {{element.key}} </td>
         </ng-container>
 
         <!-- Value Column -->
         <ng-container matColumnDef="propertyValue">
-          <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"> {{selectedAgent.toolName}} Property Value </th>
+          <th mat-header-cell *matHeaderCellDef class="tableHeaderCss"> {{selectedAgent.toolName}} (Please input a Property Value)</th>
           <td mat-cell style="padding-top:10px;margin-left: 0px" *matCellDef="let element">
             <input [(ngModel)]="element.value" ref-value="ngModel" name="{{element.value}}" [ngClass]="{ 'input-disabled' : !element.editProperties  ,'form-control': element.editProperties} "
               required>

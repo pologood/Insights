@@ -409,7 +409,7 @@ export class BusinessMappingComponent implements OnInit {
     var self = this;
     var title = this.actionType == "add" ? "Save Business Mapping Label" : " Edit Business Mapping Label";
     var dialogmessage = this.actionType == "add" ? "Are you sure do you want to save changes to the Business Mapping Label <b> " + this.label + " </b>?"
-      : "Please note: The changes will be applied from next data collection. <br> Are you sure do you want to save changes to the Business Mapping Label <b> " + this.label + " </b>?";
+      : "Please note: The changes will be applied from next data collection. <br> Are you sure do you want to save changes to the Business Mapping Label <b> " + this.label + "</b>?";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, "", "ALERT", "32%");
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {

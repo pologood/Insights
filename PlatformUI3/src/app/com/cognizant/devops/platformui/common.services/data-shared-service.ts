@@ -29,7 +29,7 @@ export class DataSharedService {
   private userSource = new BehaviorSubject<String>('admin');
   currentUser = this.userSource.asObservable();
 
-  constructor( @Inject(SESSION_STORAGE) private storage: StorageService, private datePipe: DatePipe, private cookieService: CookieService,
+  constructor( @Inject(SESSION_STORAGE) public storage: StorageService, private datePipe: DatePipe, private cookieService: CookieService,
     public router: Router, public dialog: MatDialog) { }
 
   public changeUser(user: String) {
@@ -74,6 +74,12 @@ export class DataSharedService {
     return this.storage.get(key);
   }
 
+
+  public getTimeZone() {
+    return this.storage.get("timeZone");
+  }
+
+
   public storeTimeZone() {
     var date = new Date();
     //const timeZoneOffset = date.getTimezoneOffset(); " ==== " + timeZoneOffset +
@@ -106,8 +112,9 @@ export class DataSharedService {
   }
 
   public validateSession(): boolean {
-    var authToken = this.cookieService.get('Authorization');;
+    var authToken = this.cookieService.get('Authorization');
     var sessionExpireMessage = "The existing session has expired. You will be redirected to the home page. Request you to Login again to continue using Insights. Thank you!"
+    var sessionStorageDateDashboardSessionExpiration = this.storage.get('dateDashboardSessionExpiration')
     if (authToken === undefined) {
       this.cookieService.delete('Authorization');
       this.router.navigate(['/login']);
@@ -115,7 +122,7 @@ export class DataSharedService {
       var dashboardSessionExpirationTime = new Date(this.storage.get('dateDashboardSessionExpiration'));
       var date = new Date();
       console.log(dashboardSessionExpirationTime + "  ===== " + date);
-      if ((this.storage.get('dateDashboardSessionExpiration')) == undefined) {
+      if (sessionStorageDateDashboardSessionExpiration == undefined) {
         this.clearSessionData()
         return true;
       }
@@ -129,6 +136,7 @@ export class DataSharedService {
         var minutes = 30;
         date.setTime(date.getTime() + (minutes * 60 * 1000));
         this.cookieService.set('Authorization', authToken, date);
+        this.setSession()
         return false;
       }
     }

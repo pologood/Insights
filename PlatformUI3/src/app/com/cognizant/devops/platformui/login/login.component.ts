@@ -66,7 +66,6 @@ export class LoginComponent implements OnInit, ILoginComponent {
   ngOnInit() {
     this.createAndValidateForm();
     this.dataShare.storeTimeZone();
-    
     //this.deleteAllPreviousCookies();
   }
 
@@ -122,7 +121,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
             var utcDate = this.datePipe.transform(date, 'yyyy-MM-ddTHH:mm:ssZ', '+0000');//getUTCDate() new Date(date.getUTCMilliseconds()) Y-m-dTH:M:SZ
             var dateWithTimeZone = this.datePipe.transform(utcDate, 'yyyy-MM-ddTHH:mm:ssZ', z);//  '+0530'
             console.log(date + " ==== " + timeZoneOffset + " ==== " + zone + " ==== " + z + " ==== " + dateWithTimeZone + " ====  " + utcDate + " ====  " + dateWithTimeZone.toString());*/
-         this.dataShare.setSession();
+            this.dataShare.setSession();
            //this.cookieService.set('DashboardSessionExpiration', dateDashboardSessionExpiration.toString());
             this.cookies = "";
             for (var key in grafcookies) {

@@ -104,7 +104,7 @@
       <div *ngIf="agentDataSource.length == 0">No records found</div>
     </div>
     <div *ngIf="noToolsData" class="noToolsData">
-      Please click on <b>"ADD"</b> icon to create new labels
+       <b>{{selectedAgent.toolName}}</b> does not have any Business Mapping Label, Please click on the<b> "ADD"</b> icon to create new Business Mapping Label.
     </div>
     <div *ngIf="!isListView">
       <table mat-table [dataSource]="agentPropertyDataSource" class="mat-elevation-z8 ">

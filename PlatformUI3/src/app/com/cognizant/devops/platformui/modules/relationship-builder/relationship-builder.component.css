@@ -78,7 +78,7 @@ font-size: 14px !important;
 .btnAlign{
     /* margin-right: 1px;  */
   position: absolute;
-  right: 20px;
+  right: 10px;
   top:120px;
 }
 mat-dialog-content::-webkit-scrollbar {
@@ -381,6 +381,7 @@ font-size: 13.6px;
     height: 40px !important;
     text-align: left !important;
     vertical-align: middle;
+    margin-left: 5px;
 }
 
 .dat-row:nth-child(even){

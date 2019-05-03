@@ -92,6 +92,7 @@ export class RelationshipBuilderComponent implements OnInit {
   NewDataSource = {};
   masterData: any;
   selectedRadio: any;
+  regex = new RegExp("^[a-zA-Z0-9_]*$", 'gi');
 
 
   relData: any;
@@ -424,6 +425,8 @@ export class RelationshipBuilderComponent implements OnInit {
               //  console.log("Before")
               this.getCorrelation();
               //console.log("After")
+              var dialogmessage = "<b>" + this.selectedDummyAgent + "</b> deleted successfully from Correlation.json."
+              this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
 
 
             }
@@ -470,109 +473,129 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isListView = true;
     this.isEditData = true;
     var counter = 0;
-    // console.log(typeof (newName.value));
-
-    this.prefixname = "FROM_" + this.selectedAgent1.toolName + "_TO_" + this.selectedAgent2.toolName + "_";
-    // console.log(this.prefixname);
-    this.finalRelationName = this.prefixname + newName.value;
-    // console.log(this.destinationcheck);
-    //  console.log(this.sourcecheck);
-    /* 
-    Validation for NAME
-
-        for (var x in this.relData) {
-          if (x == this.finalRelationName) {
-            ++counter;
-            break;
-          }
-    
-        } */
-    this.count = 0;
-    for (var x in this.destinationcheck) {
-      // console.log("Round" + x)
-      //console.log(this.sourcecheck[x])
-      // console.log(this.destinationcheck[x])
-
-      // console.log("Back to Loop")
-      if ((this.destinationcheck[x] == this.selectedAgent2.toolName) && (this.sourcecheck[x] == this.selectedAgent1.toolName)) {
-        console.log("present");
-        this.count = this.count + 1;
-        //console.log(this.count)
-        break;
-      }
-      else {
-        console.log("not present");
-
-      }
+    console.log(newName.value);
+    var checkname = this.regex.test(newName.value);
+    //console.log(typeof (checkname))
+    console.log(checkname)
+    if (!checkname) {
+      //console.log(this.regex);
+      newName = undefined;
+      this.messageDialog.showApplicationsMessage("Please enter valid name, and it contains only alphanumeric character and underscore ", "ERROR");
+      // checkname = true;
+      //this.Refresh();
     }
+    else {
+      this.prefixname = "FROM_" + this.selectedAgent1.toolName + "_TO_" + this.selectedAgent2.toolName + "_";
+      // console.log(this.prefixname);
+      this.finalRelationName = this.prefixname + newName.value;
 
-
-
-
-    if (this.count == 0) {
-
-      var title = "Save Co-Relation";
-      var dialogmessage = "You are creating a new Co-Relation " + "<b>" + this.finalRelationName + "</b>" + " between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure do you want to build the Co-Relation <b>" + this.finalRelationName + "</b> ?";
-      const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result == 'yes') {
-          //DESTINATION
-          this.fieldDestProp.push(this.selectedProperty2);
-
-          var res = [];
-          for (var x in this.selectedAgent2) {
-            this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
-          }
-
-          var toolname = res[0];
-          var toolcatergory = res[1];
-
-          this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
-
-
-
-          //FOR SOURCE 
-          this.fieldSourceProp.push(this.selectedProperty1);
-
-          var res1 = [];
-          for (var x in this.selectedAgent2) {
-            this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
-          }
-
-          var toolname1 = res1[0];
-          var toolcatergory1 = res1[1];
-
-          this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
-
-
-          var newData = {
-            'destination': this.AddDestination, 'source': this.AddSource, 'relationName': this.finalRelationName
-          }
-
-          this.servicesDataSource.push(newData);
-          console.log(this.servicesDataSource);
-          var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
-          this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
-            (corelationResponse2) => {
-
-              if (corelationResponse2.status == "success") {
-
-                this.getCorrelation();
-
-
-              }
-            });
-        }
-      });
-      // this.count = 0;
-    }
-    else if (this.count == 1) {
-      //self.showConfirmMessage = "Failed to save settings";
-      this.showApplicationMessage = "Failed to save settings"
-      var dialogmessage = "<b>" + this.finalRelationName + "</b> exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
-      this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
+      // console.log(this.destinationcheck);
+      //  console.log(this.sourcecheck);
+      /* 
+      Validation for NAME
+  
+          for (var x in this.relData) {
+            if (x == this.finalRelationName) {
+              ++counter;
+              break;
+            }
+      
+          } */
       this.count = 0;
+      for (var x in this.destinationcheck) {
+        // console.log("Round" + x)
+        //console.log(this.sourcecheck[x])
+        // console.log(this.destinationcheck[x])
+
+        // console.log("Back to Loop")
+        if ((this.destinationcheck[x] == this.selectedAgent2.toolName) && (this.sourcecheck[x] == this.selectedAgent1.toolName)) {
+          console.log("present");
+          this.count = this.count + 1;
+          //console.log(this.count)
+          break;
+        }
+        else {
+          console.log("not present");
+
+        }
+      }
+
+
+
+
+      if (this.count == 0) {
+
+        var title = "Save Co-Relation";
+        var dialogmessage = "You are creating a new Co-Relation " + "<b>" + this.finalRelationName + "</b>" + " between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure do you want to build the Co-Relation <b>" + this.finalRelationName + "</b> ?";
+        const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result == 'yes') {
+            //DESTINATION
+            this.fieldDestProp.push(this.selectedProperty2);
+
+            var res = [];
+            for (var x in this.selectedAgent2) {
+              this.selectedAgent2.hasOwnProperty(x) && res.push(this.selectedAgent2[x])
+            }
+
+            var toolname = res[0];
+            var toolcatergory = res[1];
+
+            this.AddDestination = { 'toolName': toolname, 'toolCategory': toolcatergory, 'fields': this.fieldDestProp };
+
+
+
+            //FOR SOURCE 
+            this.fieldSourceProp.push(this.selectedProperty1);
+
+            var res1 = [];
+            for (var x in this.selectedAgent2) {
+              this.selectedAgent1.hasOwnProperty(x) && res1.push(this.selectedAgent1[x])
+            }
+
+            var toolname1 = res1[0];
+            var toolcatergory1 = res1[1];
+
+            this.AddSource = { 'toolName': toolname1, 'toolCategory': toolcatergory1, 'fields': this.fieldSourceProp };
+
+
+            var newData = {
+              'destination': this.AddDestination, 'source': this.AddSource, 'relationName': this.finalRelationName
+            }
+
+            this.servicesDataSource.push(newData);
+            console.log(this.servicesDataSource);
+            var addMappingJson = JSON.stringify({ 'data': this.servicesDataSource });
+            this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
+              (corelationResponse2) => {
+
+                if (corelationResponse2.status == "success") {
+
+                  this.getCorrelation();
+                  var dialogmessage = "<b>" + this.finalRelationName + "</b> saved successfully in Correlation.json."
+                  this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
+
+
+                }
+              });
+          }
+        });
+        // this.count = 0;
+
+      }
+      else if (this.count == 1) {
+        //self.showConfirmMessage = "Failed to save settings";
+        this.showApplicationMessage = "Failed to save settings"
+        var dialogmessage = "<b>" + this.finalRelationName + "</b> exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
+        this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
+        this.count = 0;
+      }
+
+      else {
+        var dialogmessage = "Failed to create the Co-Relation <b>" + this.finalRelationName + "</b>. Please try again."
+        this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
+      }
     }
 
   }

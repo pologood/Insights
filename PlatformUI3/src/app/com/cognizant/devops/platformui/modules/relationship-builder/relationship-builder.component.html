@@ -36,7 +36,7 @@
 
           <label class="mainText"> Select Tools </label>
           <mat-select [(ngModel)]="selectedAgent1" [style.height.px]="20" [style.width.%]="14" (ngModelChange)="loadAgent1Info(selectedAgent1)"
-            name="selectedAgent1" required placeholder="Select Tool 1" [ngClass]="{  'input-disabled' : readChange ,  'form-control': !readChange}">
+            name="selectedAgent1" required placeholder="Select Source Tool" [ngClass]="{  'input-disabled' : readChange ,  'form-control': !readChange}">
             <mat-option [disabled]="data1 === selectedAgent2" *ngFor="let data1 of agentDataSource" [value]="data1"
               style="color:#0033A0"> {{data1.toolName}} </mat-option>
           </mat-select>
@@ -46,7 +46,7 @@
             </mat-icon>
           </button> -->
           <mat-select [(ngModel)]="selectedAgent2" [style.height.px]="20" [style.width.%]="14" [style.margin-left.%]="2"
-            (ngModelChange)="loadAgent1Info2(selectedAgent2)" name="selectedAgent2" required placeholder="Select Tool 2"
+            (ngModelChange)="loadAgent1Info2(selectedAgent2)" name="selectedAgent2" required placeholder="Select Destination Tool"
             [ngClass]="{  'input-disabled' : readChange2 ,  'form-control': !readChange2}">
             <mat-option [disabled]="data2 === selectedAgent1" *ngFor="let data2 of agentDataSource" [value]="data2"
               style="color:#0033A0"> {{data2.toolName}} </mat-option>
@@ -83,8 +83,11 @@
   <div>
 
     <div class="column2" style="margin-bottom: 1%; margin-right: 7px; border: white; border-radius: 10px; background-color: white; height: 69vh;">
-      <div class="showTable" style="text-align: center; padding: 5px;height: 45px;">
-        <b>&nbsp; Co-Relation in Correlation.json</b> <br>
+      <div class="showTable" style="text-align: center; padding: 5px;">
+        <!-- height: 45px; -->
+        <b>&nbsp; Co-Relation in Correlation.json</b> <br> <a style="font-size: 12px">
+          (Please delete and re-create existing relation to change properties
+          with UNIQUE name) </a>
 
       </div>
 
@@ -105,7 +108,7 @@
                 <!-- <div class="orangeStripCssSmall"></div> -->
               </tr>
               <tr>
-                <td><label class="SubHeading">Display Co-Relations</label></td>
+                <td><label class="SubHeading">Display Co-Relation</label></td>
                 <td><button style="margin-left: 40px" mat-raised-button (click)="showDetailsDialog()" class="configureBut">View
                     Correlation.json</button></td>
               </tr>
@@ -164,21 +167,24 @@
 
     <div class="column1" style="margin-bottom: 1%;  border: white; border-radius: 10px; background-color: white; height: 69vh;">
 
-      <div class="showTable" style="text-align: center; padding: 5px;">
+      <div class="showTable" style="text-align: center; padding: 5px;height: 65px;">
         <b>&nbsp; Tool Properties</b> (Please select Tool Properties to
-        build a Co-Relation) <br> <a style="font-size: 12px">
-          (Please delete and re-create existing relation to change properties
-          with UNIQUE name) </a>
+        build a Co-Relation)<br>
+
+
+        <a style="font-size: 12px">
+          (Please Note: A prefix "FROM_TOOLNAME1_TO_TOOLNAME2_" will be added to the Co-Relation name you input)
+        </a>
       </div>
 
       <input type="text" class="inputcss" #newName style="margin-left: 25px; width: 240px; margin-top: 10px"
-        [(ngModel)]='listFilter' [value]="searchValue" required placeholder="Please input a Co-Relation name">
+        [(ngModel)]='listFilter' [value]="searchValue" required placeholder="   Please input a Co-Relation name">
 
 
       <button mat-raised-button [disabled]="(noShowDetail||noShowDetail2||!selectedAgent1 || !selectedAgent2||buttonOn) "
         (click)="showDetailsDialogForNeo4j(selectedAgent1,selectedAgent2)" class="Neo4jDataButtonCss">Click
         to see the
-        exsisting Co-Relations in Neo4j</button>
+        exsisting Co-Relation in Neo4j</button>
 
       <div style="height: 100%; width: 100%; overflow: visible;">
         <div style="width: 47%; display: inline-block; margin-left: 8px; vertical-align: top;">
@@ -202,7 +208,7 @@
                 Properties</b>
             </div>
             <div style="color: #00B140; padding-top: 10px">
-              Label:<b>({{agent1Category}}:{{agent1Tool}})</b>
+              Label: <b>({{agent1Category}}:{{agent1Tool}})</b>
             </div>
           </div>
           <table *ngIf="showDetail" style="margin-left: 3%;">
@@ -228,7 +234,7 @@
                 Properties</b>
             </div>
             <div style="color: #00B140; padding-top: 10px;">
-              Label:<b>({{agent2Category}}:{{agent2Tool}})</b>
+              Label: <b>({{agent2Category}}:{{agent2Tool}})</b>
             </div>
           </div>
           <table *ngIf="showDetail2" style="margin-left: 4%;">

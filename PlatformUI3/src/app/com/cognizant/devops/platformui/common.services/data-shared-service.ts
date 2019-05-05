@@ -128,6 +128,7 @@ export class DataSharedService {
 
   public validateSession(): boolean {
     var authToken = this.getAuthorizationToken();
+    this.sessionExpireMessage = "The existing session has expired. You will be redirected to the home page. Request you to Login again to continue using Insights. Thank you!";
     if (authToken === undefined) {
       this.storage.remove('Authorization');
       this.router.navigate(['/login']);

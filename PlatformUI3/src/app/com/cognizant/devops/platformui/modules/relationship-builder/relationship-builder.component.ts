@@ -400,7 +400,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
     var title = "Delete Correlation";
     console.log(this.selectedDummyAgent);
-    var dialogmessage = "You are deleting " + "<b>" + this.selectedDummyAgent + "</b>" + "- the action of deleting a co-relationship CANNOT be UNDONE, moreover deleting an existing co-relationship may impact other functionalities. Are you sure you want to DELETE <b>" + this.selectedDummyAgent + "</b>";
+    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.selectedDummyAgent + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.selectedDummyAgent + "</b> ?";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
@@ -512,7 +512,7 @@ export class RelationshipBuilderComponent implements OnInit {
     if (this.count == 0) {
 
       var title = "Save Co-Relation";
-      var dialogmessage = "You are saving " + "<b>" + this.finalRelationName + "</b>" + " co-relationship between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure you want to SAVE? ";
+      var dialogmessage = "You are creating a new Co-Relation " + "<b>" + this.finalRelationName + "</b>" + " between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure do you want to build the Co-Relation <b>" + this.finalRelationName + "</b> ?";
       const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
 
       dialogRef.afterClosed().subscribe(result => {
@@ -570,7 +570,8 @@ export class RelationshipBuilderComponent implements OnInit {
     else if (this.count == 1) {
       //self.showConfirmMessage = "Failed to save settings";
       this.showApplicationMessage = "Failed to save settings"
-      this.messageDialog.showApplicationsMessage("Relationship already exists in Correlation.json.Please try again after deleting the existing relation.", "ERROR");
+      var dialogmessage = "<b>" + this.finalRelationName + "</b> exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
+      this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
       this.count = 0;
     }
 

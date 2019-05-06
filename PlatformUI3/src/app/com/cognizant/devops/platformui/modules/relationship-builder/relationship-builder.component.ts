@@ -342,8 +342,8 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isEditData = true;
     var title = "Delete Correlation";
     console.log(this.deleteRelation);
-    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation + "</b> ?";
-    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation, "ALERT", "40%");
+    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation.relationName + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation.relationName + "</b> ?";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation.relationName, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {
@@ -358,7 +358,7 @@ export class RelationshipBuilderComponent implements OnInit {
           (corelationResponse2) => {
             if (corelationResponse2.status == "success") {
               this.getCorrelation();
-              var dialogmessage = "<b>" + this.deleteRelation + "</b> deleted successfully from Correlation.json."
+              var dialogmessage = "<b>" + this.deleteRelation.relationName + "</b> deleted successfully from Correlation.json."
               this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
             }
           });

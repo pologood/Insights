@@ -13,74 +13,66 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-#search input[type=search].filled
-{
-  width: 200px;
-  padding-left: 32px;
-  color: black;
-  background-color: #fff;
-  cursor: auto;
 
+#search input[type=search].filled {
+    width: 200px;
+    padding-left: 32px;
+    color: black;
+    background-color: #fff;
+    cursor: auto;
 }
 
-
-
-
-.mat-radio-button.mat-accent .mat-radio-outer-circle{
-height: 14px !important;
-width: 14px !important
+.mat-radio-button.mat-accent .mat-radio-outer-circle {
+    height: 14px !important;
+    width: 14px !important
 }
-.mat-radio-button
-{
+
+.mat-radio-button {
     font-size: 14px !important;
 }
 
-
-
-.RadioCss
-{
+.RadioCss {
     margin-left: 140px;
     width: 20px;
 }
-.inputcss
-{
-font-size: 14px !important;
+
+.inputcss {
+    font-size: 14px !important;
+    margin-left: 25px;
+    width: 240px;
+    margin-top: 10px
 }
 
 .mainLoginInput::-moz-placeholder {
-   font-family: inherit; 
+    font-family: inherit;
 }
-.mainTextInfo
-{
+
+.mainTextInfo {
     margin-left: -400px;
 }
 
-
-.tableText
-{
+.tableText {
     color: #0033A0;
     font-family: inherit;
     font-weight: bold;
-    width:115% !important;
+    width: 115% !important;
+    margin-top: 4%;
 }
 
-
-.tableTextgreyed
-{
+.tableTextgreyed {
     color: #676666;
     font-family: inherit;
     font-weight: bold;
-    width:115% !important;
+    width: 115% !important;
 }
 
-
-
-.btnAlign{
+.btnAlign {
     /* margin-right: 1px;  */
-  position: absolute;
-  right: 20px;
-  top:120px;
+    position: absolute;
+    right: 10px;
+    top: 120px;
 }
+
 mat-dialog-content::-webkit-scrollbar {
     width: 6px;
     height: 16px;
@@ -115,18 +107,17 @@ mat-dialog-content::-webkit-scrollbar-track {
 
 .mat-dialog-content-json {
     display: block;
-    padding-left: 24px; 
+    padding-left: 24px;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-.scrollData{
-    height:90%;
+.scrollData {
+    height: 90%;
     overflow-y: auto;
     overflow-x: scroll;
     padding-bottom: 10px;
 }
-
 
 ::-webkit-scrollbar {
     width: 6px;
@@ -157,40 +148,39 @@ mat-dialog-content::-webkit-scrollbar-track {
     display: -webkit-box;
     display: -webkit-flex;
     width: 100%;
-    background:  #0033a0 ;
+    background: #0033a0;
     height: 40px;
 }
 
-
-.closeIconCss{
+.closeIconCss {
     padding-right: 30px;
     padding-top: 10px;
-	color: white;
+    color: white;
 }
 
-
- .gridheadercenter{    
+.gridheadercenter {
     font-weight: bold;
     font-size: 18px;
     text-decoration: none;
-    color: white; 
+    color: white;
     width: 120%;
     text-align: center;
     padding-top: 8px;
     margin-right: -10px;
-} 
-
-th, td {
-  overflow: hidden;
-  width: 100px !important;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.SubHeading{
-     font-size: 18px;
-    color:  #0033A0;
-    font-weight:bold;
+th,
+td {
+    overflow: hidden;
+    width: 100px !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.SubHeading {
+    font-size: 18px;
+    color: #0033A0;
+    font-weight: bold;
     margin-left: 1px;
     margin-top: 21px;
 }
@@ -204,26 +194,22 @@ th, td {
     margin: 0 auto;
 }
 
-.mat-table {
-    overflow: scroll;
+.mat-table {
+    overflow: scroll;
     width: 100%;
     max-height: 50px
-    
-    
-  }
-.ListFooter
-{
+}
+
+.ListFooter {
     font-size: 10px;
 }
 
-.NoteCss
-{
+.NoteCss {
     margin-top: -10px;
     margin-bottom: 10px;
 }
 
-.button .mat-raised-button
-{
+.button .mat-raised-button {
     border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
@@ -235,131 +221,179 @@ th, td {
     float: right;
     background-color: #0033A0 !important;
     margin-bottom: 8px;
-    margin-left: -150px; 
-   /*  margin-top: 10px; */
+    margin-left: -150px;
+    /*  margin-top: 10px; */
     margin-right: 10px;
     border-radius: 0px !important;
     height: 100%;
-    width:150px;
+    width: 150px;
     padding-left: 10px;
     padding-right: 10px;
-     border-top-left-radius: 0px !important;
+    border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
     border-bottom-left-radius: 0px !important;
     font-size: 12px;
 }
-.input
-{
+
+.input {
     border-left-style: none !important;
     border-right-style: none !important;
     border-top-style: none !important;
-     font-size: none !important;
+    font-size: none !important;
 }
 
-.mainDivContainer{
+.mainDivContainer {
     margin-left: 16px;
     margin-right: 16px;
-    height:90vh;
+    height: 90vh;
     overflow: hidden;
 }
-.divider{
-    width:5px;
-    height:auto;
-    display:inline-block;
-}
-.mat-cell, .mat-footer-cell ,.mat-header-cell
-{
-    background-color: white !important;
-     border-bottom-style: none!important;
+
+.divider {
+    width: 5px;
+    height: auto;
+    display: inline-block;
 }
 
-.td.mat-cell, td.mat-footer-cell, th.mat-header-cell
-{
-     border-bottom-style: none !important;
-  
+.mat-cell,
+.mat-footer-cell,
+.mat-header-cell {
+    background-color: white !important;
+    border-bottom-style: none!important;
 }
+
+.td.mat-cell,
+td.mat-footer-cell,
+th.mat-header-cell {
+    border-bottom-style: none !important;
+}
+
 .tableHeaderCssNew {
-     
     background-color: white;
     color: #0033A0;
     font-size: 15px;
     height: 40px;
     margin: 0px;
-    padding:0px;
+    padding: 0px;
 }
 
-.column2{
+.column2 {
     float: right;
     width: 37%;
-    box-shadow: 0 2px 2px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-    -o-box-shadow: 2px  0 5px  rgba(0,0,0,.2);
-    
+    box-shadow: 0 2px 2px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+    -o-box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
+    margin-bottom: 1%;
+    margin-right: 1px;
+    border: white;
+    border-radius: 10px;
+    background-color: white;
+    height: 69vh;
 }
 
-.Neo4jDataButtonCss[disabled]
-
-{
-background-color: #9e9a9a !important;
-color: #FFFFFF !important;
+.Neo4jDataButtonCss[disabled] {
+    background-color: #9e9a9a !important;
+    color: #FFFFFF !important;
 }
 
-.Neo4jDataButtonCss
-{
-   
-    
-/* float: right; */
-    background-color: #0033A0 !important;
-   /*  margin-bottom: 8px;
-    margin-left: -150px; 
-   /*  margin-top: 10px; */
-   /* margin-right: 10px;
-    border-radius: 0px !important;
-   
-    
-    padding-left: 10px;
-    padding-right: 10px;
-     border-top-left-radius: 0px !important;
-    border-top-right-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
-    border-bottom-left-radius: 0px !important; */
-   font-size: 11px; 
-   margin-left: 60px;
+.Neo4jDataButtonCss {
+      background-color: #0033A0 !important;
+    font-size: 11px;
+    margin-left: 60px;
+}
 
+.MainTable {
+    width: 47%;
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: top;
+}
 
+.DestLabelCsss {
+    color: #00B140;
+    padding-top: 10px;
+}
+
+.ToolDestCss {
+    color: #0033A0;
+    font-size: 18px;
+}
+
+.categoryLabelcss {
+    color: #00B140;
+    padding-top: 10px
+}
+
+.ToolHeadingCss {
+    color: #0033A0;
+    font-size: 18px;
+}
+
+.destCategory {
+    text-align: left;
+    color: #00B140;
+    padding-top: 10px;
+    font-size: 16px;
+}
+
+.categorycss {
+    text-align: left;
+    color: #00B140;
+    padding-top: 10px;
+    font-size: 16px;
+}
+
+.destToolCss {
+    color: #0033A0;
+    font-size: 18px;
+    text-align: left;
+    padding-top: 10px
+}
+
+.toollabel {
+    color: #0033A0;
+    font-size: 18px;
+    text-align: left;
+    padding-top: 10px
 }
 
 .showTable {
-    background-color: #00B140;   
+    background-color: #00B140;
     color: white;
-    border-radius: 10px 10px 0 0;   
+    border-radius: 10px 10px 0 0;
+    text-align: center;
 }
+
 .tableDiv {
-    overflow-X:hidden;
+    overflow-X: hidden;
     height: 100%;
 }
 
-.NoteCssFirst
-{
+.NoteCssFirst {
     color: #00B140;
     font-size: 15px;
     font-family: inherit;
     margin-left: 5px;
-  
-}
-.NoteCss
-{
-    font-family: inherit;
-font-size: 13.6px;
 }
 
-.column1{
-    float: left;
-    width:60%;
-    box-shadow: 0 2px 2px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-    -o-box-shadow: 2px  0 5px  rgba(0,0,0,.2);
+.NoteCss {
+    font-family: inherit;
+    font-size: 13.6px;
 }
-.divTablesHeading{
+
+.column1 {
+    float: left;
+    width: 60%;
+    box-shadow: 0 2px 2px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+    -o-box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
+    margin-bottom: 1%;
+    border: white;
+    border-radius: 10px;
+    background-color: white;
+    height: 69vh;
+}
+
+.divTablesHeading {
     font-size: 16px;
     margin-top: 10px;
     margin-bottom: 6px;
@@ -368,29 +402,28 @@ font-size: 13.6px;
     padding-left: 15px;
 }
 
-
-
-.divTablesHeadingLeft{
+.divTablesHeadingLeft {
     font-size: 16px;
     margin-top: 40px;
     margin-bottom: 6px;
     text-align: left;
     /* width: 100vh; */
 }
-.dat-row{
+
+.dat-row {
     height: 40px !important;
     text-align: left !important;
     vertical-align: middle;
+    margin-left: 5px;
 }
 
-.dat-row:nth-child(even){
-    background-color:#e1e3e7;
+.dat-row:nth-child(even) {
+    background-color: #e1e3e7;
 }
 
-.dat-row:nth-child(odd){
-    background-color:#FFFFFF;
+.dat-row:nth-child(odd) {
+    background-color: #FFFFFF;
 }
-
 
 table tr:last-child td:first-child {
     border-bottom-left-radius: 0px;
@@ -399,32 +432,28 @@ table tr:last-child td:first-child {
 table tr:last-child td:last-child {
     border-bottom-right-radius: 0px;
 }
-.mainText{
+
+.mainText {
     font-size: 16px;
-    color:  #0033A0;
-   /*  font-weight:bold; */
+    color: #0033A0;
+    /*  font-weight:bold; */
     vertical-align: sub;
     width: 10%;
-    overflow: auto; 
+    overflow: auto;
     font-family: inherit;
-        margin-left: 80px;
+    margin-left: 80px;
     /* margin-left: 500px; */
 }
 
-
-.button[disabled]
-{
-    border:0px !important;
-    background-color:white!important;
+.button[disabled] {
+    border: 0px !important;
+    background-color: white!important;
 }
 
-
-.button[disabled] .mat-raised-button
-{
+.button[disabled] .mat-raised-button {
     color: #FFFFFF;
     background-color: #676666;
 }
-
 
 .form-control {
     padding: 6px 12px;
@@ -433,16 +462,16 @@ table tr:last-child td:last-child {
     background-image: none;
     border: 1px solid #ccc;
     border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     margin-left: 5px;
     margin-bottom: 5px;
 }
 
-.searchBtnStyle { 
+.searchBtnStyle {
     vertical-align: center;
     background-color: #0033A0;
     color: white;
@@ -451,7 +480,6 @@ table tr:last-child td:last-child {
     padding: 5px;
     font-size: 13px;
 }
-
 
 tbody::-webkit-scrollbar {
     width: 6px;
@@ -471,25 +499,24 @@ tbody::-webkit-scrollbar-thumb {
 
 tbody::-webkit-scrollbar-track {
     border-radius: 10px;
-} 
+}
 
-button[disabled]{
+button[disabled] {
     border: 0px;
     background-color: transparent;
     color: black;
 }
 
-.dataDictionaryMessages{
+.dataDictionaryMessages {
     margin-top: 70px;
     text-align: center;
-    color:#0033A0;
+    color: #0033A0;
     font-size: 18px;
     padding-top: 10px
 }
 
-.dat-rowNew
-{
-background-color: white !important;
-color: #0033A0 !important;
-font-weight: bold !important;
+.dat-rowNew {
+    background-color: white !important;
+    color: #0033A0 !important;
+    font-weight: bold !important;
 }

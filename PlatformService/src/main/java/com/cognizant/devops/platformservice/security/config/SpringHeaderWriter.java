@@ -36,7 +36,7 @@ public class SpringHeaderWriter implements HeaderWriter {
 
 	@Override
 	public void writeHeaders(HttpServletRequest request, HttpServletResponse response) {
-		log.debug(" Write Header ============ ");
+		// log.debug(" Write Header ============ ");
 		response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, request.getHeader(HttpHeaders.ORIGIN));
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
@@ -49,7 +49,7 @@ public class SpringHeaderWriter implements HeaderWriter {
         if(attribute != null){
         	Map<String, String> grafanaHeaders = (Map<String, String>)attribute;
         	for(Map.Entry<String, String> entry : grafanaHeaders.entrySet()){
-				Cookie cookie = new Cookie(entry.getKey(), ValidationUtils.cleanXSS(entry.getValue()));
+				Cookie cookie = new Cookie(entry.getKey(), entry.getValue());
 				// cookie.setHttpOnly(true); //3
 				cookie.setMaxAge(60 * 30);
 				cookie.setPath("/");

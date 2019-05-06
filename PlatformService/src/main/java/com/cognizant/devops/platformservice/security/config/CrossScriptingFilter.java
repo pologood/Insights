@@ -16,6 +16,8 @@
 package com.cognizant.devops.platformservice.security.config;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.cognizant.devops.platformservice.customsettings.CustomAppSettings;
+import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 
 public class CrossScriptingFilter implements Filter {
 	private static Logger LOG = LogManager.getLogger(CustomAppSettings.class);
@@ -47,9 +50,25 @@ public class CrossScriptingFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		LOG.info("In doFilter CrossScriptingFilter  ...............");
-		chain.doFilter(new RequestWrapper((HttpServletRequest) request, (HttpServletResponse) response), (response));
-		LOG.info("Out doFilter CrossScriptingFilter ...............");
-	}
+		// LOG.info("In doFilter CrossScriptingFilter ...............");
 
+		HttpServletResponse httpResponce = (HttpServletResponse) response;
+		try {
+			RequestWrapper requestMapper = new RequestWrapper((HttpServletRequest) request,
+					httpResponce);
+			chain.doFilter(requestMapper, httpResponce);
+			// LOG.debug("Completed .. in CrossScriptingFilter");
+
+		} catch (Exception e) {
+			LOG.error("Invalid request in CrossScriptingFilter");
+			String msg = PlatformServiceUtil.buildFailureResponse("Invalid request").toString();
+			httpResponce.setContentType("application/json");
+			httpResponce.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			httpResponce.getWriter().write(msg);
+			httpResponce.getWriter().flush();
+			httpResponce.getWriter().close();
+			// e.printStackTrace();
+		}
+		// LOG.info("Out doFilter CrossScriptingFilter ...............");
+	}
 }

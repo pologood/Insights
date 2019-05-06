@@ -245,6 +245,8 @@ public class DataProcessorUtil {
 	}
 
 	private File convertToFile(MultipartFile multipartFile) throws IOException {
+		log.debug(" multipartFile.getOriginalFilename() " + multipartFile.getOriginalFilename() + "  multipartFile "
+				+ multipartFile.getName());
 		File file = new File(multipartFile.getOriginalFilename());
 
 		try (FileOutputStream fos = new FileOutputStream(file)) {

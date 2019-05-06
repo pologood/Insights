@@ -36,17 +36,11 @@ export class RestCallHandlerService {
     if (!isSessionExpired) {
       var dataresponse;
       var authToken = this.dataShare.getAuthorizationToken();
-      /* var headers;
-      var defaultHeader = {
-        'Authorization': authToken
-      }; */
-
       const headers = new HttpHeaders()
         .set("Authorization", authToken);
-      //console.log(headers);
       var restCallUrl = this.constructGetUrl(url, requestParams);
       this.asyncResult = await this.http.get(restCallUrl, { headers }).toPromise();
-      //console.log(this.asyncResult)//.toString
+      //console.log(this.asyncResult)
       return this.asyncResult;
     }
     else {
@@ -54,52 +48,49 @@ export class RestCallHandlerService {
     }
   }
 
-
   public post(url: string, requestParams?: Object, additionalheaders?: Object): Observable<any> {
-    var isSessionExpired = this.dataShare.validateSession();
-    if (url == "USER_AUTHNTICATE") {
-      isSessionExpired = false;
-      if (!isSessionExpired) {
-        var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
-        //console.log(restCallUrl);
-        var dataresponse;
-        var headers;
-        var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
-        var defaultHeader = {
-          'Authorization': authToken
-        };
-        if (this.checkValidObject(additionalheaders)) {
-          headers = this.extend(defaultHeader, additionalheaders);
-        } else {
-          headers = defaultHeader;
-        }
+    var isSessionExpired = false
+    if (url != "USER_AUTHNTICATE") {
+      isSessionExpired = this.dataShare.validateSession();
+    }
+    if (!isSessionExpired) {
+      var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
+      //console.log(restCallUrl);
+      var dataresponse;
+      var headers;
+      var authToken = this.dataShare.getAuthorizationToken();
+      var defaultHeader = {
+        'Authorization': authToken
+      };
+      if (this.checkValidObject(additionalheaders)) {
+        headers = this.extend(defaultHeader, additionalheaders);
+      } else {
         headers = defaultHeader;
-        var allData = {
-          method: 'POST',
-          headers: headers,
-          transformRequest: function (data) {
-            if (data && Object.keys(data).length !== 0 && data.constructor == Object) {
-              var postParameter = '';
-              for (var key in data) {
-                //console.log(key+""+ requestParams[key]);
-                if (data.hasOwnProperty(key)) {
-                  postParameter = postParameter.concat(key + '=' + requestParams[key] + '&');
-                }
+      }
+      headers = defaultHeader;
+      var allData = {
+        method: 'POST',
+        headers: headers,
+        transformRequest: function (data) {
+          if (data && Object.keys(data).length !== 0 && data.constructor == Object) {
+            var postParameter = '';
+            for (var key in data) {
+              //console.log(key+""+ requestParams[key]);
+              if (data.hasOwnProperty(key)) {
+                postParameter = postParameter.concat(key + '=' + requestParams[key] + '&');
               }
-              postParameter = postParameter.slice(0, -1);
-              return postParameter;
             }
-            return;
+            postParameter = postParameter.slice(0, -1);
+            return postParameter;
           }
+          return;
         }
-        //console.log(allData)
-        dataresponse = this.http.post(restCallUrl, {}, allData);
-        return dataresponse;
-
       }
-      else {
-        console.log("Session Expire")
-      }
+      //console.log(allData)
+      dataresponse = this.http.post(restCallUrl, {}, allData);
+      return dataresponse;
+    } else {
+      console.log("Session Expire")
     }
   }
 
@@ -110,24 +101,16 @@ export class RestCallHandlerService {
       //console.log(restCallUrl);
       var dataresponse;
       let headers;
-      var authToken = this.cookieService.get('Authorization');
-
-    var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
-    //console.log(restCallUrl);
-    var dataresponse;
-    let headers;
-    var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
-
+      var authToken = this.dataShare.getAuthorizationToken();
+      let params = new HttpParams();
       for (var key in requestParams) {
         // console.log(key + " " + requestParams[key]);
         if (requestParams.hasOwnProperty(key)) {
           params = params.set(key, requestParams[key]);
         }
       }
-
       headers = new HttpHeaders();
       headers = headers.set('Authorization', authToken);
-
       for (var key in additionalheaders) {
         //console.log(key + " " + additionalheaders[key]);
         if (headers.hasOwnProperty(key)) {
@@ -153,7 +136,7 @@ export class RestCallHandlerService {
       var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
       var fd = new FormData();
       fd.append("file", imageFile);
-      var authToken = this.cookieService.get('Authorization');
+      var authToken = this.dataShare.getAuthorizationToken();
       var dataresponse = this.http.post(restCallUrl, fd, {
         headers: {
           'Authorization': authToken
@@ -166,32 +149,22 @@ export class RestCallHandlerService {
     }
   }
 
-    var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
-    var fd = new FormData();
-    fd.append("file", imageFile);
-    var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
-
-    var dataresponse = this.http.post(restCallUrl, fd, {
-      headers: {
-        'Authorization': authToken
-      },
-    })
-    return dataresponse;
-
-  }
-
 
   public postFormData(url: string, fd: any): Observable<any> {
-
-    var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
-    var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
-    var dataresponse = this.http.post(restCallUrl, fd, {
-      headers: {
-        'Authorization': authToken
-      },
-    })
-    return dataresponse;
-
+    var isSessionExpired = this.dataShare.validateSession();
+    if (!isSessionExpired) {
+      var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
+      var authToken = this.dataShare.getAuthorizationToken();
+      var dataresponse = this.http.post(restCallUrl, fd, {
+        headers: {
+          'Authorization': authToken
+        },
+      })
+      return dataresponse;
+    }
+    else {
+      console.log("postFormData")
+    }
   }
 
   public postWithData(url: string, data: String, requestParams?: Object, additionalheaders?: Object): Observable<any> {
@@ -201,13 +174,9 @@ export class RestCallHandlerService {
       //console.log(restCallUrl);
       var dataresponse;
       let headers;
-      var authToken = this.cookieService.get('Authorization');
+      var authToken = this.dataShare.getAuthorizationToken();
 
-    var restCallUrl = this.restAPIUrlService.getRestCallUrl(url);
-    //console.log(restCallUrl);
-    var dataresponse;
-    let headers;
-    var authToken = this.dataShare.getAuthorizationToken();//cookieService.get('Authorization')
+      let params = new HttpParams();
 
       for (var key in requestParams) {
         // console.log(key + " " + requestParams[key]);

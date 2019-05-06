@@ -330,7 +330,7 @@ public class HealthStatus {
 					successResponse="Response not received from Neo4j";
 					status=PlatformServiceConstants.FAILURE;
 				}
-				log.error("message "+successResponse);
+				log.debug("message " + successResponse);
 				returnObject=buildAgentResponse(status,successResponse, graphResponse);
 			}
 		} catch (Exception e) {
@@ -365,7 +365,8 @@ public class HealthStatus {
 	}
 
 	private JsonObject buildAgentResponse(String status ,String message, GraphResponse graphResponse) {
-		log.error(" message in buildAgentResponse debug "+graphResponse.getNodes().size());
+		// log.debug(" message in buildAgentResponse debug
+		// "+graphResponse.getNodes().size());
 		String toolcategory=""; 
 		String toolName="";
 		String insightTimeX="";

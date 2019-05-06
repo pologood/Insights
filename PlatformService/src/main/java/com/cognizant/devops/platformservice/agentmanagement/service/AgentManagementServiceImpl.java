@@ -308,7 +308,6 @@ public class AgentManagementServiceImpl implements AgentManagementService {
 	}
 
 	private ArrayList<String> getAgents(String version) {
-
 		Document doc;
 		String url = ApplicationConfigProvider.getInstance().getAgentDetails().getDocrootUrl() + "/" + version
 				+ "/agents/";
@@ -319,9 +318,7 @@ public class AgentManagementServiceImpl implements AgentManagementService {
 			for (Element element : rows) {
 				if (null != element.text() && element.text().endsWith("/")) {
 					tools.add(StringUtils.stripEnd(element.text(), "/"));
-
 				}
-
 			}
 		} catch (IOException e) {
 			log.debug(e);

@@ -94,12 +94,6 @@ export class DataSharedService {
     return this.storage.get(key);
   }
 
-
-  public getTimeZone() {
-    return this.storage.get("timeZone");
-  }
-
-
   public storeTimeZone() {
     var date = new Date();
     //const timeZoneOffset = date.getTimezoneOffset(); " ==== " + timeZoneOffset +

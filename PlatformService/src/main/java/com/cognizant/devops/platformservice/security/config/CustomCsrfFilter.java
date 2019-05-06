@@ -41,20 +41,21 @@ public class CustomCsrfFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-		LOG.debug("  arg0  CsrfToken  " + CsrfToken.class.getName() + "   " + csrf);
+		// LOG.debug(" arg0 CsrfToken " + CsrfToken.class.getName() + " " + csrf);
 		if (csrf != null) {
 			Cookie cookie = WebUtils.getCookie(request, CSRF_COOKIE_NAME);
 			String token = csrf.getToken();
 
-			LOG.debug("  arg0  CsrfToken  value " + token);
+			// LOG.debug(" arg0 CsrfToken value " + token);
 			if (cookie == null || token != null && !token.equals(cookie.getValue())) {
 				cookie = new Cookie(CSRF_COOKIE_NAME, token);
 				cookie.setPath("/");
 				response.addCookie(cookie);
 			}
 		} else {
-			LOG.debug(" csrf token is empty  ");
+			LOG.debug(" csrf token is empty ");
 		}
 		filterChain.doFilter(request, response);
 	}
+
 }

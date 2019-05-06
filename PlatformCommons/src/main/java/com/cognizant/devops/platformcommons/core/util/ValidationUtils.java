@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.cognizant.devops.platformcommons.constants.PlatformServiceConstants;
+import com.cognizant.devops.platformcommons.exception.InsightsCustomException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -74,52 +76,113 @@ public class ValidationUtils {
 		return returnBoolean;
 	}
 
+	/**
+	 * Validate response data which doesnot contain any HTML String
+	 * 
+	 * @param JsonObject
+	 *            data
+	 * @return JsonObject
+	 */
 	public static JsonObject validateStringForHTMLContent(JsonObject data) {
 		String strRegEx = "<[^>]*>";
 		String jsonString = "";
 		JsonObject json = null;
 
-		log.debug(" validateStringForHTMLContent  before  " + data);
-		// String jsonString = new Gson().toJson(data);
-		log.debug(" validateStringForHTMLContent  before data   " + data.getClass());
+		// log.debug(" validateStringForHTMLContent string before " + data);
 
 		if (data instanceof JsonObject) {
 			jsonString = data.toString();
-			log.debug(" validateStringForHTMLContent  after  assigment  " + jsonString);
+			// log.debug(" validateStringForHTMLContent after assigment " + jsonString);
 			if (jsonString != null) {
 				jsonString = jsonString.replaceAll(strRegEx, "");
 				// replace &nbsp; with space
 				jsonString = jsonString.replace("&nbsp;", " ");
 				// replace &amp; with &
 				jsonString = jsonString.replace("&amp;", "&");
-				// OR remove all HTML entities
-				// jsonString = jsonString.replaceAll("&.*?;", "");
 			}
-			log.debug(" validateStringForHTMLContent  after  " + jsonString);
-			json = new Gson().fromJson(jsonString, JsonObject.class);
+			if (!jsonString.equalsIgnoreCase(data.toString())) {
+				log.debug(" Invilid response data ");
+				json = null;
+			}else {
+				json = new Gson().fromJson(jsonString, JsonObject.class);
+			}
+			// log.debug(" validateStringForHTMLContent after " + jsonString);
 		}
 		return json;
 	}
 
-	public static String cleanXSS(String value) {
-		if (value != null || !("").equals(value)) {
-			// You'll need to remove the spaces from the html entities below
-			log.debug("In cleanXSS RequestWrapper ..............." + value);
-			// value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-			// value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-			// value = value.replaceAll("'", "& #39;");
-			value = value.replaceAll("eval\\((.*)\\)", "");
-			value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+	/**
+	 * Pattern Array defination for XSS
+	 */
+	private static Pattern[] patterns = new Pattern[] {
+			// Script fragments
+			Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE),
+			// src='...'
+			Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'",
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+			Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"",
+					Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+			// lonely script tags
+			Pattern.compile("</script>", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+			// eval(...)
+			Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+			// expression(...)
+			Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+			// javascript:...
+			Pattern.compile("javascript:", Pattern.CASE_INSENSITIVE),
+			// vbscript:...
+			Pattern.compile("vbscript:", Pattern.CASE_INSENSITIVE),
+			// onload(...)=...
+			Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+			// check new line
+			Pattern.compile("(\r\n|\r|\n|\n\r)") };
 
-			value = value.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
-			value = value.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
-			value = value.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>", "");
-			value = value.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
-			value = value.replace("\\n", "").replace("\\r", "");
-			// value = value.replaceAll("<script>", "");
-			// value = value.replaceAll("</script>", "");
+	/**
+	 * Strips any potential XSS threats out of the value
+	 * 
+	 * @param value
+	 * @return
+	 * @throws InsightsCustomException
+	 */
+	public static String cleanXSS(String value) {
+		Boolean isXSSPattern = Boolean.FALSE;
+		// log.debug("In cleanXSS RequestWrapper ..............." + value);
+		if (value != null || !("").equals(value)) {
+			/*
+			 * String updatedValue = value;
+			 * // You'll need to remove the spaces from the html entities below
+			 * updatedValue = updatedValue.replaceAll("eval\\((.*)\\)", "");
+			 * updatedValue =
+			 * updatedValue.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+			 * updatedValue = updatedValue.replaceAll("(?i)<script.*?>.*?<script.*?>", "");
+			 * updatedValue = updatedValue.replaceAll("(?i)<script.*?>.*?</script.*?>", "");
+			 * updatedValue = updatedValue.replaceAll("(?i)<.*?javascript:.*?>.*?</.*?>",
+			 * "");
+			 * updatedValue = updatedValue.replaceAll("(?i)<.*?\\s+on.*?>.*?</.*?>", "");
+			 * updatedValue = updatedValue.replace("\\n", "").replace("\\r", "");
+			 */
+
+			try {
+				// match sections that match a pattern
+				for (Pattern scriptPattern : patterns) {
+					Matcher m = scriptPattern.matcher(value);
+					if (m.find()) {
+						isXSSPattern = true;
+						break;
+					}
+				}
+				// log.debug("Out cleanXSS RequestWrapper ........ value ......." + value + "
+				// isXSSPattern " + isXSSPattern);
+				if (isXSSPattern) {
+					throw new RuntimeException(PlatformServiceConstants.INVALID_REQUEST);
+				}
+			} catch (RuntimeException e) {
+				log.error("Invalid pattern found in data value ==== " + value);
+				throw new RuntimeException(PlatformServiceConstants.INVALID_REQUEST);
+			}
 		}
-		log.debug("Out cleanXSS RequestWrapper ........ value ......." + value);
 		return value;
 	}
+
 }

@@ -38,14 +38,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.FileCopyUtils;
 
-import com.cognizant.devops.platformservice.rest.AccessGroupManagement.AccessGroupManagement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -66,7 +63,6 @@ public class AgentManagementUtil {
 			targetDir.mkdirs();
 		}
 		File zip = File.createTempFile("agent_", ".zip", targetDir);
-		log.debug(" input file getAgentConfigfileMain  ==== " + filePath + " output file" + zip.getAbsolutePath());
 		try(InputStream in = new BufferedInputStream(filePath.openStream(), 1024);
 				OutputStream out = new BufferedOutputStream(new FileOutputStream(zip))){
 			copyInputStream(in, out);
@@ -101,13 +97,11 @@ public class AgentManagementUtil {
 			for (Enumeration entries = zipFile.entries(); entries.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
 				String extentation = FilenameUtils.getExtension(entry.getName());
-				log.debug("extentation   " + extentation);
 				if (validFileExtention.contains(extentation)) {
 					File file = new File(targetDir, File.separator + entry.getName());
 					if (!buildDirectory(file.getParentFile())) {
 						throw new IOException("Could not create directory: " + file.getParentFile());
 					}
-					log.debug(" input file ==== " + entry.getName() + " output file" + file.getAbsolutePath());
 					if (!entry.isDirectory()) {
 						copyInputStream(zipFile.getInputStream(entry),
 								new BufferedOutputStream(new FileOutputStream(file)));
@@ -137,14 +131,6 @@ public class AgentManagementUtil {
 	}
 
 	private  void copyInputStream(InputStream in, OutputStream out) throws IOException {
-		log.debug("  copyInputStream  in AgentManagementUtil ============================== ");
-		/*byte[] buffer = new byte[1024];
-		int len = in.read(buffer);
-		while (len >= 0) {
-			out.write(buffer, 0, len);
-			len = in.read(buffer);
-		}*/
-		// IOUtils.copy(in,out);
 		FileCopyUtils.copy(in, out);
 		in.close();
 		out.close();

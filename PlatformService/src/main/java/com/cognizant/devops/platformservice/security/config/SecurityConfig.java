@@ -115,21 +115,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.cors().and()
 			.authorizeRequests()
 			.antMatchers("/datasources/**").permitAll()
-				// .antMatchers("/user/authenticate").permitAll()
 			.antMatchers("/admin/**").access("hasAuthority('Admin')")
 			.antMatchers("/configure/loadConfigFromResources").permitAll()
 			.antMatchers("/**").authenticated()
 			.and().exceptionHandling().accessDeniedHandler(springAccessDeniedHandler)
 			.and().httpBasic().authenticationEntryPoint(springAuthenticationEntryPoint)
-			//.and().sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 			.and().sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 				.and().headers().addHeaderWriter(springHeaderWriter)
-				.and().csrf().ignoringAntMatchers(CSRF_IGNORE) // URI where CSRF check will not be applied
-					.csrfTokenRepository(csrfTokenRepository()) // defines a repository where tokens are stored
+				.and().csrf().ignoringAntMatchers(CSRF_IGNORE).csrfTokenRepository(csrfTokenRepository())
 				.and().addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
-		; // Csrf filter in which we will add
-				//.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // disable()
-		//
+		// .addFilterAfter(new CrossScriptingFilter(), CrossScriptingFilter.class)
+		;
 	}
 	
 	 @Bean

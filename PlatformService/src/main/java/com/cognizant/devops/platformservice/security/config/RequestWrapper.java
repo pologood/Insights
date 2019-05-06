@@ -34,16 +34,22 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 	private static Logger log = LogManager.getLogger(CustomAppSettings.class);
 	HttpServletRequest request;
 	HttpServletResponse response;
+	Boolean validationStatus = false;
 
 	public RequestWrapper(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 		super(servletRequest);
 		this.request = servletRequest;
 		this.response = servletResponse;
+		getValidateCookies();
+		validatAllHeaders();
 	}
 
+	/**
+	 * Apply the XSS filter to the parameters
+	 * @param parameters
+	 */
 	@Override
 	public String[] getParameterValues(String parameter) {
-		log.debug("In getParameterValues .. parameter .......");
 		String[] values = super.getParameterValues(parameter);
 		if (values == null) {
 			return null;
@@ -54,60 +60,77 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
 			encodedValues[i] = ValidationUtils.cleanXSS(values[i]);
 		}
 
-		log.debug("arg0 message " + request.getRequestURI() + "    " + request.toString());
+		// log.debug("arg0 message " + request.getRequestURI() + " " +
+		// request.toString());
 		Enumeration<String> parameterNames = request.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
 			String paramName = parameterNames.nextElement();
 			String paramValues = ValidationUtils.cleanXSS(request.getParameter(paramName));
-			log.debug("arg0 ==== paramValues " + paramValues + " " + paramName);
+			// log.debug("arg0 ==== paramValues " + paramValues + " " + paramName);
 		}
 
 		return encodedValues;
 	}
 
+	/**
+	 * Apply the XSS filter to the parameter
+	 * @param parameters
+	 */
 	@Override
 	public String getParameter(String parameter) {
-		log.debug("In getParameter .. parameter .......");
+		// log.debug("In getParameter .. parameter .......");
 		String value = super.getParameter(parameter);
 		if (value == null) {
 			return null;
 		}
-		log.info("In getParameter RequestWrapper ........ value .......");
+		// log.info("In getParameter RequestWrapper ........ value .......");
 		return ValidationUtils.cleanXSS(value);
 	}
 
+	/**
+	 * Apply the XSS filter to the super Header
+	 * 
+	 * @param parameters
+	 */
 	@Override
 	public String getHeader(String name) {
-		log.debug("In getHeader .. parameter .......");
+		// log.debug("In getHeader .. parameter .......");
 		String value = super.getHeader(name);
 		if (value == null)
 			return null;
-		log.info("In getHeader RequestWrapper ........... value ....");
+		// log.info("In getHeader RequestWrapper ........... value ....");
 		return ValidationUtils.cleanXSS(value);
 	}
 
+	/**
+	 * Apply the XSS filter to the all Headers
+	 * 
+	 * @param parameters
+	 */
 
+	public void validatAllHeaders() {
+		// log.debug("In All validatAllHeaders .. parameter .......");
+		Enumeration<String> headerNames = request.getHeaderNames();
 
-	@Override
-	public Cookie[] getCookies() {
-		log.debug(" in RequestWrapper cookies =============== ");
-		Cookie[] cookies = null;
-		Cookie cookie = null;
-		/*
-		 * Cookie[] request_cookie = request.getCookies(); for (int i = 0; i <
-		 * request_cookie.length; i++) { cookie = request_cookie[i];
-		 * log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue()); }
-		 */
-
-		cookies = PlatformServiceUtil.validateCookies(request.getCookies());
-
-		/*
-		 * for (int i = 0; i < cookies.length; i++) { cookie = cookies[i];
-		 * log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue()); }
-		 */
-
-		return cookies;
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			String headersValue = request.getHeader(headerName);
+			// log.info("In validatAllHeaders RequestWrapper headersValue " + headersValue +
+			// " headerName " + headerName);
+			String headerValue = ValidationUtils.cleanXSS(headersValue);
+		}
 	}
 
-
+	/**
+	 * Validate request cookies from XSS and HTTP_Response_Splitting
+	 * @param parameters
+	 */
+	//@Override
+	public Cookie[] getValidateCookies() {
+		// log.debug(" in RequestWrapper cookies =============== ");
+		Cookie[] cookies = null;
+		cookies = PlatformServiceUtil.validateCookies(request.getCookies());
+		return cookies;
+	}
+	
 }

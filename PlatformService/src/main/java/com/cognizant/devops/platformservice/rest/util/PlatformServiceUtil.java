@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.cognizant.devops.platformcommons.constants.PlatformServiceConstants;
 import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
+import com.cognizant.devops.platformcommons.exception.InsightsCustomException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sun.jersey.api.client.Client;
@@ -57,6 +58,9 @@ public class PlatformServiceUtil {
 		jsonResponse.addProperty(PlatformServiceConstants.STATUS, PlatformServiceConstants.SUCCESS);
 		jsonResponse.add(PlatformServiceConstants.DATA, new Gson().toJsonTree(data));
 		JsonObject validatedData = ValidationUtils.validateStringForHTMLContent(jsonResponse);
+		if (validatedData == null) {
+			validatedData = buildFailureResponse(PlatformServiceConstants.INVALID_RESPONSE_DATA);
+		}
 		return validatedData;
 	}
 	
@@ -81,11 +85,11 @@ public class PlatformServiceUtil {
 		Cookie cookie = null;
 		List<Cookie> cookiesList = new ArrayList<Cookie>();
 		if (request_cookies != null) {
-			log.debug("Request Cookies length " + request_cookies.length);
+			// log.debug("Request Cookies length " + request_cookies.length);
 			cookies = new Cookie[request_cookies.length];
 			for (int i = 0; i < request_cookies.length; i++) {
 				cookie = request_cookies[i];
-				log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue());
+				// log.debug(" cookie " + cookie.getName() + " " + cookie.getValue());
 				if (masterCookiesList.contains(cookie.getName())) {
 					cookie.setMaxAge(30 * 60);
 					cookie.setHttpOnly(true);
@@ -98,10 +102,10 @@ public class PlatformServiceUtil {
 				}
 			}
 			cookies = cookiesList.toArray(cookies);
-			log.debug("Request return Cookies length " + cookies.length);
+			// log.debug("Request return Cookies length " + cookies.length);
 		} else {
 			cookies = request_cookies;
-			log.debug("No cookies founds");
+			log.warn("No cookies founds");
 		}
 		return cookies;
 	}

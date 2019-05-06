@@ -55,7 +55,7 @@ export class RestCallHandlerService {
       //console.log(headers);
       var restCallUrl = this.constructGetUrl(url, requestParams);
       this.asyncResult = await this.http.get(restCallUrl, { headers }).toPromise();
-      //console.log(this.asyncResult)//.toString
+      console.log(this.asyncResult)//.toString
       return this.asyncResult;
     }
     else {

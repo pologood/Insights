@@ -32,7 +32,7 @@ import { count } from 'rxjs/operators';
   styleUrls: ['./relationship-builder.component.css', './../home.module.css']
 })
 export class RelationshipBuilderComponent implements OnInit {
-  selectedDummyAgent: any = undefined;
+  deleteRelation: any = undefined;
   element: any = undefined;
   deleteRelationArray = [];
   relationmappingLabels: RelationLabel[] = [];
@@ -42,7 +42,6 @@ export class RelationshipBuilderComponent implements OnInit {
   property2selected: boolean = false;
   isbuttonenabled: boolean = false;
   dictResponse: any;
-  corelationResponse: any;
   corelationResponseMaster: any;
   dataComponentColumns = [];
   agentDataSource = [];
@@ -57,6 +56,7 @@ export class RelationshipBuilderComponent implements OnInit {
   selectedProperty1: any;
   selectedAgent1: any;
   isListView = false;
+  corelationResponseMaster2: any;
   isEditData = false;
   isrefresh: boolean = false;
   isSaveEnabled: boolean = false;
@@ -175,28 +175,36 @@ export class RelationshipBuilderComponent implements OnInit {
       this.toolsDatasource = [];
       this.saveRelationArray = [];
       this.toolSourceDataSource = [];
+      this.corelationResponseMaster = undefined;
       var self = this;
+
       this.relationshipBuilderService.loadUiServiceLocation().then(
-        (corelationResponse) => {
-          self.corelationResponseMaster = corelationResponse.data;
-          self.corrprop = corelationResponse.data
+        (correlationresposne) => {
+          console.log(correlationresposne);
+          self.corelationResponseMaster2 = correlationresposne
+        });
+
+
+      this.relationshipBuilderService.loadUiServiceLocation().then(
+        (responsedata) => {
+          console.log(responsedata);
+          self.corelationResponseMaster = responsedata.data;
+          console.log(self.corelationResponseMaster);
+          self.corrprop = responsedata.data
           if (self.corrprop != null) {
             for (var key in this.corrprop) {
-              // console.log(key);
+              console.log(key);
               var element = self.corrprop[key];
-              var a = (element.relationName);
-              var t = (element.destination);
-              var s = element.source;
-              var b = (element.destination.toolName);
-              var c = (element.source.toolName);
-              var d = '<b>' + element.source.toolName + '</b>: ' + element.source.fields[0] + '   ' + element.destination.toolName + ' : ' + element.destination.fields[0];
-              element['prop'] = d;
+              var destinationToolName = (element.destination.toolName);
+              var sourceToolName = (element.source.toolName);
+              var detailProp = '<b>' + element.source.toolName + '</b>: ' + element.source.fields[0] + '   ' + element.destination.toolName + ' : ' + element.destination.fields[0];
+              element['prop'] = detailProp;
               console.log(element)
               self.displayDataSource.push(element)
               console.log(this.displayDataSource);
 
-              self.destinationcheck.push(b);
-              self.sourcecheck.push(c);
+              self.destinationcheck.push(destinationToolName);
+              self.sourcecheck.push(sourceToolName);
             }
           }
 
@@ -278,7 +286,7 @@ export class RelationshipBuilderComponent implements OnInit {
         disableClose: true,
         data:
         {
-          message: this.corelationResponseMaster,
+          message: this.corelationResponseMaster2,
           title: "Correlation.json"
         }
 
@@ -311,14 +319,14 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isListView = true;
     this.isEditData = true;
     var title = "Delete Correlation";
-    console.log(this.selectedDummyAgent);
-    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.selectedDummyAgent + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.selectedDummyAgent + "</b> ?";
-    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
+    console.log(this.deleteRelation);
+    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation + "</b> ?";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {
         for (var key in this.corelationResponseMaster) {
-          if (this.corelationResponseMaster[key].relationName != this.selectedDummyAgent) {
+          if (this.corelationResponseMaster[key].relationName != this.deleteRelation) {
             this.deleteRelationArray.push(this.corrprop[key])
           }
         }
@@ -331,7 +339,7 @@ export class RelationshipBuilderComponent implements OnInit {
               this.deleteRelationArray = [];
               this.displayDataSource = [];
               this.getCorrelation();
-              var dialogmessage = "<b>" + this.selectedDummyAgent + "</b> deleted successfully from Correlation.json."
+              var dialogmessage = "<b>" + this.deleteRelation + "</b> deleted successfully from Correlation.json."
               this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
             }
           });
@@ -397,7 +405,7 @@ export class RelationshipBuilderComponent implements OnInit {
       if (this.count == 0) {
         var title = "Save Co-Relation";
         var dialogmessage = "You are creating a new Co-Relation " + "<b>" + this.finalRelationName + "</b>" + " between <b>" + this.selectedAgent1.toolName + "</b> and  <b> " + this.selectedAgent2.toolName + "</b> . Are you sure do you want to build the Co-Relation <b>" + this.finalRelationName + "</b> ?";
-        const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.selectedDummyAgent, "ALERT", "40%");
+        const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation, "ALERT", "40%");
 
         dialogRef.afterClosed().subscribe(result => {
           if (result == 'yes') {

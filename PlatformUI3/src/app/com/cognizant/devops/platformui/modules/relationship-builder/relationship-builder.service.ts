@@ -25,89 +25,39 @@ export interface IRelationshipBuilderService {
     loadToolsRelationshipAndProperties(startToolName: string, startToolCategory: string, endToolName: string, endToolCatergory: string): Promise<any>;
 }
 
-
-
-
 @Injectable()
 export class RelationshipBuilderService implements IRelationshipBuilderService {
 
     constructor(private restCallHandlerService: RestCallHandlerService, private http: HttpClient) {
     }
-    public async initMethods() {
-        const result1 = await this.loadUiServiceLocation();
+    loadUiServiceLocation(): Promise<any> {
 
-
+        return this.restCallHandlerService.get("CO_RELATIONSHIP_JSON");
     }
 
+    loadUiServiceLocationNeo4j(): Promise<any> {
 
-    async loadUiServiceLocation(): Promise<any> {
-        var restHandler = this.restCallHandlerService;
-        return restHandler.get("CO_RELATIONSHIP_JSON");
-
-        /*var self = this;
-        var uiConfigJsonUrl = "config/correlation.json"
-        let UIConfigResponse = await this.getJSONUsingObservable(uiConfigJsonUrl).toPromise();
-        console.log(UIConfigResponse);
-        return UIConfigResponse;*/
+        return this.restCallHandlerService.get("CO_RELATIONSHIP_JSON_NEO4J");
     }
-
-
-
-    async loadUiServiceLocationNeo4j(): Promise<any> {
-        /* var restHandler = this.restCallHandlerService;
-        return restHandler.get("CO_RELATIONSHIP_JSON"); */
-
-        /*  var self = this;
-         var uiConfigJsonUrl = "config/neo4jdata.json"
-         let UIConfigResponse = await this.getJSONUsingObservable(uiConfigJsonUrl).toPromise();
-         //console.log(UIConfigResponse);
-         return UIConfigResponse; */
-        var restHandler = this.restCallHandlerService;
-        return restHandler.get("CO_RELATIONSHIP_JSON_NEO4J");
-    }
-
-
 
     loadToolsAndCategories(): Promise<any> {
-        var restHandler = this.restCallHandlerService;
-        return restHandler.get("DATA_DICTIONARY_TOOLS_AND_CATEGORY");
+
+        return this.restCallHandlerService.get("DATA_DICTIONARY_TOOLS_AND_CATEGORY");
     }
 
-    /*  saveCorrelationConfig(config: String): Promise<any> {
-         var restHandler = this.restCallHandlerService;
-         //console.log(restHandler.postWithParameter("SAVE_RELATIONSHIP_JSON",{'configDetails':config}).toPromise());
-         return restHandler.postWithParameter("SAVE_RELATIONSHIP_JSON", { 'configDetails': config }).toPromise();
- 
-     } */
-
-
-
-
     saveCorrelationConfig(config: String): Promise<any> {
-        var restHandler = this.restCallHandlerService;
-        return restHandler.postWithData("SAVE_RELATIONSHIP_JSON", config, "", { 'Content-Type': 'application/json' }).toPromise();
+
+        return this.restCallHandlerService.postWithData("SAVE_RELATIONSHIP_JSON", config, "", { 'Content-Type': 'application/json' }).toPromise();
     }
 
     loadToolProperties(toolName: string, categoryName: string): Promise<any> {
-        var restHandler = this.restCallHandlerService;
-        return restHandler.get("DATA_DICTIONARY_TOOL_PROPERTIES", { 'toolName': toolName, 'categoryName': categoryName });
+
+        return this.restCallHandlerService.get("DATA_DICTIONARY_TOOL_PROPERTIES", { 'toolName': toolName, 'categoryName': categoryName });
     }
-
-    public getJSONUsingObservable(url): Observable<any> {
-        return this.http.get(url)
-    }
-
-
-
-
-
-
-
-
 
     loadToolsRelationshipAndProperties(startToolName: string, startToolCategory: string, endToolName: string, endToolCatergory: string): Promise<any> {
-        var restHandler = this.restCallHandlerService;
-        return restHandler.get("DATA_DICTIONARY_TOOLS_RELATIONSHIPS", { 'startToolName': startToolName, 'startToolCategory': startToolCategory, 'endToolName': endToolName, 'endToolCatergory': endToolCatergory });
+
+        return this.restCallHandlerService.get("DATA_DICTIONARY_TOOLS_RELATIONSHIPS", { 'startToolName': startToolName, 'startToolCategory': startToolCategory, 'endToolName': endToolName, 'endToolCatergory': endToolCatergory });
     }
 
 

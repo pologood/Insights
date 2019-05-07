@@ -111,17 +111,13 @@ export class LoginComponent implements OnInit, ILoginComponent {
           if (data.status === 'SUCCESS') {
             self.showThrobber = false;
             var date = new Date();
-            //var timeZoneOffset = this.dataShare.convertDateToZone(date.toString());
-            //console.log(timeZoneOffset);
-            /*const timeZoneOffset = date.getTimezoneOffset();
-            var zone = this.datePipe.transform(date, 'ZZZZ')
-            var z = zone.slice(3, zone.length);
-            var utcDate = this.datePipe.transform(date, 'yyyy-MM-ddTHH:mm:ssZ', '+0000');//getUTCDate() new Date(date.getUTCMilliseconds()) Y-m-dTH:M:SZ
-            var dateWithTimeZone = this.datePipe.transform(utcDate, 'yyyy-MM-ddTHH:mm:ssZ', z);//  '+0530'
-            console.log(date + " ==== " + timeZoneOffset + " ==== " + zone + " ==== " + z + " ==== " + dateWithTimeZone + " ====  " + utcDate + " ====  " + dateWithTimeZone.toString());*/
-            this.dataShare.setSession();
-           //this.cookieService.set('DashboardSessionExpiration', dateDashboardSessionExpiration.toString());
-            this.cookies = "";
+
+            var dateDashboardSessionExpiration = new Date(new Date().getTime() + 86400 * 1000);
+            var minutes = 30;
+            date.setTime(date.getTime() + (minutes * 60 * 1000));
+
+            this.dataShare.setAuthorizationToken(token);
+            this.dataShare.setSession();this.cookies = "";
             for (var key in grafcookies) {
               console.log(key + "    " + grafcookies[key])
               this.cookieService.set(key, grafcookies[key], date);

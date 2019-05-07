@@ -57,7 +57,7 @@ export class HealthCheckComponent implements OnInit {
   reportLogsColumns: string[];
   reportLogsDataSource = new MatTableDataSource<any>();
   constructor(private healthCheckService: HealthCheckService, private dialog: MatDialog,
-    private dataShare: DataSharedService, private queryBuilderService: QueryBuilderService,
+    public dataShare: DataSharedService, private queryBuilderService: QueryBuilderService,
     private messageDialog: MessageDialogService) {
     this.loadAgentCheckInfo();
     this.loadOtherHealthCheckInfo();
@@ -65,7 +65,7 @@ export class HealthCheckComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.timeZone = this.dataShare.getStoragedProperty("timeZone");
+    this.timeZone = this.dataShare.getTimeZone();
     console.log(this.timeZone);
   }
 

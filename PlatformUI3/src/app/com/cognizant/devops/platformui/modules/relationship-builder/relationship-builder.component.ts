@@ -90,7 +90,7 @@ export class RelationshipBuilderComponent implements OnInit {
   agent2Category: any;
   public data: any;
   selectedRadio: any;
-  regex = new RegExp("^[a-zA-Z0-9_]*$", 'gi');
+  regex = new RegExp("^[a-zA-Z0-9_]*$");
   relData: any;
   displayDataSource = [];
   toolsDatasource = [];
@@ -310,7 +310,7 @@ export class RelationshipBuilderComponent implements OnInit {
         disableClose: true,
         data:
         {
-          message: this.corelationResponseMaster2,
+          message: this.corelationResponseMaster,
           title: "Correlation.json"
         }
 
@@ -337,6 +337,14 @@ export class RelationshipBuilderComponent implements OnInit {
     this.selectedAgent1 = "";
     this.dataDictionaryInfo();
 
+    //window.location. = window.location.href;
+    /* console.log(window.location.href)
+    console.log()
+    window.location.reload() */
+    /* console.log(this.router.url)
+    this.router.navigateByUrl('/InSights/Home/relationship-builder', { skipLocationChange: false }).then(() =>
+      this.router.navigate(["/InSights/Home/relationship-builder"])); */
+
   }
 
   relationDelete() {
@@ -349,6 +357,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {
+        this.deleteRelationArray = [];
         for (var element of this.corelationResponseMaster) {
           if (element.relationName != this.deleteRelation.relationName) {
             this.deleteRelationArray.push(element);
@@ -472,9 +481,10 @@ export class RelationshipBuilderComponent implements OnInit {
       }
       else if (this.count == 1) {
         this.showApplicationMessage = "Failed to save settings"
-        var dialogmessage = "<b>" + this.finalRelationName + "</b> exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
+        var dialogmessage = "Co-Relation between <b>" + this.destinationcheck + "</b> and <b>" + this.sourcecheck + "</b> alreday exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
         this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
         this.count = 0;
+        newName = undefined;
       }
       else {
         var dialogmessage = "Failed to create the Co-Relation <b>" + this.finalRelationName + "</b>. Please try again."

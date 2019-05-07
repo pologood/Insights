@@ -202,39 +202,6 @@ export class RelationshipBuilderComponent implements OnInit {
       }
       // console.log("Line 198" + this.displayDataSource);
       this.dataComponentColumns = ['radio', 'relationName'];
-      /* .then(
-      (correlationresponse) => {
-        console.log(correlationresponse);
-        self.corelationResponseMaster2 = correlationresponse
-      }); */
-
-
-      /* this.relationshipBuilderService.loadUiServiceLocation().then(
-        (responsedata) => {
-          console.log(responsedata);
-          self.corelationResponseMaster = responsedata.data;
-          console.log(self.corelationResponseMaster);
-          self.corrprop = responsedata.data
-          if (self.corrprop != null) {
-            for (var key in this.corrprop) {
-              console.log(key);
-              var element = self.corrprop[key];
-              var destinationToolName = (element.destination.toolName);
-              var sourceToolName = (element.source.toolName);
-              var detailProp = '<b>' + element.source.toolName + '</b>: ' + element.source.fields[0] + '   ' + element.destination.toolName + ' : ' + element.destination.fields[0];
-              element['prop'] = detailProp;
-              console.log(element)
-              self.displayDataSource.push(element)
-              console.log(this.displayDataSource);
-
-              self.destinationcheck.push(destinationToolName);
-              self.sourcecheck.push(sourceToolName);
-            }
-          }
-
-          this.relData = this.displayDataSource;
-          this.dataComponentColumns = ['radio', 'relationName'];
-        }); */
     }
     catch (error) {
       console.log(error);
@@ -336,15 +303,6 @@ export class RelationshipBuilderComponent implements OnInit {
     this.buttonOn = false;
     this.selectedAgent1 = "";
     this.dataDictionaryInfo();
-
-    //window.location. = window.location.href;
-    /* console.log(window.location.href)
-    console.log()
-    window.location.reload() */
-    /* console.log(this.router.url)
-    this.router.navigateByUrl('/InSights/Home/relationship-builder', { skipLocationChange: false }).then(() =>
-      this.router.navigate(["/InSights/Home/relationship-builder"])); */
-
   }
 
   relationDelete() {

@@ -34,6 +34,8 @@ import { count } from 'rxjs/operators';
 export class RelationshipBuilderComponent implements OnInit {
   deleteRelation: any = undefined;
   element: any = undefined;
+  readChange: boolean = false;
+  readChange2: boolean = false;
   deleteRelationArray = [];
   relationmappingLabels: RelationLabel[] = [];
   prefixname: string = '';

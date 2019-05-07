@@ -58,9 +58,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
     private restCallHandlerService: RestCallHandlerService, private cookieService: CookieService,
     private router: Router, private logger: LogService, private dataShare: DataSharedService,
     private datePipe: DatePipe, private imageHandeler: ImageHandlerService) {
-    //console.log(" logging in login "); //this.logger.log
     this.getAsyncData();
-
   }
 
   ngOnInit() {
@@ -90,7 +88,6 @@ export class LoginComponent implements OnInit, ILoginComponent {
         this.imageAlt = 'Cognizant log';
         this.dataShare.uploadOrFetchLogo("DefaultLogo");
       }
-
     } catch (error) {
       //console.log(error);
     }
@@ -109,6 +106,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
       var token = 'Basic ' + btoa(this.username + ":" + this.password);
       this.loginService.loginUserAuthentication(this.username, this.password)
         .then((data) => {
+          console.log(data);
           var grafcookies = data.data;
           if (data.status === 'SUCCESS') {
             self.showThrobber = false;
@@ -125,6 +123,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
            //this.cookieService.set('DashboardSessionExpiration', dateDashboardSessionExpiration.toString());
             this.cookies = "";
             for (var key in grafcookies) {
+              console.log(key + "    " + grafcookies[key])
               this.cookieService.set(key, grafcookies[key], date);
             }
             var uniqueString = "grfanaLoginIframe";
@@ -164,10 +163,10 @@ export class LoginComponent implements OnInit, ILoginComponent {
               //self.showThrobber = false;
               self.router.navigate(['/InSights/Home']);
             }, 2000);
-          } else if (data.error.message) {
+          } else if (data.status === "failure") {
             self.showThrobber = false;
             self.isLoginError = true;
-            self.logMsg = data.error.message;
+            self.logMsg = data.message;
             self.isDisabled = false;
           }
         });

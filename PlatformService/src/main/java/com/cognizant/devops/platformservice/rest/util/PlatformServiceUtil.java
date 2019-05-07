@@ -15,9 +15,20 @@
  ******************************************************************************/
 package com.cognizant.devops.platformservice.rest.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.cognizant.devops.platformcommons.constants.PlatformServiceConstants;
+import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sun.jersey.api.client.Client;
@@ -25,6 +36,10 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class PlatformServiceUtil {
+	private static final Logger log = LogManager.getLogger(PlatformServiceUtil.class);
+	private static final String[] SET_VALUES = new String[] { "grafanaOrg", "grafana_user", "grafanaRole",
+			"grafana_remember", "grafana_sess", "XSRF-TOKEN", "JSESSIONID" };
+	private static final Set<String> masterCookiesList = new HashSet<String>(Arrays.asList(SET_VALUES));
 	private PlatformServiceUtil(){
 		
 	}
@@ -37,10 +52,12 @@ public class PlatformServiceUtil {
 	}
 	
 	public static JsonObject buildSuccessResponseWithData(Object data){
+
 		JsonObject jsonResponse = new JsonObject();
 		jsonResponse.addProperty(PlatformServiceConstants.STATUS, PlatformServiceConstants.SUCCESS);
 		jsonResponse.add(PlatformServiceConstants.DATA, new Gson().toJsonTree(data));
-		return jsonResponse;
+		JsonObject validatedData = ValidationUtils.validateStringForHTMLContent(jsonResponse);
+		return validatedData;
 	}
 	
 	public static JsonObject buildSuccessResponse(){
@@ -57,5 +74,35 @@ public class PlatformServiceUtil {
 				.entity(requestJson.toString())
 				.post(ClientResponse.class);
 		return response;
+	}
+
+	public static Cookie[] validateCookies(Cookie[] request_cookies) {
+		Cookie[] cookies = null;
+		Cookie cookie = null;
+		List<Cookie> cookiesList = new ArrayList<Cookie>();
+		if (request_cookies != null) {
+			log.debug("Request Cookies length " + request_cookies.length);
+			cookies = new Cookie[request_cookies.length];
+			for (int i = 0; i < request_cookies.length; i++) {
+				cookie = request_cookies[i];
+				log.debug("  cookie    " + cookie.getName() + "   " + cookie.getValue());
+				if (masterCookiesList.contains(cookie.getName())) {
+					cookie.setMaxAge(30 * 60);
+					cookie.setHttpOnly(true);
+					cookie.setValue(ValidationUtils.cleanXSS(cookie.getValue()));
+					//cookies[i] = cookie;
+					cookiesList.add(cookie);
+
+				} else {
+					log.debug("Cookie Name Not found in master cookies list name as " + cookie.getName());
+				}
+			}
+			cookies = cookiesList.toArray(cookies);
+			log.debug("Request return Cookies length " + cookies.length);
+		} else {
+			cookies = request_cookies;
+			log.debug("No cookies founds");
+		}
+		return cookies;
 	}
 }

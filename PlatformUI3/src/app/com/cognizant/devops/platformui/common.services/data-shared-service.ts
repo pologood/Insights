@@ -29,7 +29,7 @@ export class DataSharedService {
   private userSource = new BehaviorSubject<String>('admin');
   currentUser = this.userSource.asObservable();
 
-  constructor( @Inject(SESSION_STORAGE) public storage: StorageService, private datePipe: DatePipe, private cookieService: CookieService,
+  constructor(@Inject(SESSION_STORAGE) private storage: StorageService, private datePipe: DatePipe, private cookieService: CookieService,
     public router: Router, public dialog: MatDialog) { }
 
   public changeUser(user: String) {
@@ -56,6 +56,22 @@ export class DataSharedService {
     this.storage.set("userName", userName);
   }
 
+  public setAuthorizationToken(strAuthorization: string) {
+    this.storage.set("Authorization", strAuthorization);
+  }
+
+  public getAuthorizationToken() {
+    return this.storage.get("Authorization");
+  }
+
+  public setSessionExpirationTime(timeDashboardSessionExpiration: any) {
+    this.storage.set("dashboardSessionExpiration", timeDashboardSessionExpiration);
+  }
+
+  public getSessionExpirationTime() {
+    return this.storage.get("dashboardSessionExpiration");
+  }
+
   public setOrgAndRole(orgName: String, orgId: any, role: String) {
     this.storage.set("userRole", role);
     this.storage.set("orgName", orgName);
@@ -66,6 +82,10 @@ export class DataSharedService {
     return this.storage.get("userName");
   }
 
+  public getTimeZone() {
+    return this.storage.get("timeZone");
+  }
+
   public getStorageService(): StorageService {
     return this.storage;
   }
@@ -73,12 +93,6 @@ export class DataSharedService {
   public getStoragedProperty(key: string): any {
     return this.storage.get(key);
   }
-
-
-  public getTimeZone() {
-    return this.storage.get("timeZone");
-  }
-
 
   public storeTimeZone() {
     var date = new Date();
@@ -90,6 +104,7 @@ export class DataSharedService {
     var timezone = parts[1];
     this.storage.set("timeZone", timezone);
     this.storage.set("timeZoneOffSet", zone);
+    console.log(this.storage.get("timeZone"));
   }
 
   public convertDateToZone(dateStr: string): string {
@@ -112,11 +127,11 @@ export class DataSharedService {
   }
 
   public validateSession(): boolean {
-    var authToken = this.cookieService.get('Authorization');
-    var sessionExpireMessage = "The existing session has expired. You will be redirected to the home page. Request you to Login again to continue using Insights. Thank you!"
+    var authToken = this.getAuthorizationToken();
+    this.sessionExpireMessage = "The existing session has expired. You will be redirected to the home page. Request you to Login again to continue using Insights. Thank you!";
     var sessionStorageDateDashboardSessionExpiration = this.storage.get('dateDashboardSessionExpiration')
     if (authToken === undefined) {
-      this.cookieService.delete('Authorization');
+      this.storage.remove('Authorization');
       this.router.navigate(['/login']);
     } else {
       var dashboardSessionExpirationTime = new Date(this.storage.get('dateDashboardSessionExpiration'));
@@ -127,7 +142,7 @@ export class DataSharedService {
         return true;
       }
       if ((dashboardSessionExpirationTime < date)) {
-        var dialogRef = this.sessionExpiredMessage(sessionExpireMessage, "WARN", true);
+        var dialogRef = this.sessionExpiredMessage(this.sessionExpireMessage, "WARN", true);
         this.clearSessionData()
         return true;
 
@@ -135,7 +150,7 @@ export class DataSharedService {
         console.log("session present");
         var minutes = 30;
         date.setTime(date.getTime() + (minutes * 60 * 1000));
-        this.cookieService.set('Authorization', authToken, date);
+        this.storage.set('Authorization', authToken);
         this.setSession()
         return false;
       }

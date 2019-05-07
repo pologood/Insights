@@ -71,6 +71,8 @@ export class HealthCheckComponent implements OnInit {
 
   async loadAgentCheckInfo() {
     try {
+      this.timeZone = this.dataShare.getStoragedProperty("timeZone");
+      console.log(this.timeZone);
       this.showThrobberAgent = true;
       this.showContentAgent = !this.showThrobberAgent;
       this.agentResponse = await this.healthCheckService.loadServerAgentConfiguration();

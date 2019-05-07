@@ -163,11 +163,12 @@ public class AccessGroupManagement {
 		log.debug("\n\nInside getUserCookies method call");
 		Map<String, String> cookieMap = (Map) httpRequest.getAttribute("responseHeaders");
 		if (cookieMap == null || cookieMap.get("grafana_sess") == null) {
-			Cookie[] cookies = httpRequest.getCookies();
+			Cookie[] cookies = PlatformServiceUtil.validateCookies(httpRequest.getCookies());
 			cookieMap = new HashMap<String, String>();
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
-					cookieMap.put(cookie.getName(), cookie.getValue());
+					cookieMap.put(cookie.getName(), cookie.getValue().concat("; HttpOnly"));
+					cookie.setHttpOnly(true);
 				}
 			}
 			if (!cookieMap.containsKey("grafana_sess")) {

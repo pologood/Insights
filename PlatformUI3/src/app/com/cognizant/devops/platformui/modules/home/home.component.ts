@@ -130,7 +130,7 @@ export class HomeComponent implements OnInit {
     let currentUserResponce: any;
     let self = this;
     this.userResponse = await this.grafanaService.getUsers()
-    console.log(" In user response " + JSON.stringify(this.userResponse));
+    // console.log(" In user response " + JSON.stringify(this.userResponse));
     if (this.userResponse.data != undefined) {
       self.userName = self.userResponse.data.name != undefined ? self.userResponse.data.name.replace(/['"]+/g, '') : "";
       self.userCurrentOrg = self.userResponse.data.orgId;

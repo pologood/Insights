@@ -122,7 +122,7 @@ export class DataSharedService {
     var minutes = 30;
     date.setTime(date.getTime() + (minutes * 60 * 1000));
     var dateDashboardSessionExpiration = date.getTime();
-    console.log(dateDashboardSessionExpiration + "  @@@@@@  " + date)
+   // console.log(dateDashboardSessionExpiration + "  @@@@@@  " + date)
     this.storage.set("dateDashboardSessionExpiration", dateDashboardSessionExpiration);
   }
 
@@ -136,7 +136,7 @@ export class DataSharedService {
     } else {
       var dashboardSessionExpirationTime = new Date(this.storage.get('dateDashboardSessionExpiration'));
       var date = new Date();
-      console.log(dashboardSessionExpirationTime + "  ===== " + date);
+     // console.log(dashboardSessionExpirationTime + "  ===== " + date);
       if (sessionStorageDateDashboardSessionExpiration == undefined) {
         this.clearSessionData()
         return true;
@@ -147,7 +147,7 @@ export class DataSharedService {
         return true;
 
       } else {
-        console.log("session present");
+        //console.log("session present");
         var minutes = 30;
         date.setTime(date.getTime() + (minutes * 60 * 1000));
         this.storage.set('Authorization', authToken);

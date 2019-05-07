@@ -182,12 +182,12 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
       let correlationresponse = await this.relationshipBuilderService.loadUiServiceLocation()
-      console.log("Line 182" + correlationresponse);
+      // console.log("Line 182" + correlationresponse);
       if (correlationresponse.status == "success") {
         this.corelationResponseMaster = correlationresponse.data;
         this.relationmappingLabels = [];
       }
-      console.log("Line 186" + this.corelationResponseMaster);
+      // console.log("Line 186" + this.corelationResponseMaster);
       for (var element of this.corelationResponseMaster) {
         var destinationToolName = (element.destination.toolName);
         var sourceToolName = (element.source.toolName);
@@ -221,7 +221,7 @@ export class RelationshipBuilderComponent implements OnInit {
           this.showDetail3 = true;
           this.noShowDetailCorr = false;
           this.corrprop = usersResponseData3.data["relationName"];
-          console.log(this.corrprop);
+          //  console.log(this.corrprop);
           var isSessionExpired = this.dataShare.validateSession();
           if (!isSessionExpired) {
             let showJsonDialog = this.dialog.open(ShowJsonDialog, {
@@ -309,7 +309,7 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isListView = true;
     this.isEditData = true;
     var title = "Delete Correlation";
-    console.log(this.deleteRelation);
+    //  console.log(this.deleteRelation);
     var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation.relationName + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation.relationName + "</b> ?";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation.relationName, "ALERT", "40%");
 
@@ -381,12 +381,12 @@ export class RelationshipBuilderComponent implements OnInit {
       for (var x in this.destinationcheck) {
 
         if ((this.destinationcheck[x] == this.selectedAgent2.toolName) && (this.sourcecheck[x] == this.selectedAgent1.toolName)) {
-          console.log("present");
+          // console.log("present");
           this.count = this.count + 1;
           break;
         }
         else {
-          console.log("not present");
+          //  console.log("not present");
 
         }
       }
@@ -423,7 +423,7 @@ export class RelationshipBuilderComponent implements OnInit {
               this.saveRelationArray.push(element)
             }
             this.saveRelationArray.push(newData);
-            console.log(this.saveRelationArray);
+            // console.log(this.saveRelationArray);
             var addMappingJson = JSON.stringify({ 'data': this.saveRelationArray });
             this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
               (corelationResponse2) => {

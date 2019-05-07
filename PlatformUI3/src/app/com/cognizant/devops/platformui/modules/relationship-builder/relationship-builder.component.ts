@@ -42,7 +42,7 @@ export class RelationshipBuilderComponent implements OnInit {
   property2selected: boolean = false;
   isbuttonenabled: boolean = false;
   dictResponse: any;
-  corelationResponseMaster: any;
+  corelationResponseMaster = [];
   dataComponentColumns = [];
   agentDataSource = [];
   AddDestination = {};
@@ -168,24 +168,46 @@ export class RelationshipBuilderComponent implements OnInit {
   }
 
 
-  getCorrelation() {
+  async  getCorrelation() {
     try {
 
       this.displayDataSource = [];
       this.toolsDatasource = [];
       this.saveRelationArray = [];
       this.toolSourceDataSource = [];
-      this.corelationResponseMaster = undefined;
-      var self = this;
-
-      this.relationshipBuilderService.loadUiServiceLocation().then(
-        (correlationresposne) => {
-          console.log(correlationresposne);
-          self.corelationResponseMaster2 = correlationresposne
-        });
+      this.corelationResponseMaster = [];
+      //this.relationmappingLabels = [];
 
 
-      this.relationshipBuilderService.loadUiServiceLocation().then(
+      let correlationresponse = await this.relationshipBuilderService.loadUiServiceLocation()
+      console.log("Line 182" + correlationresponse);
+      if (correlationresponse.status == "success") {
+        this.corelationResponseMaster = correlationresponse.data;
+        this.relationmappingLabels = [];
+      }
+      console.log("Line 186" + this.corelationResponseMaster);
+      for (var element of this.corelationResponseMaster) {
+        var destinationToolName = (element.destination.toolName);
+        var sourceToolName = (element.source.toolName);
+        var detailProp = '<b>' + element.source.toolName + '</b>:' + element.source.fields[0] + ':<b>' + element.destination.toolName + '</b>:' + element.destination.fields[0];
+        //element['prop'] = detailProp;
+        let relationLabel = new RelationLabel(destinationToolName, sourceToolName, element.relationName, detailProp);
+        //console.log(element);
+        this.relationmappingLabels.push(relationLabel);
+        // this.displayDataSource.push(relationLabel);
+        this.destinationcheck.push(destinationToolName);
+        this.sourcecheck.push(sourceToolName);
+      }
+      // console.log("Line 198" + this.displayDataSource);
+      this.dataComponentColumns = ['radio', 'relationName'];
+      /* .then(
+      (correlationresponse) => {
+        console.log(correlationresponse);
+        self.corelationResponseMaster2 = correlationresponse
+      }); */
+
+
+      /* this.relationshipBuilderService.loadUiServiceLocation().then(
         (responsedata) => {
           console.log(responsedata);
           self.corelationResponseMaster = responsedata.data;
@@ -210,7 +232,7 @@ export class RelationshipBuilderComponent implements OnInit {
 
           this.relData = this.displayDataSource;
           this.dataComponentColumns = ['radio', 'relationName'];
-        });
+        }); */
     }
     catch (error) {
       console.log(error);
@@ -320,26 +342,23 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isEditData = true;
     var title = "Delete Correlation";
     console.log(this.deleteRelation);
-    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation + "</b> ?";
-    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation, "ALERT", "40%");
+    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation.relationName + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation.relationName + "</b> ?";
+    const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation.relationName, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {
-        for (var key in this.corelationResponseMaster) {
-          if (this.corelationResponseMaster[key].relationName != this.deleteRelation) {
-            this.deleteRelationArray.push(this.corrprop[key])
+        for (var element of this.corelationResponseMaster) {
+          if (element.relationName != this.deleteRelation.relationName) {
+            this.deleteRelationArray.push(element);
           }
         }
-
+        //console.log(this.deleteRelationArray)
         var deleteMappingJson = JSON.stringify({ 'data': this.deleteRelationArray });
         this.relationshipBuilderService.saveCorrelationConfig(deleteMappingJson).then(
           (corelationResponse2) => {
             if (corelationResponse2.status == "success") {
-
-              this.deleteRelationArray = [];
-              this.displayDataSource = [];
               this.getCorrelation();
-              var dialogmessage = "<b>" + this.deleteRelation + "</b> deleted successfully from Correlation.json."
+              var dialogmessage = "<b>" + this.deleteRelation.relationName + "</b> deleted successfully from Correlation.json."
               this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
             }
           });
@@ -431,8 +450,8 @@ export class RelationshipBuilderComponent implements OnInit {
               'destination': this.AddDestination, 'source': this.AddSource, 'relationName': this.finalRelationName
             }
 
-            for (var key in this.corelationResponseMaster) {
-              this.saveRelationArray.push(this.corrprop[key])
+            for (var element of this.corelationResponseMaster) {
+              this.saveRelationArray.push(element)
             }
             this.saveRelationArray.push(newData);
             console.log(this.saveRelationArray);

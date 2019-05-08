@@ -232,7 +232,7 @@ export class RelationshipBuilderComponent implements OnInit {
               data:
               {
                 message: this.corrprop,
-                title: "Co-Relations in Neo4j"
+                title: "Co-Relation in Neo4j"
 
               }
             });
@@ -251,7 +251,7 @@ export class RelationshipBuilderComponent implements OnInit {
             disableClose: true,
             data:
             {
-              message: 'No Relations Found',
+              message: 'No Relations Found between ' + this.selectedAgent1.toolName + ' and ' + this.selectedAgent2.toolName,
               title: "Co-Relations in Neo4j"
             }
 
@@ -431,6 +431,7 @@ export class RelationshipBuilderComponent implements OnInit {
                   this.getCorrelation();
                   var dialogmessage = "<b>" + this.finalRelationName + "</b> saved successfully in Correlation.json."
                   this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
+                  this.Refresh();
                 }
               });
           }

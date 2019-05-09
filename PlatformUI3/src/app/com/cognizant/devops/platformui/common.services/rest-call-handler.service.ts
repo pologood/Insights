@@ -37,7 +37,8 @@ export class RestCallHandlerService {
       var dataresponse;
       var authToken = this.dataShare.getAuthorizationToken();
       const headers = new HttpHeaders()
-        .set("Authorization", authToken);
+        .set("Authorization", authToken)
+        .set("newAuthorization", this.dataShare.getStoragedProperty('newAuthorization'));
       var restCallUrl = this.constructGetUrl(url, requestParams);
       this.asyncResult = await this.http.get(restCallUrl, { headers }).toPromise();
       //console.log(this.asyncResult)
@@ -110,7 +111,8 @@ export class RestCallHandlerService {
         }
       }
       headers = new HttpHeaders();
-      headers = headers.set('Authorization', authToken);
+      headers = headers.set('Authorization', authToken)
+        .set("newAuthorization", this.dataShare.getStoragedProperty('newAuthorization'));
       for (var key in additionalheaders) {
         //console.log(key + " " + additionalheaders[key]);
         if (headers.hasOwnProperty(key)) {
@@ -139,7 +141,8 @@ export class RestCallHandlerService {
       var authToken = this.dataShare.getAuthorizationToken();
       var dataresponse = this.http.post(restCallUrl, fd, {
         headers: {
-          'Authorization': authToken
+          'Authorization': authToken,
+          'newAuthorization': this.dataShare.getStoragedProperty('newAuthorization')
         },
       })
       return dataresponse;

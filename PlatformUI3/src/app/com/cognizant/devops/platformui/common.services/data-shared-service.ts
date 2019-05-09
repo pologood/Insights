@@ -22,6 +22,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Router, NavigationExtras } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ApplicationMessageDialog } from '@insights/app/modules/application-dialog/application-message-dialog';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class DataSharedService {
@@ -57,6 +58,8 @@ export class DataSharedService {
   }
 
   public setAuthorizationToken(strAuthorization: string) {
+    var token = this.encryptData('123456$#@$^@1ERF', strAuthorization);
+    this.storage.set("newAuthorization", token);
     this.storage.set("Authorization", strAuthorization);
   }
 
@@ -90,7 +93,7 @@ export class DataSharedService {
     return this.storage;
   }
 
-  public getStoragedProperty(key: string): any {
+  public getStoragedProperty(key: string): string {
     return this.storage.get(key);
   }
 
@@ -189,4 +192,37 @@ export class DataSharedService {
     return dialogRef;
 
   }
+
+  public encryptData(keys, value) {
+
+    //var key = CryptoJS.enc.Utf8.parse(keys);
+    //var iv = CryptoJS.enc.Utf8.parse(keys);
+    var encryptedValue = CryptoJS.AES.encrypt(value, keys);
+    //CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(value.toString()), key);
+
+    /* ,
+      {
+        keySize: 128 / 8,
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      } */
+    console.log(" encryptedValue " + encryptedValue + " value " + value);
+    return encryptedValue.toString();
+  }
+
+  //The get method is use for decrypt the value.
+  public getDecryptData(keys, value) {
+    var key = CryptoJS.enc.Utf8.parse(keys);
+    var iv = CryptoJS.enc.Utf8.parse(keys);
+    var decrypted = CryptoJS.AES.decrypt(value, key, {
+      keySize: 128 / 8,
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    });
+
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  }
+
 }

@@ -17,17 +17,19 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Observable } from 'rxjs'
-
+import { DataSharedService } from '@insights/common/data-shared-service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private tokenExtractor: HttpXsrfTokenExtractor) { }
+  constructor(private tokenExtractor: HttpXsrfTokenExtractor, private dataShare: DataSharedService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let token = this.tokenExtractor.getToken() as string;
-    if (token !== null) {
+    let auth = this.dataShare.getStoragedProperty('newAuthorization') as string;
+    console.log("auth " + auth);
+    if (token !== null && auth != undefined) {
       request = request.clone({
-        setHeaders: { "XSRF-TOKEN": token }
+        setHeaders: { "XSRF-TOKEN": token, "newAuthorization": auth }
       });
       request = request.clone({
         withCredentials: true

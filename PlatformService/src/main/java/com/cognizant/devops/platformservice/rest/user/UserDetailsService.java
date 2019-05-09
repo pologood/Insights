@@ -67,7 +67,7 @@ public class UserDetailsService {
 	// {"sAMAccountName","distinguishedName", "sn", "givenname", "mail",
 	// "telephonenumber", "thumbnailPhoto", "title"};
 
-	@Autowired
+	// @Autowired
 	private DefaultSpringSecurityContextSource contextSource;
 
 	/**

@@ -39,9 +39,10 @@ import com.cognizant.devops.platformservice.security.config.CrossScriptingFilter
  * @author 146414
  * This class will initialize the config.json.
  */
-public class PlatformServiceInitializer implements WebApplicationInitializer  {
+public class PlatformServiceInitializer implements WebApplicationInitializer {
 	static Logger log = LogManager.getLogger(PlatformServiceInitializer.class.getName());
 
+	
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		ApplicationConfigCache.loadConfigCache();
@@ -50,7 +51,7 @@ public class PlatformServiceInitializer implements WebApplicationInitializer  {
 		servletContext.addFilter("CrossScriptingFilter", CrossScriptingFilter.class).addMappingForUrlPatterns(null,
 				false, "/*");
 	}
-	
+
 	private static void disableSslVerification() {
 	    try
 	    {

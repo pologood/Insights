@@ -15,16 +15,17 @@
  ******************************************************************************/
 package com.cognizant.devops.platformservice.security.config;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.cognizant.devops.platformcommons.config.ApplicationConfigCache;
 import com.cognizant.devops.platformservice.content.config.ContentConfig;
 
 public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-
-		return new Class[] { SecurityConfig.class, ContentConfig.class };
+		return new Class[] { SecurityConfiguration.class, ContentConfig.class }; // , ContentConfig.class
 
 	}
 

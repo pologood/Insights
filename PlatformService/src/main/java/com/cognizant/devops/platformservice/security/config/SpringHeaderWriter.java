@@ -15,46 +15,37 @@
  ******************************************************************************/
 package com.cognizant.devops.platformservice.security.config;
 
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.web.header.HeaderWriter;
 import org.springframework.stereotype.Component;
 
-import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 
 @Component
-public class SpringHeaderWriter implements HeaderWriter {
+public class SpringHeaderWriter { //implements HeaderWriter 
 	private static final Logger log = LogManager.getLogger(PlatformServiceUtil.class);
 
-	@Override
+	/*@Override
 	public void writeHeaders(HttpServletRequest request, HttpServletResponse response) {
-		// log.debug(" Write Header ============ ");
+		log.debug(" Write Header ============ ");
 		response.setStatus(HttpServletResponse.SC_OK);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, request.getHeader(HttpHeaders.ORIGIN));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-        // 463188 - Response Headers for Control: no-cache, no-store header
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        //Set the response headers for grafana details.
-        Object attribute = request.getAttribute("responseHeaders");
-        if(attribute != null){
-        	Map<String, String> grafanaHeaders = (Map<String, String>)attribute;
-        	for(Map.Entry<String, String> entry : grafanaHeaders.entrySet()){
+	    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, request.getHeader(HttpHeaders.ORIGIN));
+	    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
+	    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD));
+	    response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+	    // 463188 - Response Headers for Control: no-cache, no-store header
+	    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+	    //Set the response headers for grafana details.
+	    Object attribute = request.getAttribute("responseHeaders");
+	    if(attribute != null){
+	    	Map<String, String> grafanaHeaders = (Map<String, String>)attribute;
+	    	for(Map.Entry<String, String> entry : grafanaHeaders.entrySet()){
 				Cookie cookie = new Cookie(entry.getKey(), entry.getValue());
 				// cookie.setHttpOnly(true); //3
 				cookie.setMaxAge(60 * 30);
 				cookie.setPath("/");
 				response.addCookie(cookie);
-        	}
-        }
-	}
+	    	}
+	    }
+	}*/
 }

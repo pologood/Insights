@@ -27,6 +27,7 @@ import { LogService } from '@insights/common/log-service';
 import { DataSharedService } from '@insights/common/data-shared-service';
 import { ImageHandlerService } from '@insights/common/imageHandler.service';
 
+
 export interface ILoginComponent {
   createAndValidateForm(): void;
   userAuthentication(): void;
@@ -64,7 +65,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
   ngOnInit() {
     this.createAndValidateForm();
     this.dataShare.storeTimeZone();
-    
+
     //this.deleteAllPreviousCookies();
   }
 
@@ -105,6 +106,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
       this.isDisabled = true;
       this.showThrobber = true;
       var token = 'Basic ' + btoa(this.username + ":" + this.password);
+      this.dataShare.setAuthorizationToken(token);
       this.loginService.loginUserAuthentication(this.username, this.password)
         .then((data) => {
           console.log(data);
@@ -116,9 +118,7 @@ export class LoginComponent implements OnInit, ILoginComponent {
             var dateDashboardSessionExpiration = new Date(new Date().getTime() + 86400 * 1000);
             var minutes = 30;
             date.setTime(date.getTime() + (minutes * 60 * 1000));
-
-            this.dataShare.setAuthorizationToken(token);
-            this.dataShare.setSession();this.cookies = "";
+            this.dataShare.setSession(); this.cookies = "";
             for (var key in grafcookies) {
               console.log(key + "    " + grafcookies[key])
               this.cookieService.set(key, grafcookies[key], date);

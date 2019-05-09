@@ -15,12 +15,19 @@
  ******************************************************************************/
 package com.cognizant.devops.platformservice.security.config;
 
+import java.nio.charset.StandardCharsets;
+import java.security.DigestException;
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.NewCookie;
@@ -34,6 +41,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.cognizant.devops.platformcommons.config.ApplicationConfigProvider;
 import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.cognizant.devops.platformcommons.dal.rest.RestHandler;
+import com.cognizant.devops.platformcommons.exception.InsightsCustomException;
 import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -45,16 +53,35 @@ import com.sun.jersey.api.client.ClientResponse;
 public class GrafanaUserDetailsUtil {
 	private static final Logger log = LogManager.getLogger(GrafanaUserDetailsUtil.class);
 
-
 	public static UserDetails getUserDetails(HttpServletRequest httpRequest) {
 		log.debug("\\n\\nInside getUserDetails function call!");
 		ApplicationConfigProvider.performSystemCheck();
 		String authHeader = ValidationUtils.cleanXSS(httpRequest.getHeader("Authorization"));
 
+		log.debug(" authHeader ==========  " + authHeader);
+
+		String encryptedData = AES256Cryptor.encrypt(authHeader, "123456$#@$^@1ERF");
+
+		log.debug(" encryptedData ========= " + encryptedData);
+
+		String decryptedData = AES256Cryptor.decrypt(encryptedData, "123456$#@$^@1ERF");
+
+		log.debug(" decryptedData ========= " + decryptedData);
+
+		String newAuthToken = httpRequest.getHeader("newAuthorization");
+
+		log.debug(" newAuthToken String " + newAuthToken);
+
+		String authTokenDecrypt = AES256Cryptor.decrypt(newAuthToken, "123456$#@$^@1ERF");
+
+		log.debug(" authTokenDecrypt  ========= " + authTokenDecrypt);
+
+		//Boolean deValue = validateAuthentication(newAuthToken);
+
 		Cookie[] requestCookies = PlatformServiceUtil.validateCookies(httpRequest.getCookies());
 		Map<String, String> grafanaResponseCookies = new HashMap<String, String>();
 		Map<String, String> cookieMap = new HashMap<String, String>();
-		log.debug(" authHeader " + authHeader);
+		//log.debug(" authHeader " + authHeader);
 		if (requestCookies != null) {
 			for (Cookie cookie : requestCookies) {
 				cookieMap.put(ValidationUtils.cleanXSS(cookie.getName()),
@@ -127,7 +154,8 @@ public class GrafanaUserDetailsUtil {
 
 			httpRequest.setAttribute("responseHeaders", grafanaResponseCookies);
 			if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
-				return new User(userName, credential, true, true, true, true, mappedAuthorities);
+				return new User(userName, credential, true, true, true, true,
+						mappedAuthorities);
 			} else {
 				return new User(userName, "", true, true, true, true, mappedAuthorities);
 			}
@@ -165,13 +193,20 @@ public class GrafanaUserDetailsUtil {
 		return grafanaCurrentOrg;
 	}
 
-	private static List<NewCookie> getValidGrafanaSession(String userName, String password) {
+	private static List<NewCookie> getValidGrafanaSession(String userName, String password)
+			throws InsightsCustomException {
 		log.debug("Inside getValidGrafanaSession method call");
 		JsonObject loginRequestParams = new JsonObject();
 		loginRequestParams.addProperty("user", userName);
 		loginRequestParams.addProperty("password", password);
 		String loginApiUrl = ApplicationConfigProvider.getInstance().getGrafana().getGrafanaEndpoint() + "/login";
 		ClientResponse grafanaLoginResponse = RestHandler.doPost(loginApiUrl, loginRequestParams, null);
+		log.debug("arg0 Grafana login responce =============== " + grafanaLoginResponse.toString());
+		if (grafanaLoginResponse.getStatus() != 200) {
+			throw new InsightsCustomException(" Unauthorized Access ==== ");
+		}
 		return grafanaLoginResponse.getCookies();
 	}
+
+
 }

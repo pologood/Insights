@@ -130,7 +130,7 @@
 	"enableOnlineDatatagging": true,
 	"trustedHosts": 
 	[
-		"localhost"
+		"http://localhost:8080"
 	],
 
 	"enableOnlineBackup": false

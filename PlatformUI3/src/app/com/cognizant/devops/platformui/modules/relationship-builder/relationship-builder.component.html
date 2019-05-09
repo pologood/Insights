@@ -29,7 +29,7 @@
 
       <div layout layout-align="end center" style="margin-left: 0px;">
 
-        <div style="margin-left: -77px; margin-top: 10px;">
+        <div style="margin-left: -77px; margin-top: 22px;">
 
           <label class="mainText"> Select Tools </label>
           <mat-select [(ngModel)]="selectedAgent1" [style.height.px]="20" [style.width.%]="14" (ngModelChange)="loadAgent1Info(selectedAgent1)"
@@ -77,9 +77,9 @@
     <div class="column2">
       <div class="showTable" style="text-align: center; padding: 5px;">
         <!-- height: 45px; -->
-        <b>&nbsp; Co-Relation in Correlation.json</b>
-        <br> <a style="font-size: 12px">
-          (Please delete and re-create existing relation to change properties
+        <b>&nbsp; List of Co-Relation in Correlation.json</b>
+        <br> <a style="font-size: 13px">
+          (Please delete and re-create existing relation to <br> change properties
           with UNIQUE name) </a>
       </div>
       <div class="arrange-horizontally">
@@ -148,8 +148,8 @@
       <div class="showTable" style="text-align: center; padding: 5px;height: 65px;">
         <b>&nbsp; Tool Properties</b> (Please select Tool Properties to build a Co-Relation)
         <br>
-        <a style="font-size: 12px">
-          (Please Note: A prefix "FROM_TOOLNAME1_TO_TOOLNAME2_" will be added to the Co-Relation name you input)
+        <a style="font-size: 13px">
+          (Please Note: A prefix "FROM_TOOLNAME1_TO_TOOLNAME2_" <br> will be added to the Co-Relation name you input)
         </a>
       </div>
       <input type="text" class="inputcss" #newName [(ngModel)]='listFilter' [value]="searchValue" required placeholder="   Please input a Co-Relation name">

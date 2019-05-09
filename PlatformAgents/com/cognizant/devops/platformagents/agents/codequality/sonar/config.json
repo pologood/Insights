@@ -1,6 +1,9 @@
 {
- 
- 
+  "communication": {
+    "type": "REST",
+    "sslVerify": true,
+    "responseType": "JSON"
+  },
   "mqConfig": {
     "exchange": "iSight",
     "host": "127.0.0.1",

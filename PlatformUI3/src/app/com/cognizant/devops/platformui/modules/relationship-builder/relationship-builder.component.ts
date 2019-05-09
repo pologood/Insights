@@ -88,7 +88,7 @@ export class RelationshipBuilderComponent implements OnInit {
   agent2Category: any;
   public data: any;
   selectedRadio: any;
-  regex = new RegExp("^[a-zA-Z0-9_]*$", 'gi');
+  regex = new RegExp("^[a-zA-Z0-9_]*$");
   relData: any;
   displayDataSource = [];
   toolsDatasource = [];
@@ -180,12 +180,12 @@ export class RelationshipBuilderComponent implements OnInit {
 
 
       let correlationresponse = await this.relationshipBuilderService.loadUiServiceLocation()
-      console.log("Line 182" + correlationresponse);
+      // console.log("Line 182" + correlationresponse);
       if (correlationresponse.status == "success") {
         this.corelationResponseMaster = correlationresponse.data;
         this.relationmappingLabels = [];
       }
-      console.log("Line 186" + this.corelationResponseMaster);
+      // console.log("Line 186" + this.corelationResponseMaster);
       for (var element of this.corelationResponseMaster) {
         var destinationToolName = (element.destination.toolName);
         var sourceToolName = (element.source.toolName);
@@ -200,39 +200,6 @@ export class RelationshipBuilderComponent implements OnInit {
       }
       // console.log("Line 198" + this.displayDataSource);
       this.dataComponentColumns = ['radio', 'relationName'];
-      /* .then(
-      (correlationresponse) => {
-        console.log(correlationresponse);
-        self.corelationResponseMaster2 = correlationresponse
-      }); */
-
-
-      /* this.relationshipBuilderService.loadUiServiceLocation().then(
-        (responsedata) => {
-          console.log(responsedata);
-          self.corelationResponseMaster = responsedata.data;
-          console.log(self.corelationResponseMaster);
-          self.corrprop = responsedata.data
-          if (self.corrprop != null) {
-            for (var key in this.corrprop) {
-              console.log(key);
-              var element = self.corrprop[key];
-              var destinationToolName = (element.destination.toolName);
-              var sourceToolName = (element.source.toolName);
-              var detailProp = '<b>' + element.source.toolName + '</b>: ' + element.source.fields[0] + '   ' + element.destination.toolName + ' : ' + element.destination.fields[0];
-              element['prop'] = detailProp;
-              console.log(element)
-              self.displayDataSource.push(element)
-              console.log(this.displayDataSource);
-
-              self.destinationcheck.push(destinationToolName);
-              self.sourcecheck.push(sourceToolName);
-            }
-          }
-
-          this.relData = this.displayDataSource;
-          this.dataComponentColumns = ['radio', 'relationName'];
-        }); */
     }
     catch (error) {
       console.log(error);
@@ -252,7 +219,7 @@ export class RelationshipBuilderComponent implements OnInit {
           this.showDetail3 = true;
           this.noShowDetailCorr = false;
           this.corrprop = usersResponseData3.data["relationName"];
-          console.log(this.corrprop);
+          //  console.log(this.corrprop);
           var isSessionExpired = this.dataShare.validateSession();
           if (!isSessionExpired) {
             let showJsonDialog = this.dialog.open(ShowJsonDialog, {
@@ -263,7 +230,7 @@ export class RelationshipBuilderComponent implements OnInit {
               data:
               {
                 message: this.corrprop,
-                title: "Co-Relations in Neo4j"
+                title: "Co-Relation in Neo4j"
 
               }
             });
@@ -282,7 +249,7 @@ export class RelationshipBuilderComponent implements OnInit {
             disableClose: true,
             data:
             {
-              message: 'No Relations Found',
+              message: 'No Relations Found between ' + this.selectedAgent1.toolName + ' and ' + this.selectedAgent2.toolName,
               title: "Co-Relations in Neo4j"
             }
 
@@ -308,7 +275,7 @@ export class RelationshipBuilderComponent implements OnInit {
         disableClose: true,
         data:
         {
-          message: this.corelationResponseMaster2,
+          message: this.corelationResponseMaster,
           title: "Correlation.json"
         }
 
@@ -334,19 +301,19 @@ export class RelationshipBuilderComponent implements OnInit {
     this.buttonOn = false;
     this.selectedAgent1 = "";
     this.dataDictionaryInfo();
-
   }
 
   relationDelete() {
     this.isListView = true;
     this.isEditData = true;
     var title = "Delete Correlation";
-    console.log(this.deleteRelation);
+    //  console.log(this.deleteRelation);
     var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation.relationName + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation.relationName + "</b> ?";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation.relationName, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == 'yes') {
+        this.deleteRelationArray = [];
         for (var element of this.corelationResponseMaster) {
           if (element.relationName != this.deleteRelation.relationName) {
             this.deleteRelationArray.push(element);
@@ -412,12 +379,12 @@ export class RelationshipBuilderComponent implements OnInit {
       for (var x in this.destinationcheck) {
 
         if ((this.destinationcheck[x] == this.selectedAgent2.toolName) && (this.sourcecheck[x] == this.selectedAgent1.toolName)) {
-          console.log("present");
+          // console.log("present");
           this.count = this.count + 1;
           break;
         }
         else {
-          console.log("not present");
+          //  console.log("not present");
 
         }
       }
@@ -454,7 +421,7 @@ export class RelationshipBuilderComponent implements OnInit {
               this.saveRelationArray.push(element)
             }
             this.saveRelationArray.push(newData);
-            console.log(this.saveRelationArray);
+            // console.log(this.saveRelationArray);
             var addMappingJson = JSON.stringify({ 'data': this.saveRelationArray });
             this.relationshipBuilderService.saveCorrelationConfig(addMappingJson).then(
               (corelationResponse2) => {
@@ -462,6 +429,7 @@ export class RelationshipBuilderComponent implements OnInit {
                   this.getCorrelation();
                   var dialogmessage = "<b>" + this.finalRelationName + "</b> saved successfully in Correlation.json."
                   this.messageDialog.showApplicationsMessage(dialogmessage, "SUCCESS");
+                  this.Refresh();
                 }
               });
           }
@@ -470,9 +438,10 @@ export class RelationshipBuilderComponent implements OnInit {
       }
       else if (this.count == 1) {
         this.showApplicationMessage = "Failed to save settings"
-        var dialogmessage = "<b>" + this.finalRelationName + "</b> exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
+        var dialogmessage = "Co-Relation between <b>" + this.destinationcheck + "</b> and <b>" + this.sourcecheck + "</b> alreday exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
         this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
         this.count = 0;
+        newName = undefined;
       }
       else {
         var dialogmessage = "Failed to create the Co-Relation <b>" + this.finalRelationName + "</b>. Please try again."

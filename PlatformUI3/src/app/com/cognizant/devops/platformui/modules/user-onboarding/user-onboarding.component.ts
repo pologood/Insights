@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright 2019 Cognizant Technology Solutions
- * 
+* Copyright 2019 Cognizant Technology Solutions
+* 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- * 
+* use this file except in compliance with the License.  You may obtain a copy
+* of the License at
+* 
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+* 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+* License for the specific language governing permissions and limitations under
+* the License.
+******************************************************************************/
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RestCallHandlerService } from '@insights/common/rest-call-handler.service';
 import { DomSanitizer, BrowserModule, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
@@ -64,6 +64,8 @@ export class UserOnboardingComponent implements OnInit {
     var self = this;
 
     this.framesize = window.frames.innerHeight;
+    var orgId2 = this.dataShare.getStoragedProperty("orgId");
+    console.log(" orgId2 " + orgId2);
 
     var receiveMessage = function (evt) {
       var height = parseInt(evt.data);
@@ -87,18 +89,30 @@ export class UserOnboardingComponent implements OnInit {
     this.adminOrgDataArray = [];
 
     let adminOrgsResponse = await this.userOnboardingService.getCurrentUserOrgs();
-    //console.log(adminOrgsResponse);
+    console.log(adminOrgsResponse);
     if (adminOrgsResponse.data != undefined && adminOrgsResponse.status == "success") {
-      for (var org in adminOrgsResponse.data) {
-        if ((adminOrgsResponse.data[org].role) === 'Admin') {
-          this.adminOrgDataArray.push(adminOrgsResponse.data[org]);
+      var orgId2 = this.dataShare.getStoragedProperty("orgId");
+      console.log(" orgId2 === " + orgId2);
+      for (var orgData of adminOrgsResponse.data) {
+        console.log(orgData)
+        if ((orgData.role) === 'Admin') {
+          this.adminOrgDataArray.push(orgData);
+          if (orgId2 == orgData.orgId) {
+            var record = orgData;
+            console.log("Selected === " + orgData);
+            this.selectedAdminOrg = record;
+          }
         }
       }
       this.isSaveEnable = false;
     }
+
+    console.log(this.selectedAdminOrg);
+    this.loadUsersInfo(this.selectedAdminOrg);
   }
 
   loadUsersInfo(selectedAdminOrg) {
+    console.log(selectedAdminOrg);
     this.isSaveEnable = false;
     this.showThrobber = true;
     var self = this;
@@ -198,50 +212,49 @@ export class UserOnboardingComponent implements OnInit {
   }
 
   displayaccessGroupCreateField() {
-    
+
     this.displayAccessGroupDetail = !this.displayAccessGroupDetail;
     if (this.accessGroupName != undefined) {
       var self = this;
-       var isSessionExpired= this.dataShare.validateSession();
-  if(!isSessionExpired)
-{
-      const dialogRef = this.dialog.open(AddGroupMessageDialog, {
-        panelClass: 'DialogBox',
-        width: '50%',
-        height: '50%',
-        disableClose: true,
-        data: {
-        }
-      });
+      var isSessionExpired = this.dataShare.validateSession();
+      if (!isSessionExpired) {
+        const dialogRef = this.dialog.open(AddGroupMessageDialog, {
+          panelClass: 'DialogBox',
+          width: '50%',
+          height: '50%',
+          disableClose: true,
+          data: {
+          }
+        });
 
-    
-      dialogRef.afterClosed().subscribe(result => {
-        if (result != undefined && result != 'no') { //'yes'
-          self.userOnboardingService.createOrg(result)
-            .then(function (createOrgResponse) {
-              if (createOrgResponse.message = "Organization created") {
-                self.isSaveEnable = false;
-                self.showApplicationMessage = createOrgResponse.message;
-                self.messageDialog.showApplicationsMessage(createOrgResponse.message, "SUCCESS");
-              } else {
-                self.showApplicationMessage = "Unable create Organization";
-                self.messageDialog.showApplicationsMessage("Unable to Create Organization", "WARN");
-              }
-            });
-          self.loadUsersInfo(this.selectedAdminOrg);
-          setTimeout(() => {
-            self.showApplicationMessage = "";
-          }, 2000);
-        }
-      });
+        dialogRef.afterClosed().subscribe(result => {
+          if (result != undefined && result != 'no') { //'yes'
+            self.userOnboardingService.createOrg(result)
+              .then(function (createOrgResponse) {
+                if (createOrgResponse.message = "Organization created") {
+                  self.isSaveEnable = false;
+                  self.showApplicationMessage = createOrgResponse.message;
+                  self.messageDialog.showApplicationsMessage(createOrgResponse.message, "SUCCESS");
+                } else {
+                  self.showApplicationMessage = "Unable create Organization";
+                  self.messageDialog.showApplicationsMessage("Unable to Create Organization", "WARN");
+                }
+              });
+            self.loadUsersInfo(this.selectedAdminOrg);
+            setTimeout(() => {
+              self.showApplicationMessage = "";
+            }, 2000);
+          }
+        });
+      }
+      setTimeout(() => {
+        this.showApplicationMessage = "";
+      }, 2000);
     }
-    setTimeout(() => {
-      this.showApplicationMessage = "";
-    }, 2000);
-  }
   }
   addGlobalUser() {
 
   }
 }
+
 

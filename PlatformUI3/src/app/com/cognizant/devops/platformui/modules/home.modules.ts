@@ -72,6 +72,7 @@ import { CustomReportConfigComponent } from './blockchain/custom-report/custom-r
 import { QueryBuilderService } from './blockchain/custom-report/custom-report-service';
 import { ShowJsonDialog } from '@insights/app/modules/relationship-builder/show-correlationjson';
 import { from } from 'rxjs';
+import { AddUserComponent } from './user-onboarding/add-user.component';
 
 
 @NgModule({
@@ -92,6 +93,7 @@ import { from } from 'rxjs';
     BusinessMappingComponent,
     DataArchivingComponent,
     AgentConfigurationComponent,
+    AddUserComponent,
     BlockChainComponent,
     UserOnboardingComponent,
     LandingPageComponent,

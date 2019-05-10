@@ -508,6 +508,7 @@ export class HomeComponent implements OnInit {
 
   getSelectedOrgName(orgSelectedName): String {
     var orgName: String = "";
+    //console.log(orgSelectedName)
     if (orgSelectedName != undefined && orgSelectedName.length > 16) {
       orgName = (orgSelectedName.substring(0, 16)) + '..';
     } else {

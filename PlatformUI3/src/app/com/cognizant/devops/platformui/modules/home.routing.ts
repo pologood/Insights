@@ -33,6 +33,7 @@ import { LandingPageComponent } from '@insights/app/modules/landing-page/landing
 import { LogoSettingComponent } from '@insights/app/modules/settings/logo-setting/logo-setting.component';
 import { CustomReportComponent } from './blockchain/custom-report/custom-report.component';
 import { CustomReportConfigComponent } from './blockchain/custom-report/custom-report-configuration/custom-report-configuration.component';
+import { AddUserComponent } from './user-onboarding/add-user.component';
 
 const homeRoutes: Routes = [
   {
@@ -50,6 +51,7 @@ const homeRoutes: Routes = [
       { path: 'businessmapping', component: BusinessMappingComponent },
       { path: 'dataarchiving', component: DataArchivingComponent },
       { path: 'agentconfiguration', component: AgentConfigurationComponent },
+      { path: 'adduseronboarding', component: AddUserComponent},
       { path: 'accessGroupManagement', component: UserOnboardingComponent },
       { path: 'landingPage', component: LandingPageComponent },
       { path: 'logoSetting', component: LogoSettingComponent },

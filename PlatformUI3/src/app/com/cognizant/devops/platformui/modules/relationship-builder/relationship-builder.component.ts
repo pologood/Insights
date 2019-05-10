@@ -308,7 +308,7 @@ export class RelationshipBuilderComponent implements OnInit {
     this.isEditData = true;
     var title = "Delete Correlation";
     //  console.log(this.deleteRelation);
-    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation.relationName + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE, moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation.relationName + "</b> ?";
+    var dialogmessage = "You are deleting a Co-Relation " + "<b>" + this.deleteRelation.relationName + "</b>" + ". The action of deleting a Co-Relation CANNOT be UNDONE. Moreover deleting an existing Co-Relation may impact other functionalities. Are you sure you want to DELETE the Co-Relation <b>" + this.deleteRelation.relationName + "</b> ?";
     const dialogRef = this.messageDialog.showConfirmationMessage(title, dialogmessage, this.deleteRelation.relationName, "ALERT", "40%");
 
     dialogRef.afterClosed().subscribe(result => {
@@ -438,7 +438,7 @@ export class RelationshipBuilderComponent implements OnInit {
       }
       else if (this.count == 1) {
         this.showApplicationMessage = "Failed to save settings"
-        var dialogmessage = "Co-Relation between <b>" + this.destinationcheck + "</b> and <b>" + this.sourcecheck + "</b> alreday exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
+        var dialogmessage = "Co-Relation between <b>" + this.selectedAgent1.toolName + "</b> and <b>" + this.selectedAgent2.toolName + "</b> already exists in the Correlation.json.If you wish to create a new Co-Relation please delete the existing Co-relation and save it with a UNIQUE name."
         this.messageDialog.showApplicationsMessage(dialogmessage, "ERROR");
         this.count = 0;
         newName = undefined;

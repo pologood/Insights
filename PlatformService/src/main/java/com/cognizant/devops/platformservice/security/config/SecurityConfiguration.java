@@ -23,11 +23,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -36,11 +34,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
-import org.springframework.security.ldap.authentication.BindAuthenticator;
-import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
-import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -51,7 +46,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.cognizant.devops.platformcommons.config.ApplicationConfigProvider;
-import com.cognizant.devops.platformcommons.config.LDAPConfiguration;
 
 @ComponentScan(basePackages = {"com.cognizant.devops.platformservice"})
 @Configuration
@@ -67,11 +61,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private SpringAuthenticationEntryPoint springAuthenticationEntryPoint;
 	
-	@Autowired
-	private SpringHeaderWriter springHeaderWriter;
+	//@Autowired
+	//private SpringHeaderWriter springHeaderWriter;
 	
-	@Autowired
-	private SpringAuthorityProvider springAuthorityProvider;
+	//@Autowired
+	//private SpringAuthorityProvider springAuthorityProvider;
 
 	@Autowired
 	private GrafanaUserDetailsService userDetailsService;
@@ -81,7 +75,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private static final String[] CSRF_IGNORE = { "/login/**", "/user/authenticate/**" };
 
-	@Bean
+	/*@Bean
 	public DefaultSpringSecurityContextSource getDefaultSpringSecurityContextSource() {
 		if (ApplicationConfigProvider.getInstance().isDisableAuth()
 				|| ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
@@ -97,21 +91,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		contextSource.afterPropertiesSet();
 		this.contextSource = contextSource;
 		return contextSource;
-	}
+	}*/
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth)
 			throws Exception {
 		ApplicationConfigProvider.performSystemCheck();
+		log.debug("  DisableAuth " + ApplicationConfigProvider.getInstance().isDisableAuth() + "   EnableNativeUsers  "
+				+ ApplicationConfigProvider.getInstance().isEnableNativeUsers());
+		String encodedPassword = new BCryptPasswordEncoder().encode("C0gnizant@1");
 		if (ApplicationConfigProvider.getInstance().isDisableAuth()) {
-			auth.inMemoryAuthentication().withUser("PowerUser").password("{noop}C0gnizant@1").roles("USER");
+			auth.inMemoryAuthentication().withUser("PowerUser").password(encodedPassword).roles("USER");
 			return;
 		} else if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
 			auth.userDetailsService(userDetailsService);
 			return;
+		} else if (!ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
+			auth.inMemoryAuthentication().withUser("PowerUser").password(encodedPassword).roles("USER");
+			return;
 		}
 
-		LDAPConfiguration ldapConfiguration = ApplicationConfigProvider.getInstance().getLdapConfiguration();
+		/*LDAPConfiguration ldapConfiguration = ApplicationConfigProvider.getInstance().getLdapConfiguration();
 		FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch("", ldapConfiguration.getSearchFilter(),
 				this.contextSource);
 		userSearch.setSearchSubtree(true);
@@ -119,7 +119,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		bindAuthenticator.setUserSearch(userSearch);
 		LdapAuthenticationProvider ldapAuthProvider = new LdapAuthenticationProvider(bindAuthenticator);
 		ldapAuthProvider.setUserDetailsContextMapper(springAuthorityProvider);
-		auth.authenticationProvider(ldapAuthProvider);
+		auth.authenticationProvider(ldapAuthProvider);*/
 
 	}
 

@@ -85,6 +85,7 @@ public class CrossScriptingFilter implements Filter {
 		LOG.debug(" Write Header in CrossScriptingFilter ============ ");
 		response.setStatus(HttpServletResponse.SC_OK);
 		String origin = request.getHeader(HttpHeaders.ORIGIN);
+		LOG.debug(" origin   ========= " + origin);
 		if (!ApplicationConfigProvider.getInstance().getTrustedHosts().contains(origin)) {
 			throw new RuntimeException(PlatformServiceConstants.INVALID_REQUEST_ORIGIN);
 		}

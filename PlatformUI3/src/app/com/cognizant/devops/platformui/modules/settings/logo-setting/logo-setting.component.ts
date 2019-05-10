@@ -76,6 +76,10 @@ export class LogoSettingComponent implements OnInit {
           dummy.value = "";
           this.buttonEnable = false;
           this.messageDialog.showApplicationsMessage("<b>" + fileName + "</b> uploaded successfully.<br> Please LOGOUT and LOGIN again in to the Insights Application to see the uploaded logo.", "SUCCESS");
+        } else if (event.status == "failure") {
+          dummy.value = "";
+          this.buttonEnable = false;
+          this.messageDialog.showApplicationsMessage("Unable to upload file, Please try with different file :  " + event.message, "ERROR");
         }
       });
     }

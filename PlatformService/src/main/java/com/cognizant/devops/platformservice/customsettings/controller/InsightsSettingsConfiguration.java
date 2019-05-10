@@ -95,8 +95,8 @@ public class InsightsSettingsConfiguration {
 			imgResp.setImageType(fileExt);
 			return PlatformServiceUtil.buildSuccessResponseWithData(imgResp);
 		} else {
-			LOG.error("Invalid file " + file.getName() + fileExt + " size " + file.getSize());
-			return PlatformServiceUtil.buildFailureResponse(PlatformServiceConstants.INVALID_REQUEST);
+			LOG.error("Invalid file  " + file.getName() + "  With extension  " + fileExt + " size " + file.getSize());
+			return PlatformServiceUtil.buildFailureResponse(PlatformServiceConstants.INVALID_FILE);
 		}
 	}
 

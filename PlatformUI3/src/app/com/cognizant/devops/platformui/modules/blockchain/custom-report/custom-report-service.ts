@@ -25,6 +25,7 @@ export interface IQueryBuilderService {
     deleteQuery(reportnmae): Promise<any>;
     uploadFile(formData : FormData): Promise<any>;
     downloadFile(filepath):Observable<any>;
+    testQuery(frequency: any): Promise<any>;
 }
 
 @Injectable()
@@ -64,6 +65,10 @@ export class QueryBuilderService implements IQueryBuilderService {
         let params= new HttpParams();
         params = params.append("path",filepath);
         return this.httpClient.get("/PlatformService/blockchain/queryBuilder/getFileContents",{headers:headers_object, responseType: 'blob', params});
+    }
+
+    testQuery(frequency: any): Promise<any> {
+        return this.restCallHandlerService.postFormData("/PlatformService/blockchain/queryBuilder/testQuery",frequency).toPromise();
     }
     
 

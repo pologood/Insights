@@ -137,4 +137,20 @@ import { QueryBuilderService } from './custom-report-service';
         }
       }
 
+      async testReport(){
+        console.log('testReport');
+        console.log(this.selectedAgent);
+        if(this.selectedAgent === undefined){
+            this.messageDialog.showApplicationsMessage("Please select a record to edit", "ERROR");
+            return;
+        }
+        let result = await this.queryBuilderService.testQuery(this.selectedAgent.reportName, this.selectedAgent.frequency);
+        if (result.status == "success") {
+            this.getCustomReports();
+            setTimeout(() => this.messageDialog.showApplicationsMessage("Report generated Successfully","SUCCESS"));
+        } else {
+            this.messageDialog.showApplicationsMessage("Failed to create report!", "ERROR");
+        }
+    }
+
   }

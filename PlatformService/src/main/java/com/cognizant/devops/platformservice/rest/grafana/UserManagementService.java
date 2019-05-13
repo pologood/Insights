@@ -232,11 +232,11 @@ public class UserManagementService {
 	}
 
 	private String getUserCookies(){
-		Cookie[] cookies = httpRequest.getCookies();
+		Cookie[] cookies = PlatformServiceUtil.validateCookies(httpRequest.getCookies());
 		StringBuffer grafanaCookie = new StringBuffer();
 		if(cookies != null){
 			for(Cookie cookie : cookies){
-				grafanaCookie.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+				grafanaCookie.append(cookie.getName()).append("=").append(cookie.getValue()).append("; HttpOnly");
 			}
 		}else{
 			try {

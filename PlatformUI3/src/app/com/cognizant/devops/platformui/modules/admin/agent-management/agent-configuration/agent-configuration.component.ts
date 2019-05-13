@@ -70,7 +70,7 @@ export class AgentConfigurationComponent implements OnInit {
   subTitleName: string;
   subTitleInfoText: string;
   @ViewChild('fileInput') myFileDiv: ElementRef;
-  regex = new RegExp("^[a-zA-Z0-9_]*$", 'gi');///[ !@#$%^&*()+\=\[\]{};'"\\|,.<>\/?]/
+  regex = new RegExp("^[a-zA-Z0-9_]*$");///[ !@#$%^&*()+\=\[\]{};'"\\|,.<>\/?]/
 
   constructor(public config: InsightsInitService, public agentService: AgentService,
     private router: Router, private route: ActivatedRoute,
@@ -326,7 +326,7 @@ export class AgentConfigurationComponent implements OnInit {
         self.messageDialog.showApplicationsMessage("You are not allow to change AgentId while update ", "ERROR");
         agentId = undefined;
       } else if (!checkAgentId) {
-        //console.log(this.regex);
+        console.log(this.regex + "  ===============    " + checkAgentId + "  ============  " + agentId);
         agentId = undefined;
         self.messageDialog.showApplicationsMessage("Please enter valid agentId, and only contain alphanumeric character and underscore ", "ERROR");
       }
@@ -512,7 +512,7 @@ export class AgentConfigurationComponent implements OnInit {
     var reader = new FileReader();
     reader.readAsText(trackingJsonFileArray);
     reader.onload = () => {
-      this.trackingUploadedFileContentStr = reader.result;
+      this.trackingUploadedFileContentStr = reader.result.toString();
       if (this.trackingUploadedFileContentStr == "") {
         this.fileUploadErrorMessage = "Unable to read file ,Please try again ";
       }

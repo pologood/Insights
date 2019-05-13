@@ -18,20 +18,20 @@ export class RelationLabel {
     destination: string;
     source: string;
     relationName: string;
-    isdataNeo4j?: boolean = true;
+    detailProp: string;
 
 
-    public setData(destination, source, relationName, isdataNeo4j): void {
+    public setData(destination, source, relationName, detailProp): void {
         this.destination = destination;
         this.source = source;
         this.relationName = relationName;
-        this.isdataNeo4j = isdataNeo4j;
+        this.detailProp = detailProp;
     }
-    constructor(destination, source, relationName, isdataNeo4j) {
+    constructor(destination, source, relationName, detailProp) {
         this.destination = destination;
         this.source = source;
         this.relationName = relationName;
-        this.isdataNeo4j = isdataNeo4j;
+        this.detailProp = detailProp;
 
     }
 }

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * Copyright 2017 Cognizant Technology Solutions
  * 
@@ -14,18 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package com.cognizant.devops.platformservice.correlationbuilder.service;
 
-import java.io.IOException;
+package com.cognizant.devops.platformservice.querybuilder.service;
 
-import com.cognizant.devops.platformcommons.config.ApplicationConfigProvider;
+import java.util.List;
+
 import com.cognizant.devops.platformcommons.exception.InsightsCustomException;
-import com.google.gson.JsonObject;
+import com.cognizant.devops.platformdal.queryBuilder.QueryBuilderConfig;
 
-public interface CorrelationBuilderService {
-	
-	public Object getCorrelationJson() throws IOException, InsightsCustomException;
-	public Object getNeo4jJson() throws IOException, InsightsCustomException;
-	public String saveConfig(String configDetails)throws InsightsCustomException;
-	
+public interface QueryBuilderService {
+
+	public String saveOrUpdateQuery(String reportName, String frequency, String subscribers, String fileName, String queryType, String user) throws InsightsCustomException;
+
+	public String deleteQuery(String reportName) throws InsightsCustomException;
+
+	public List<QueryBuilderConfig> fetchQueries() throws InsightsCustomException;
+
 }

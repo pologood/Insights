@@ -130,7 +130,7 @@ export class HomeComponent implements OnInit {
     let currentUserResponce: any;
     let self = this;
     this.userResponse = await this.grafanaService.getUsers()
-    //console.log(" In user response " + JSON.stringify(this.userResponse));
+    // console.log(" In user response " + JSON.stringify(this.userResponse));
     if (this.userResponse.data != undefined) {
       self.userName = self.userResponse.data.name != undefined ? self.userResponse.data.name.replace(/['"]+/g, '') : "";
       self.userCurrentOrg = self.userResponse.data.orgId;
@@ -162,8 +162,6 @@ export class HomeComponent implements OnInit {
     this.loadorganizations();
     this.loadMenuItem();
   }
-
-
 
   public async loadorganizations() {
     var self = this;
@@ -456,12 +454,12 @@ export class HomeComponent implements OnInit {
     // construct a form with hidden inputs, targeting the iframe
     var form = document.createElement("form");
     form.target = uniqueString;
-    this.config.getGrafanaHost1().then(function (response) {
+    if (this.config.getGrafanaHost()) {
       form.action = InsightsInitService.grafanaHost + "/logout";
       form.method = "GET";
       document.body.appendChild(form);
       form.submit();
-    });
+    }
     this.grafanaService.logout()
       .then(function (data) {
         //console.log(data);
@@ -510,6 +508,7 @@ export class HomeComponent implements OnInit {
 
   getSelectedOrgName(orgSelectedName): String {
     var orgName: String = "";
+    //console.log(orgSelectedName)
     if (orgSelectedName != undefined && orgSelectedName.length > 16) {
       orgName = (orgSelectedName.substring(0, 16)) + '..';
     } else {

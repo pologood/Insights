@@ -39,6 +39,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cognizant.devops.platformcommons.config.ApplicationConfigProvider;
+import com.cognizant.devops.platformcommons.core.util.AES256Cryptor;
 import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.cognizant.devops.platformcommons.dal.rest.RestHandler;
 import com.cognizant.devops.platformcommons.exception.InsightsCustomException;
@@ -56,27 +57,23 @@ public class GrafanaUserDetailsUtil {
 	public static UserDetails getUserDetails(HttpServletRequest httpRequest) {
 		log.debug("\\n\\nInside getUserDetails function call!");
 		ApplicationConfigProvider.performSystemCheck();
-		String authHeader = ValidationUtils.cleanXSS(httpRequest.getHeader("Authorization"));
-
-		log.debug(" authHeader ==========  " + authHeader);
-
-		String encryptedData = AES256Cryptor.encrypt(authHeader, "123456$#@$^@1ERF");
-
+		String token = ValidationUtils.cleanXSS(httpRequest.getHeader("Authorization")); //authHeader
+		
+		
+		/*String encryptedData = AES256Cryptor.encrypt(authHeader, "123456$#@$^@1ERF");
+		
 		log.debug(" encryptedData ========= " + encryptedData);
-
+		
 		String decryptedData = AES256Cryptor.decrypt(encryptedData, "123456$#@$^@1ERF");
+		
+		log.debug(" decryptedData ========= " + decryptedData);*/
 
-		log.debug(" decryptedData ========= " + decryptedData);
+		log.debug("  Authorization ===== " + token);
 
-		String newAuthToken = httpRequest.getHeader("newAuthorization");
+		String authHeader = ValidationUtils
+				.extactAutharizationToken(token);
 
-		log.debug(" newAuthToken String " + newAuthToken);
-
-		String authTokenDecrypt = AES256Cryptor.decrypt(newAuthToken, "123456$#@$^@1ERF");
-
-		log.debug(" authTokenDecrypt  ========= " + authTokenDecrypt);
-
-		//Boolean deValue = validateAuthentication(newAuthToken);
+		log.debug(" authTokenDecrypt  ========= " + authHeader);
 
 		Cookie[] requestCookies = PlatformServiceUtil.validateCookies(httpRequest.getCookies());
 		Map<String, String> grafanaResponseCookies = new HashMap<String, String>();
@@ -153,12 +150,12 @@ public class GrafanaUserDetailsUtil {
 			}
 
 			httpRequest.setAttribute("responseHeaders", grafanaResponseCookies);
-			if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
+			/*if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {*/
 				return new User(userName, credential, true, true, true, true,
 						mappedAuthorities);
-			} else {
+			/*} else {
 				return new User(userName, "", true, true, true, true, mappedAuthorities);
-			}
+			}*/
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

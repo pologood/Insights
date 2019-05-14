@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package com.cognizant.devops.platformservice.security.config;
+package com.cognizant.devops.platformcommons.core.util;
 
 import java.util.Base64;
 import java.nio.charset.StandardCharsets;
@@ -86,7 +86,6 @@ public class AES256Cryptor {
 
 	/**
 	 * Decrypt
-	 * Thanks Artjom B. for this: http://stackoverflow.com/a/29152379/4405051
 	 * 
 	 * @param ciphertext
 	 *            encrypted string

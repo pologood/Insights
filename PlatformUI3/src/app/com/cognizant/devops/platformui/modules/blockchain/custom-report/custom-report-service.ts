@@ -18,26 +18,29 @@ import { RestCallHandlerService } from '@insights/common/rest-call-handler.servi
 import { Observable } from '../../../../../../../../../node_modules/rxjs';
 import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { DataSharedService } from '@insights/common/data-shared-service';
+
 
 export interface IQueryBuilderService {
-    saveOrUpdateQuery(form: any,fileName:any, user:string): Promise<any>;
+    saveOrUpdateQuery(form: any, fileName: any, user: string): Promise<any>;
     fetchQueries(): Promise<any>;
     deleteQuery(reportnmae): Promise<any>;
-    uploadFile(formData : FormData): Promise<any>;
-    downloadFile(filepath):Observable<any>;
+    uploadFile(formData: FormData): Promise<any>;
+    downloadFile(filepath): Observable<any>;
 }
 
 @Injectable()
 export class QueryBuilderService implements IQueryBuilderService {
 
-    constructor(private restCallHandlerService: RestCallHandlerService, private httpClient:HttpClient, private cookieService: CookieService) {
+    constructor(private restCallHandlerService: RestCallHandlerService, private httpClient: HttpClient,
+        private cookieService: CookieService, private dataShare: DataSharedService) {
     }
 
-    saveOrUpdateQuery(form: any,fileName: any, user:string): Promise<any> {
+    saveOrUpdateQuery(form: any, fileName: any, user: string): Promise<any> {
         console.log(form);
-        let queryObj =  { 'reportName': form.reportname, 'frequency': form.frequency, 'subscribers': form.subscribers, 'fileName': fileName, 'queryType': form.querytype, 'user':user};
+        let queryObj = { 'reportName': form.reportname, 'frequency': form.frequency, 'subscribers': form.subscribers, 'fileName': fileName, 'queryType': form.querytype, 'user': user };
         console.log(queryObj);
-        return this.restCallHandlerService.postFormData("CREATE_UPDATE_CYPHER_QUERY",queryObj).toPromise();
+        return this.restCallHandlerService.postFormData("CREATE_UPDATE_CYPHER_QUERY", queryObj).toPromise();
     }
 
     fetchQueries(): Promise<any> {
@@ -45,11 +48,11 @@ export class QueryBuilderService implements IQueryBuilderService {
     }
 
     deleteQuery(reportname): Promise<any> {
-        return this.restCallHandlerService.postFormData("DELETE_CYPHER_QUERY",reportname).toPromise();
+        return this.restCallHandlerService.postFormData("DELETE_CYPHER_QUERY", reportname).toPromise();
     }
 
     uploadFile(formData): Promise<any> {
-        return this.restCallHandlerService.postFormData("UPLOAD_QUERY_FILE",formData).toPromise();
+        return this.restCallHandlerService.postFormData("UPLOAD_QUERY_FILE", formData).toPromise();
     }
 
     // downloadFile(filepath) : Observable<any>{
@@ -57,14 +60,14 @@ export class QueryBuilderService implements IQueryBuilderService {
     // }
 
 
-    downloadFile(filepath):Observable<Blob> {
-        let authToken = this.cookieService.get('Authorization');
+    downloadFile(filepath): Observable<Blob> {
+        let authToken = this.dataShare.getAuthorizationToken();
         let headers_object = new HttpHeaders();
         headers_object = headers_object.append("Authorization", authToken);
-        let params= new HttpParams();
-        params = params.append("path",filepath);
-        return this.httpClient.get("/PlatformService/blockchain/queryBuilder/getFileContents",{headers:headers_object, responseType: 'blob', params});
+        let params = new HttpParams();
+        params = params.append("path", filepath);
+        return this.httpClient.get("/PlatformService/blockchain/queryBuilder/getFileContents", { headers: headers_object, responseType: 'blob', params });
     }
-    
+
 
 }

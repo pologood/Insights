@@ -18,8 +18,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs'
 import { RestAPIurlService } from '@insights/common/rest-apiurl.service'
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
-import { CommonModule } from '@angular/common';
 import { DataSharedService } from '@insights/common/data-shared-service';
 
 @Injectable()
@@ -37,8 +35,7 @@ export class RestCallHandlerService {
       var dataresponse;
       var authToken = this.dataShare.getAuthorizationToken();
       const headers = new HttpHeaders()
-        .set("Authorization", authToken)
-        .set("newAuthorization", this.dataShare.getStoragedProperty('newAuthorization'));
+        .set("Authorization", authToken);
       var restCallUrl = this.constructGetUrl(url, requestParams);
       this.asyncResult = await this.http.get(restCallUrl, { headers }).toPromise();
       //console.log(this.asyncResult)
@@ -111,8 +108,7 @@ export class RestCallHandlerService {
         }
       }
       headers = new HttpHeaders();
-      headers = headers.set('Authorization', authToken)
-        .set("newAuthorization", this.dataShare.getStoragedProperty('newAuthorization'));
+      headers = headers.set('Authorization', authToken);
       for (var key in additionalheaders) {
         //console.log(key + " " + additionalheaders[key]);
         if (headers.hasOwnProperty(key)) {
@@ -141,8 +137,7 @@ export class RestCallHandlerService {
       var authToken = this.dataShare.getAuthorizationToken();
       var dataresponse = this.http.post(restCallUrl, fd, {
         headers: {
-          'Authorization': authToken,
-          'newAuthorization': this.dataShare.getStoragedProperty('newAuthorization')
+          'Authorization': authToken
         },
       })
       return dataresponse;

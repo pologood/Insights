@@ -149,21 +149,6 @@ export class HealthCheckComponent implements OnInit {
     }
   }
 
-  /*selectToolData(ToolSelect) {
-    var dataListDatasourceSelected = [];
-    if (ToolSelect != "All") {
-      this.dataComponentDataSource.filter(x => {
-        if (x.serverName == ToolSelect) {
-          dataListDatasourceSelected.push(x)
-        }
-      }
-      )
-    } else {
-      dataListDatasourceSelected = this.dataComponentDataSource;
-    }
-    this.dataListDatasource = dataListDatasourceSelected;
-  }*/
-
   // Displays Show Details dialog box when Details column is clicked
   showDetailsDialog(toolName: string, categoryName: string, agentId: string) {
     var isSessionExpired = this.dataShare.validateSession();

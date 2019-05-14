@@ -23,6 +23,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ApplicationMessageDialog } from '@insights/app/modules/application-dialog/application-message-dialog';
 import * as CryptoJS from 'crypto-js';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class DataSharedService {
@@ -58,12 +59,15 @@ export class DataSharedService {
   }
 
   public setAuthorizationToken(strAuthorization: string) {
-    var token = this.encryptData('123456$#@$^@1ERF', strAuthorization);
-    this.storage.set("newAuthorization", token);
-    this.storage.set("Authorization", strAuthorization);
+    var auth_uuid = uuid(); //CryptoJS.randomBytes(64).toString('hex')  this.makeid()
+    console.log("  auth_uuid  " + auth_uuid);
+    var auth = this.encryptData(auth_uuid, strAuthorization) + auth_uuid;
+    console.log(" token with number  " + auth);
+    this.storage.set("Authorization", strAuthorization); // auth
   }
 
   public getAuthorizationToken() {
+    console.log("  Authorization  in  getAuthorizationToken " + this.storage.get("Authorization"));
     return this.storage.get("Authorization");
   }
 
@@ -125,7 +129,7 @@ export class DataSharedService {
     var minutes = 30;
     date.setTime(date.getTime() + (minutes * 60 * 1000));
     var dateDashboardSessionExpiration = date.getTime();
-   // console.log(dateDashboardSessionExpiration + "  @@@@@@  " + date)
+    // console.log(dateDashboardSessionExpiration + "  @@@@@@  " + date)
     this.storage.set("dateDashboardSessionExpiration", dateDashboardSessionExpiration);
   }
 
@@ -139,7 +143,7 @@ export class DataSharedService {
     } else {
       var dashboardSessionExpirationTime = new Date(this.storage.get('dateDashboardSessionExpiration'));
       var date = new Date();
-     // console.log(dashboardSessionExpirationTime + "  ===== " + date);
+      // console.log(dashboardSessionExpirationTime + "  ===== " + date);
       if (sessionStorageDateDashboardSessionExpiration == undefined) {
         this.clearSessionData()
         return true;
@@ -190,39 +194,11 @@ export class DataSharedService {
     });
 
     return dialogRef;
-
   }
 
-  public encryptData(keys, value) {
-
-    //var key = CryptoJS.enc.Utf8.parse(keys);
-    //var iv = CryptoJS.enc.Utf8.parse(keys);
+  public encryptData(keys, value): string {
     var encryptedValue = CryptoJS.AES.encrypt(value, keys);
-    //CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(value.toString()), key);
-
-    /* ,
-      {
-        keySize: 128 / 8,
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-      } */
     console.log(" encryptedValue " + encryptedValue + " value " + value);
     return encryptedValue.toString();
   }
-
-  //The get method is use for decrypt the value.
-  public getDecryptData(keys, value) {
-    var key = CryptoJS.enc.Utf8.parse(keys);
-    var iv = CryptoJS.enc.Utf8.parse(keys);
-    var decrypted = CryptoJS.AES.decrypt(value, key, {
-      keySize: 128 / 8,
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  }
-
 }

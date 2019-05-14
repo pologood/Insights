@@ -121,8 +121,6 @@
 
 
 	"insightsServiceURL": "http://localhost:8080",
-	"disableAuth": false,
-	"enableNativeUsers": true,
 	"insightsTimeZone": "Asia/Kolkata",
 	"userId": "admin",
 	"password": "admin",

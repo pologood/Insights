@@ -84,20 +84,18 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loadCustomerLogo();
-
   }
 
   constructor(private grafanaService: GrafanaAuthenticationService,
     private cookieService: CookieService, private config: InsightsInitService,
     public router: Router, private dataShare: DataSharedService, private dialog: MatDialog) {
-    //console.log("in home on constructor init ");
+    console.log("in home on constructor init ");
     //router.onSameUrlNavigation = 'reload';
     this.displayLandingPage = true;
     if (this.depth === undefined) {
       this.depth = 0;
     }
     this.loadCustomerLogo();
-    //this.grafanaService.validateSession();
     this.isValidUser = true;
     this.framesize = window.frames.innerHeight;
     this.leftNavWidthInPer = 20;

@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cognizant.devops.platformcommons.config.ApplicationConfigProvider;
 import com.cognizant.devops.platformcommons.config.GrafanaData;
+import com.cognizant.devops.platformcommons.core.util.ValidationUtils;
 import com.cognizant.devops.platformcommons.dal.rest.RestHandler;
 import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 import com.cognizant.devops.platformservice.security.config.SpringAuthorityUtil;
@@ -164,7 +165,11 @@ public class AccessGroupManagement {
 			}
 			if (!cookieMap.containsKey("grafana_sess")) {
 				try {
-					String authHeader = httpRequest.getHeader("Authorization");
+
+					String authHeader = ValidationUtils
+							.extactAutharizationToken(httpRequest.getHeader("Authorization"));
+
+					log.debug(" authTokenDecrypt  ========= " + authHeader);
 					String decodedAuthHeader = new String(Base64.getDecoder().decode(authHeader.split(" ")[1]),
 							"UTF-8");
 					String[] authTokens = decodedAuthHeader.split(":");

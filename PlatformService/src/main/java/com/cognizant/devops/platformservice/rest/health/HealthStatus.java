@@ -18,7 +18,8 @@ package com.cognizant.devops.platformservice.rest.health;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,7 @@ import com.cognizant.devops.platformcommons.dal.neo4j.GraphResponse;
 import com.cognizant.devops.platformcommons.dal.neo4j.Neo4jDBHandler;
 import com.cognizant.devops.platformcommons.dal.neo4j.NodeData;
 import com.cognizant.devops.platformdal.dal.PostgresMetadataHandler;
+import com.cognizant.devops.platformservice.correlationbuilder.controller.InsightsCorrelationBuilder;
 import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -53,78 +55,81 @@ public class HealthStatus {
 	private static final String HOST_ENDPOINT = "endPoint";
 	private static final String PLATFORM_SERVICE_VERSION_FILE = "version.properties";
 
-	static Logger log = Logger.getLogger(HealthStatus.class.getName());
+	static Logger log = LogManager.getLogger(HealthStatus.class.getName());
 	@RequestMapping(value = "/globalHealth", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public JsonObject getHealthStatus() throws IOException{
+	public @ResponseBody JsonObject getHealthStatus() {
 		JsonObject servicesHealthStatus = new JsonObject();
 		String username=null;
 		String password=null;
 		String authToken=null;
-
-		//ApplicationConfigCache.loadConfigCache();
-		/*PostgreSQL health check*/
-		String hostEndPoint = ServiceStatusConstants.POSTGRESQL_HOST;
-		String apiUrl = hostEndPoint;		
-		JsonObject postgreStatus = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.PgSQL,Boolean.FALSE,username,password,authToken);
-		servicesHealthStatus.add(ServiceStatusConstants.PgSQL, postgreStatus);
-
-		/*PlatformService health check*/
-		hostEndPoint = ServiceStatusConstants.PLATFORM_SERVICE_HOST;
-		JsonObject platformServStatus = getVersionDetails(PLATFORM_SERVICE_VERSION_FILE, hostEndPoint, ServiceStatusConstants.Service);
-		servicesHealthStatus.add(ServiceStatusConstants.PlatformService, platformServStatus);
-
-		/*Insights Inference health check*/	
-		hostEndPoint = ServiceStatusConstants.INSIGHTS_INFERENCE_MASTER_HOST;
-		apiUrl = hostEndPoint+"/jobs";
-		JsonObject inferenceServStatus = getComponentStatus("PlatformInsightSpark",apiUrl);//getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.Service,"");
-		servicesHealthStatus.add(ServiceStatusConstants.InsightsInference, inferenceServStatus);
-
-		/*Neo4j health check*/
-		hostEndPoint = ServiceStatusConstants.NEO4J_HOST;
-		apiUrl = hostEndPoint+"/db/data/";
-		authToken=ApplicationConfigProvider.getInstance().getGraph().getAuthToken();
-		JsonObject neo4jStatus = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.Neo4j,Boolean.TRUE,username,password,authToken);
-		servicesHealthStatus.add(ServiceStatusConstants.Neo4j, neo4jStatus);
-
-		/*Elastic Search health check*/
-		hostEndPoint = ServiceStatusConstants.ES_HOST;
-		apiUrl = hostEndPoint;
-		JsonObject EsStatus = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.ES,Boolean.FALSE,username,password,authToken);
-		servicesHealthStatus.add(ServiceStatusConstants.ES, EsStatus);
-
-		/*Rabbit Mq health check */
-		hostEndPoint = ServiceStatusConstants.RABBIT_MQ;
-		apiUrl = hostEndPoint+"/api/overview";
-		authToken=null;
-		username=ApplicationConfigProvider.getInstance().getMessageQueue().getUser();
-		password=ApplicationConfigProvider.getInstance().getMessageQueue().getPassword();
-		JsonObject rabbitMq = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.RabbitMq,Boolean.TRUE,username,password,authToken);
-		servicesHealthStatus.add(ServiceStatusConstants.RabbitMq, rabbitMq);
-
-		/*Patform Engine Health Check*/
-		hostEndPoint = ServiceStatusConstants.PlatformEngine;
-		apiUrl = hostEndPoint;
-		JsonObject jsonPlatformEngineStatus = getComponentStatus("PlatformEngine","");
-		servicesHealthStatus.add(ServiceStatusConstants.PlatformEngine, jsonPlatformEngineStatus);
-
-//		hostEndPoint = ServiceStatusConstants.Agents;
-//		apiUrl = hostEndPoint;
-//		JsonObject jsonAgentStatus = getComponentStatus("Agents","");
-//		servicesHealthStatus.add(ServiceStatusConstants.Agents, jsonAgentStatus);
-
-		log.debug(" servicesHealthStatus "+servicesHealthStatus.toString());
-		return servicesHealthStatus;		
+		try {
+			String hostEndPoint = "";
+			String apiUrl = "";
+			hostEndPoint = ServiceStatusConstants.POSTGRESQL_HOST;
+			apiUrl = hostEndPoint;		
+			JsonObject postgreStatus = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.PgSQL,Boolean.FALSE,username,password,authToken);
+			servicesHealthStatus.add(ServiceStatusConstants.PgSQL, postgreStatus);
+			//log.debug("After Postgres================");
+			/*PlatformService health check*/
+			hostEndPoint = ServiceStatusConstants.PLATFORM_SERVICE_HOST;
+			JsonObject platformServStatus = getVersionDetails(PLATFORM_SERVICE_VERSION_FILE, hostEndPoint, ServiceStatusConstants.Service);
+			servicesHealthStatus.add(ServiceStatusConstants.PlatformService, platformServStatus);
+			//log.debug("After Platform Service================");
+			/*Insights Inference health check*/	
+			hostEndPoint = ServiceStatusConstants.INSIGHTS_INFERENCE_MASTER_HOST;
+			apiUrl = hostEndPoint+"/jobs";
+			JsonObject inferenceServStatus = getComponentStatus("PlatformInsightSpark",apiUrl);//getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.Service,"");
+			servicesHealthStatus.add(ServiceStatusConstants.InsightsInference, inferenceServStatus);
+			//log.debug("After inferance engine================");
+			/*Neo4j health check*/
+			hostEndPoint = ServiceStatusConstants.NEO4J_HOST;
+			apiUrl = hostEndPoint+"/db/data/";
+			authToken=ApplicationConfigProvider.getInstance().getGraph().getAuthToken();
+			JsonObject neo4jStatus = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.Neo4j,Boolean.TRUE,username,password,authToken);
+			servicesHealthStatus.add(ServiceStatusConstants.Neo4j, neo4jStatus);
+			//log.debug("After Neo4j================");
+			/*Elastic Search health check*/
+			hostEndPoint = ServiceStatusConstants.ES_HOST;
+			apiUrl = hostEndPoint;
+			JsonObject EsStatus = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.ES,Boolean.FALSE,username,password,authToken);
+			servicesHealthStatus.add(ServiceStatusConstants.ES, EsStatus);
+			//log.debug("After ElasticSearch================");
+			/*Rabbit Mq health check */
+			hostEndPoint = ServiceStatusConstants.RABBIT_MQ;
+			apiUrl = hostEndPoint+"/api/overview";
+			authToken=null;
+			username=ApplicationConfigProvider.getInstance().getMessageQueue().getUser();
+			password=ApplicationConfigProvider.getInstance().getMessageQueue().getPassword();
+			JsonObject rabbitMq = getClientResponse(hostEndPoint, apiUrl, ServiceStatusConstants.DB,ServiceStatusConstants.RabbitMq,Boolean.TRUE,username,password,authToken);
+			servicesHealthStatus.add(ServiceStatusConstants.RabbitMq, rabbitMq);
+			//log.debug("After Rabbit Mq================");
+			/*Patform Engine Health Check*/
+			hostEndPoint = ServiceStatusConstants.PlatformEngine;
+			apiUrl = hostEndPoint;
+			JsonObject jsonPlatformEngineStatus = getComponentStatus("PlatformEngine","");
+			servicesHealthStatus.add(ServiceStatusConstants.PlatformEngine, jsonPlatformEngineStatus);
+			//log.debug("After Platform Engine================");
+	
+			log.debug(" servicesHealthStatus "+servicesHealthStatus.toString());
+		}catch(Exception e) {
+			e.printStackTrace();
+			PlatformServiceUtil.buildFailureResponse(e.getMessage());
+		}
+		return servicesHealthStatus;	
 	}
 	@RequestMapping(value = "/globalAgentsHealth", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public JsonObject getAgentsHealthStatus() throws IOException{
-
+	public @ResponseBody JsonObject getAgentsHealthStatus() {
 		String hostEndPoint = ServiceStatusConstants.Agents;
 		JsonObject servicesAgentsHealthStatus = new JsonObject();
-		JsonObject jsonAgentStatus = getComponentStatus("Agents","");
-		servicesAgentsHealthStatus.add(ServiceStatusConstants.Agents, jsonAgentStatus);
-		return servicesAgentsHealthStatus;	
+		try {
+			JsonObject jsonAgentStatus = getComponentStatus("Agents","");
+			servicesAgentsHealthStatus.add(ServiceStatusConstants.Agents, jsonAgentStatus);
+			log.debug(" servicesAgentsHealthStatus  " + servicesAgentsHealthStatus);
+		}catch(Exception e) {
+			e.printStackTrace();
+			PlatformServiceUtil.buildFailureResponse(e.getMessage());
+		}
+		return servicesAgentsHealthStatus;
 	}
 
 

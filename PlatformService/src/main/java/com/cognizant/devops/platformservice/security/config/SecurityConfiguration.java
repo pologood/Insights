@@ -60,12 +60,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private SpringAuthenticationEntryPoint springAuthenticationEntryPoint;
-	
-	//@Autowired
-	//private SpringHeaderWriter springHeaderWriter;
-	
-	//@Autowired
-	//private SpringAuthorityProvider springAuthorityProvider;
 
 	@Autowired
 	private GrafanaUserDetailsService userDetailsService;
@@ -75,82 +69,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private static final String[] CSRF_IGNORE = { "/login/**", "/user/authenticate/**" };
 
-	/*@Bean
-	public DefaultSpringSecurityContextSource getDefaultSpringSecurityContextSource() {
-		if (ApplicationConfigProvider.getInstance().isDisableAuth()
-				|| ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
-			return null;
-		}
-		LDAPConfiguration ldapConfiguration = ApplicationConfigProvider.getInstance().getLdapConfiguration();
-		String ldapUrl = ldapConfiguration.getLdapUrl();
-		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(
-				ldapUrl + "/" + ldapConfiguration.getSearchBaseDN());
-		contextSource.setUserDn(ldapConfiguration.getBindDN());
-		contextSource.setPassword(ldapConfiguration.getBindPassword());
-		contextSource.setReferral("ignore");
-		contextSource.afterPropertiesSet();
-		this.contextSource = contextSource;
-		return contextSource;
-	}*/
-
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth)
-			throws Exception {
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		ApplicationConfigProvider.performSystemCheck();
-		log.debug("  DisableAuth " + ApplicationConfigProvider.getInstance().isDisableAuth() + "   EnableNativeUsers  "
-				+ ApplicationConfigProvider.getInstance().isEnableNativeUsers());
-		String encodedPassword = new BCryptPasswordEncoder().encode("C0gnizant@1");
-		if (ApplicationConfigProvider.getInstance().isDisableAuth()) {
-			auth.inMemoryAuthentication().withUser("PowerUser").password(encodedPassword).roles("USER");
+		/*if (ApplicationConfigProvider.getInstance().isDisableAuth()) {
+			auth.inMemoryAuthentication().withUser("PowerUser").password("C0gnizant@1").roles("USER");
 			return;
-		} else if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
+		} else if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {*/
 			auth.userDetailsService(userDetailsService);
 			return;
-		} else if (!ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
-			auth.inMemoryAuthentication().withUser("PowerUser").password(encodedPassword).roles("USER");
-			return;
-		}
-
-		/*LDAPConfiguration ldapConfiguration = ApplicationConfigProvider.getInstance().getLdapConfiguration();
-		FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch("", ldapConfiguration.getSearchFilter(),
-				this.contextSource);
-		userSearch.setSearchSubtree(true);
-		BindAuthenticator bindAuthenticator = new BindAuthenticator(this.contextSource);
-		bindAuthenticator.setUserSearch(userSearch);
-		LdapAuthenticationProvider ldapAuthProvider = new LdapAuthenticationProvider(bindAuthenticator);
-		ldapAuthProvider.setUserDetailsContextMapper(springAuthorityProvider);
-		auth.authenticationProvider(ldapAuthProvider);*/
-
+		/*}*/
 	}
 
-	/*
-	 * @Override
-	 * protected void configure(AuthenticationManagerBuilder auth) throws Exception
-	 * {
-	 * ApplicationConfigProvider.performSystemCheck();
-	 * if (ApplicationConfigProvider.getInstance().isDisableAuth()) {
-	 * auth.inMemoryAuthentication().withUser("PowerUser").password("C0gnizant@1").
-	 * roles("USER");
-	 * return;
-	 * } else if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {
-	 * auth.userDetailsService(userDetailsService);
-	 * return;
-	 * }
-	 * }
-	 */
 
-	/*
-	 * @Bean
-	 * public MethodInvokingFactoryBean methodInvokingFactoryBean() {
-	 * MethodInvokingFactoryBean methodInvokingFactoryBean = new
-	 * MethodInvokingFactoryBean();
-	 * methodInvokingFactoryBean.setTargetClass(SecurityContextHolder.class);
-	 * methodInvokingFactoryBean.setTargetMethod("setStrategyName");
-	 * methodInvokingFactoryBean.setArguments(SecurityContextHolder.
-	 * MODE_INHERITABLETHREADLOCAL);
-	 * return methodInvokingFactoryBean;
-	 * }
-	 */
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -163,20 +94,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/**").authenticated()
 			.and().exceptionHandling().accessDeniedHandler(springAccessDeniedHandler)
 			.and().httpBasic().authenticationEntryPoint(springAuthenticationEntryPoint)
+				.and().headers().frameOptions().sameOrigin()
 			.and().sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-				//.and().headers().addHeaderWriter(springHeaderWriter)
-				.and().csrf().ignoringAntMatchers(CSRF_IGNORE).csrfTokenRepository(csrfTokenRepository())
-				.and().addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
-		// .addFilterAfter(new CrossScriptingFilter(), CrossScriptingFilter.class)
+			.and().csrf().ignoringAntMatchers(CSRF_IGNORE).csrfTokenRepository(csrfTokenRepository()).and()
+			.addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
 		;
 	}
 	
 	@Bean
 	public CommonsMultipartResolver multipartResolver() throws IOException {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		// Set the maximum allowed size (in bytes) for each individual file.
-		resolver.setMaxUploadSizePerFile(5242880);// 5MB
-		// You may also set other available properties.
+		resolver.setMaxUploadSizePerFile(5242880);
 		return resolver;
 	}
 

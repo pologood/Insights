@@ -24,9 +24,7 @@ import org.apache.logging.log4j.Logger;
 import com.cognizant.devops.platformcommons.constants.PlatformServiceConstants;
 import com.cognizant.devops.platformcommons.exception.InsightsCustomException;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class ValidationUtils {
 	private static final Logger log = LogManager.getLogger(ComponentHealthLogger.class);
@@ -183,6 +181,34 @@ public class ValidationUtils {
 			}
 		}
 		return value;
+	}
+
+	public static String extactAutharizationToken(String authHeaderToken)   {
+		String authTokenDecrypt = "";
+		try {
+			log.debug(" authHeaderToken String " + authHeaderToken);
+
+			if (!authHeaderToken.startsWith("Basic ")) {
+
+				String auth = authHeaderToken.substring(0, authHeaderToken.length() - 36);
+
+				String passkey = authHeaderToken.substring(authHeaderToken.length() - 36, authHeaderToken.length());
+
+				log.debug(" authHeader ==========  " + authHeaderToken);
+
+				log.debug(" auth " + auth + "  key   " + passkey);
+
+				authTokenDecrypt = AES256Cryptor.decrypt(auth, passkey);
+			} else {
+				authTokenDecrypt = authHeaderToken;
+			}
+
+			log.debug(" authTokenDecrypt  ========= " + authTokenDecrypt);
+		} catch (Exception e) {
+			log.error(" InsightsCustomException Invalid Autharization Token " + e.getMessage());
+			throw new RuntimeException(PlatformServiceConstants.INVALID_TOKEN);
+		}
+		return authTokenDecrypt;
 	}
 
 }

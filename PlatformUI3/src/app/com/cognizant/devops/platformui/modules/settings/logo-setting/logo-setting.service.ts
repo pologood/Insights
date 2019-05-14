@@ -32,7 +32,7 @@ export class LogoSettingService implements ILogoSettingService {
 
     uploadLogo(imageFile:any): Observable<any> {
         var restHandler = this.restCallHandlerService;
-        return restHandler.postWithImage("UPLOAD_IMAGE",imageFile);
+        return restHandler.postWithImage("UPLOAD_IMAGE", imageFile);
     }
 }
 

@@ -18,12 +18,14 @@ import { RestCallHandlerService } from '@insights/common/rest-call-handler.servi
 import { Observable } from 'rxjs';
 import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { DataSharedService } from '@insights/common/data-shared-service';
+
 
 
 export interface IHealthCheckService {
     loadServerHealthConfiguration(): Promise<any>;
     loadHealthConfigurations(toolName: string, toolCategory: string, agentId: String): Promise<any>;
-    downloadLog(fileName : string):Observable<any>;
+    downloadLog(fileName: string): Observable<any>;
 }
 
 
@@ -32,7 +34,8 @@ export interface IHealthCheckService {
 @Injectable()
 export class HealthCheckService implements IHealthCheckService {
 
-    constructor(private restCallHandlerService: RestCallHandlerService, private httpClient:HttpClient, private cookieService: CookieService) {
+    constructor(private restCallHandlerService: RestCallHandlerService, private httpClient: HttpClient,
+        private cookieService: CookieService, private dataShare: DataSharedService) {
     }
 
     loadServerHealthConfiguration(): Promise<any> {
@@ -48,13 +51,13 @@ export class HealthCheckService implements IHealthCheckService {
         return restHandler.get("HEALTH_TOOL", { 'tool': toolName, 'category': toolCategory, 'agentId': agentId });
     }
 
-    downloadLog(fileName):Observable<Blob> {
-        let authToken = this.cookieService.get('Authorization');
+    downloadLog(fileName): Observable<Blob> {
+        let authToken = this.dataShare.getAuthorizationToken();
         let headers_object = new HttpHeaders();
         headers_object = headers_object.append("Authorization", authToken);
-        let params= new HttpParams();
-        params = params.append("logFileName",fileName+".log");
-        return this.httpClient.get("/PlatformAuditService/traceability/getReportLog",{headers:headers_object, responseType: 'blob',params});
+        let params = new HttpParams();
+        params = params.append("logFileName", fileName + ".log");
+        return this.httpClient.get("/PlatformAuditService/traceability/getReportLog", { headers: headers_object, responseType: 'blob', params });
     }
 
 

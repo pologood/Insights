@@ -17,6 +17,8 @@ package com.cognizant.devops.platformservice.security.config;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -84,17 +86,33 @@ public class CrossScriptingFilter implements Filter {
 	public void writeHeaders(HttpServletRequest request, HttpServletResponse response) {
 		LOG.debug(" Write Header in CrossScriptingFilter ============ ");
 		response.setStatus(HttpServletResponse.SC_OK);
-		String origin = request.getHeader(HttpHeaders.ORIGIN);
-		LOG.debug(" origin   ========= " + origin);
-		if (!ApplicationConfigProvider.getInstance().getTrustedHosts().contains(origin)) {
-			throw new RuntimeException(PlatformServiceConstants.INVALID_REQUEST_ORIGIN);
+		try {
+			String origin = request.getHeader(HttpHeaders.ORIGIN);
+			String referer = request.getHeader(HttpHeaders.REFERER);
+			String host = "";
+			if (request.getHeader(HttpHeaders.REFERER) != null) {
+				URL url = new URL(referer);
+				host = url.getHost();
+			} else {
+				URL url = new URL(origin);
+				host = url.getHost();
+			}
+			LOG.debug(" host information ===== " + host);
+			if (!ApplicationConfigProvider.getInstance().getTrustedHosts().contains(host)) {
+				throw new RuntimeException(PlatformServiceConstants.INVALID_REQUEST_ORIGIN);
+			}
+			response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+			response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+					request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
+			response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+					request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD));
+			response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+			// 463188 - Response Headers for Control: no-cache, no-store header
+			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD));
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-        // 463188 - Response Headers for Control: no-cache, no-store header
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
         //Set the response headers for grafana details.
         Object attribute = request.getAttribute("responseHeaders");
         if(attribute != null){

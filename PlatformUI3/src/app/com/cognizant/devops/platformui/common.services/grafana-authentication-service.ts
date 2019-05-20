@@ -17,9 +17,9 @@
 import { Injectable } from '@angular/core';
 import { RestCallHandlerService } from '@insights/common/rest-call-handler.service';
 import { Observable } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DataSharedService } from '@insights/common/data-shared-service';
 
 export interface IAuthenticationService {
     getAuthentication(authToken: string, msg: string): void;
@@ -35,7 +35,7 @@ export class GrafanaAuthenticationService implements IAuthenticationService {
     response: any;
     location: Location;
     constructor(location: Location, private router: Router,
-        private cookieService: CookieService, private restCallHandlerService: RestCallHandlerService
+        private dataShare: DataSharedService, private restCallHandlerService: RestCallHandlerService
     ) {
 
 

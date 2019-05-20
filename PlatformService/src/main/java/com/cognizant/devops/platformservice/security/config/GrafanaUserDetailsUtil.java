@@ -81,6 +81,7 @@ public class GrafanaUserDetailsUtil {
 		//log.debug(" authHeader " + authHeader);
 		if (requestCookies != null) {
 			for (Cookie cookie : requestCookies) {
+				log.debug(" cookie " + cookie.getName() + " " + cookie.getValue());
 				cookieMap.put(ValidationUtils.cleanXSS(cookie.getName()),
 						ValidationUtils.cleanXSS(cookie.getValue()) + "; HttpOnly");
 				cookie.setHttpOnly(true);

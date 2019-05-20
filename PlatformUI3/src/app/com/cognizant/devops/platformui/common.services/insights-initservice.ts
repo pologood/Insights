@@ -18,9 +18,9 @@ import { Location, LocationStrategy, PathLocationStrategy } from '@angular/commo
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 import { ImageHandlerService } from '@insights/common/imageHandler.service';
 import { LogService } from '@insights/common/log-service';
+
 
 @Injectable()
 export class InsightsInitService {
@@ -34,8 +34,7 @@ export class InsightsInitService {
     static processJson;
 
     constructor(location: Location, private http: HttpClient,
-        private cookieService: CookieService, private imageHandler: ImageHandlerService,
-        private logger: LogService) {
+        private imageHandler: ImageHandlerService, private logger: LogService) {
     }
 
     public async initMethods() {

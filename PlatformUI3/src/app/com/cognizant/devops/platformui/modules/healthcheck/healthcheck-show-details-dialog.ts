@@ -122,6 +122,4 @@ export class ShowDetailsDialog implements OnInit {
   closeShowDetailsDialog(): void {
     this.dialogRef.close();
   }
-
-
 }

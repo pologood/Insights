@@ -1,4 +1,3 @@
 {
-	"strictSSL": false,
-	"proxy": "http://proxy.cognizant.com:6050"
+	"strictSSL": false
 }

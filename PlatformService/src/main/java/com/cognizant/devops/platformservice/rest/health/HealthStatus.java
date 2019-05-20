@@ -38,14 +38,10 @@ import com.cognizant.devops.platformcommons.dal.neo4j.GraphResponse;
 import com.cognizant.devops.platformcommons.dal.neo4j.Neo4jDBHandler;
 import com.cognizant.devops.platformcommons.dal.neo4j.NodeData;
 import com.cognizant.devops.platformdal.dal.PostgresMetadataHandler;
-import com.cognizant.devops.platformservice.correlationbuilder.controller.InsightsCorrelationBuilder;
 import com.cognizant.devops.platformservice.rest.util.PlatformServiceUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 @RestController
 @RequestMapping("/admin/health")
@@ -152,33 +148,7 @@ public class HealthStatus {
 			label.append(":").append(tool);	
 		}
 		GraphResponse response = loadHealthData(label.toString(),ServiceStatusConstants.Agents,agentId);
-		return PlatformServiceUtil.buildSuccessResponseWithData(response);
-	}
-
-	private JsonObject getClientResponse(String hostEndPoint, String apiUrl, String type,String version){
-		try {
-			Client client = Client.create();
-			WebResource webResource = client
-					.resource(apiUrl);
-
-			ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON.toString())
-					.get(ClientResponse.class);
-
-			if (response.getStatus() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "+ response.getStatus());
-			}
-
-			String successResponse = "" ;
-			if( response.getStatus() == 200){
-				successResponse = "Response successfully recieved from "+apiUrl;
-			}
-			return buildSuccessResponse(successResponse, hostEndPoint, type,version);
-
-		} catch (Exception e) {
-			log.error("Error while capturing health check at "+apiUrl,e);
-		}
-		String failureResponse = "Error while capturing health check at "+apiUrl;
-		return buildFailureResponse(failureResponse, hostEndPoint, type,version);
+		return PlatformServiceUtil.buildSuccessResponseWithHtmlData(response);
 	}
 
 	private JsonObject getClientResponse(String hostEndPoint, String apiUrl, String displayType,String serviceType, boolean isRequiredAuthentication,String username, String password,String authToken){

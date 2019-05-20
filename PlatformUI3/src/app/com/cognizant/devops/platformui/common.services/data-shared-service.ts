@@ -97,7 +97,8 @@ export class DataSharedService {
     return this.storage;
   }
 
-  public getStoragedProperty(key: string): string {
+  public getStoragedProperty(key: string): any {
+
     return this.storage.get(key);
   }
 
@@ -195,7 +196,6 @@ export class DataSharedService {
 
     return dialogRef;
   }
-
   public encryptData(keys, value): string {
     var encryptedValue = CryptoJS.AES.encrypt(value, keys);
     console.log(" encryptedValue " + encryptedValue + " value " + value);

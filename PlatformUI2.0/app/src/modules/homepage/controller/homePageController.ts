@@ -86,7 +86,7 @@ module ISightApp {
                 });
 
             //self.selectedIndex = 2;
-            //self.templateName = 'dashboards';
+            self.templateName = 'agentList';
             self.loadDataDictionaryURL();
             let location = this.$location;
             let uiConfigJsonUrl: string = location.absUrl().replace(location.path(), "");

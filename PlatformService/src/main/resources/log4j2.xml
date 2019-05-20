@@ -14,6 +14,15 @@
 			</Policies>
 			<DefaultRolloverStrategy max="20" />
 		</RollingFile>
+		
+		<RollingFile name="RollingFileSpring" filename="${env:INSIGHTS_HOME}/logs/PlatformService/PlatformServiceSpring.log"
+			filepattern="${env:INSIGHTS_HOME}/logs/PlatformService/log4j_PlatformServiceSpring.log">
+			<PatternLayout pattern="%d{dd MMM yyyy HH:mm:ss,SSS} %p [%t]:%c{3}.%M()%L - %m%n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
  
 	</Appenders>
 	
@@ -24,6 +33,9 @@
 		<!-- <Logger name="org" level="error">
 				<AppenderRef ref="RollingFile" />
 		</Logger> -->
+		<Logger name="org.spring" level="debug"> <!-- com.cognizant  -->
+				<AppenderRef ref="RollingFileSpring" />
+		</Logger>
 		<Logger name="Console" level="debug">
 				<AppenderRef ref="Console" />
 		</Logger>
@@ -33,6 +45,9 @@
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 		</Root>
+		<logger name="org.hibernate">
+		  <level value="error"/> 
+		</logger>
 	</Loggers>
 
 </Configuration>

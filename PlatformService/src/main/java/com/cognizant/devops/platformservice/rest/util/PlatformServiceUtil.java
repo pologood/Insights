@@ -64,6 +64,14 @@ public class PlatformServiceUtil {
 		return validatedData;
 	}
 	
+	public static JsonObject buildSuccessResponseWithHtmlData(Object data) {
+
+		JsonObject jsonResponse = new JsonObject();
+		jsonResponse.addProperty(PlatformServiceConstants.STATUS, PlatformServiceConstants.SUCCESS);
+		jsonResponse.add(PlatformServiceConstants.DATA, new Gson().toJsonTree(data));
+		return jsonResponse;
+	}
+
 	public static JsonObject buildSuccessResponse(){
 		JsonObject jsonResponse = new JsonObject();
 		jsonResponse.addProperty(PlatformServiceConstants.STATUS, PlatformServiceConstants.SUCCESS);
@@ -81,32 +89,33 @@ public class PlatformServiceUtil {
 	}
 
 	public static Cookie[] validateCookies(Cookie[] request_cookies) {
-		Cookie[] cookies = null;
+		Cookie[] cookiesArray = null;
 		Cookie cookie = null;
+		int cookiesArrayLength = 0;
 		List<Cookie> cookiesList = new ArrayList<Cookie>();
 		if (request_cookies != null) {
 			// log.debug("Request Cookies length " + request_cookies.length);
-			cookies = new Cookie[request_cookies.length];
 			for (int i = 0; i < request_cookies.length; i++) {
 				cookie = request_cookies[i];
-				// log.debug(" cookie " + cookie.getName() + " " + cookie.getValue());
+				log.debug(" cookie " + cookie.getName() + " " + cookie.getValue());
 				if (masterCookiesList.contains(cookie.getName())) {
 					cookie.setMaxAge(30 * 60);
 					cookie.setHttpOnly(true);
 					cookie.setValue(ValidationUtils.cleanXSS(cookie.getValue()));
 					//cookies[i] = cookie;
 					cookiesList.add(cookie);
-
+					cookiesArrayLength = cookiesArrayLength + 1;
 				} else {
 					log.debug("Cookie Name Not found in master cookies list name as " + cookie.getName());
 				}
 			}
-			cookies = cookiesList.toArray(cookies);
+			cookiesArray = new Cookie[cookiesArrayLength];
+			cookiesArray = cookiesList.toArray(cookiesArray);
 			// log.debug("Request return Cookies length " + cookies.length);
 		} else {
-			cookies = request_cookies;
+			cookiesArray = request_cookies;
 			log.warn("No cookies founds");
 		}
-		return cookies;
+		return cookiesArray;
 	}
 }

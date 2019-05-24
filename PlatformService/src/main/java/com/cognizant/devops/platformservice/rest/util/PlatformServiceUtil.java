@@ -97,7 +97,7 @@ public class PlatformServiceUtil {
 			// log.debug("Request Cookies length " + request_cookies.length);
 			for (int i = 0; i < request_cookies.length; i++) {
 				cookie = request_cookies[i];
-				log.debug(" cookie " + cookie.getName() + " " + cookie.getValue());
+				//log.debug(" cookie " + cookie.getName() + " " + cookie.getValue());
 				if (masterCookiesList.contains(cookie.getName())) {
 					cookie.setMaxAge(30 * 60);
 					cookie.setHttpOnly(true);

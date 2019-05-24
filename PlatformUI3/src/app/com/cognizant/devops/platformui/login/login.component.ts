@@ -168,6 +168,22 @@ export class LoginComponent implements OnInit, ILoginComponent {
             self.logMsg = data.message;
             self.isDisabled = false;
           }
+        })
+        .catch(function (data) {
+          console.log(data)
+
+          if (data.status == 500) {
+            self.logMsg = "Internal server error"
+          } else if (data.status == 404) {
+            self.logMsg = "Server Not found"
+          } else if (data.status == 401) {
+            self.logMsg = "Unauthorized Access"
+          } else {
+            self.logMsg = "Internal server error";
+          }
+          self.showThrobber = false;
+          self.isLoginError = true;
+          self.isDisabled = false;
         });
     }
   }

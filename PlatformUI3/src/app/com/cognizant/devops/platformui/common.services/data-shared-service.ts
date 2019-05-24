@@ -17,10 +17,10 @@
 import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
-import { Router, NavigationExtras } from '@angular/router';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ApplicationMessageDialog } from '@insights/app/modules/application-dialog/application-message-dialog';
 import * as CryptoJS from 'crypto-js';
 import { v4 as uuid } from 'uuid';
@@ -63,7 +63,7 @@ export class DataSharedService {
     console.log("  auth_uuid  " + auth_uuid);
     var auth = this.encryptData(auth_uuid, strAuthorization) + auth_uuid;
     console.log(" token with number  " + auth);
-    this.storage.set("Authorization", strAuthorization); // auth
+    this.storage.set("Authorization", auth); // strAuthorization
   }
 
   public getAuthorizationToken() {

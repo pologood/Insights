@@ -34,8 +34,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -51,7 +51,6 @@ import com.cognizant.devops.platformcommons.config.ApplicationConfigProvider;
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
-// @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	static Logger log = LogManager.getLogger(SecurityConfiguration.class.getName());
 
@@ -71,33 +70,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		log.debug(" Inside Configure method ==== ");
 		ApplicationConfigProvider.performSystemCheck();
-		/*if (ApplicationConfigProvider.getInstance().isDisableAuth()) {
-			auth.inMemoryAuthentication().withUser("PowerUser").password("C0gnizant@1").roles("USER");
-			return;
-		} else if (ApplicationConfigProvider.getInstance().isEnableNativeUsers()) {*/
-			auth.userDetailsService(userDetailsService);
-			return;
-		/*}*/
+		auth.userDetailsService(userDetailsService);
+		return;
 	}
 
 
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+
+		final AdvanceAuthenticationFilter tokenFilter = new AdvanceAuthenticationFilter();
 		http
-				.cors().and()
-			.authorizeRequests()
-			.antMatchers("/datasources/**").permitAll()
-			.antMatchers("/admin/**").access("hasAuthority('Admin')")
-			.antMatchers("/configure/loadConfigFromResources").permitAll()
+				.cors().and().authorizeRequests().antMatchers("/datasources/**").permitAll().antMatchers("/admin/**")
+				.access("hasAuthority('Admin')").antMatchers("/configure/loadConfigFromResources").permitAll()
 				.antMatchers("/**").authenticated() //.permitAll()
-			.and().exceptionHandling().accessDeniedHandler(springAccessDeniedHandler)
-				.and().httpBasic().authenticationEntryPoint(springAuthenticationEntryPoint).and() // .disable() 
-				.headers().frameOptions().sameOrigin()
-			.and().sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-			.and().csrf().ignoringAntMatchers(CSRF_IGNORE).csrfTokenRepository(csrfTokenRepository()).and()
-			.addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
+				.and().exceptionHandling().accessDeniedHandler(springAccessDeniedHandler).and().httpBasic().disable()
+				.addFilterBefore(tokenFilter, BasicAuthenticationFilter.class) // .disable()  .authenticationEntryPoint(springAuthenticationEntryPoint) .and() .and()
+				.headers().frameOptions().sameOrigin().and().sessionManagement().maximumSessions(1).and()
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().csrf().ignoringAntMatchers(CSRF_IGNORE)
+				.csrfTokenRepository(csrfTokenRepository()).and()
+				.addFilterAfter(new CustomCsrfFilter(), CsrfFilter.class)
 		;
 	}
 	
@@ -114,11 +108,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return repository;
 	}
 		
-		@Override
-		public void configure(WebSecurity web) throws Exception {
-			web.ignoring().antMatchers("/settings/getLogoImage");
-			web.ignoring().antMatchers("/datasource/**");
-		}
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/settings/getLogoImage");
+		web.ignoring().antMatchers("/datasource/**");
+	}
 		
 	@Bean
 	public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
